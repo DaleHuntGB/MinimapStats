@@ -1,0 +1,9 @@
+## Title: |cFF8080FFMinimapStats|r
+## Interface: 100002
+## Notes: Adds Location, FPS, Latency and Time to the Minimap.
+## Author: Unhalted - Twisting Nether
+## DefaultState: Enabled
+## SavedVariables: MinimapStats_ConfigDB
+
+MinimapStats.lua
+Config.lua
