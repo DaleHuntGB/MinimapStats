@@ -1,0 +1,11 @@
+## Title: |cFF8080FFMinimapStats|r
+## Interface: 100107
+## Version: 4.0.0
+## Author: Unhalted
+## SavedVariables: MSDB
+## OptionalDeps: SharedMedia-3.0, LibSharedMedia-3.0
+## IconTexture: Interface\AddOns\MinimapStats\Libraries\MinimapStatsLogo
+## DefaultState: Enabled
+
+MinimapStats.lua
+Libraries\Embeds.xml
