@@ -1,0 +1,22 @@
+{
+    "Lua.diagnostics.globals": [
+        "NORMAL_FONT_COLOR_CODE",
+        "FONT_COLOR_CODE_CLOSE",
+        "CLOSE",
+        "GameFontHighlightSmall",
+        "GameFontDisableSmall",
+        "GameFontNormalSmall",
+        "GameFontNormal",
+        "SetDesaturation",
+        "ColorPickerFrame",
+        "OpacitySliderFrame",
+        "ChatFontNormal",
+        "OKAY",
+        "NOT_BOUND",
+        "ACCEPT",
+        "SlashCmdList",
+        "MinimapCluster",
+        "ToggleCalendar",
+        "ReloadUI"
+    ]
+}
