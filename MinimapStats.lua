@@ -5,6 +5,7 @@ local AddOnVersion = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
 local LSM = LibStub("LibSharedMedia-3.0")
 local MSGUIShown = false
 local DebugMode = false
+local TestingInstanceDifficulty = false
 
 local DefaultSettings = {
     global = {
@@ -170,13 +171,37 @@ function FetchInformation()
 end
 
 function FetchInstanceDifficulty()
-    local _, _, InstanceDifficulty, _, _, _, _, InstanceID, InstanceSize = GetInstanceInfo()
-    local KeystoneLevel = C_ChallengeMode.GetActiveKeystoneInfo()
-    local InstanceDifficultyIndicator = MinimapCluster.InstanceDifficulty
-    local InstanceIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Instance or _G["MiniMapInstanceDifficulty"]
-    local GuildIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Guild or _G["GuildInstanceDifficulty"]
-    local ChallengeIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.ChallengeMode or _G["MiniMapChallengeMode"]
-    local InGarrison = InstanceID == 1152 or InstanceID == 1153 or InstanceID == 1154 or InstanceID == 1158 or InstanceID == 1159 or InstanceID == 1160
+    if self.db.global.DisplayInstanceDifficulty then
+        local _, _, InstanceDifficulty, _, _, _, _, InstanceID, InstanceSize = GetInstanceInfo()
+        local KeystoneLevel = C_ChallengeMode.GetActiveKeystoneInfo()
+        local InstanceDifficultyIndicator = MinimapCluster.InstanceDifficulty
+        local InstanceIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Instance or _G["MiniMapInstanceDifficulty"]
+        local GuildIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Guild or _G["GuildInstanceDifficulty"]
+        local ChallengeIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.ChallengeMode or _G["MiniMapChallengeMode"]
+        local InGarrison = InstanceID == 1152 or InstanceID == 1153 or InstanceID == 1154 or InstanceID == 1158 or InstanceID == 1159 or InstanceID == 1160
+        
+        local NormalDungeon = "5" .. "|cFF" .. SecondaryFontColor .. "N" .."|r"
+        local HeroicDungeon = "5" .. "|cFF" .. SecondaryFontColor .. "H" .."|r"
+        local MythicDungeon = "5" .. "|cFF" .. SecondaryFontColor .. "M" .."|r"
+        local MythicPlusDungeon = "+" .. "|cFF" .. SecondaryFontColor .. KeystoneLevel .."|r"
+        local TimewalkingDungeon = "|cFF" .. SecondaryFontColor .. "TW" .. "|r"
+        local TenNormalRaid = "10" .. "|cFF" .. SecondaryFontColor .. "N" .."|r"
+        local TwentyFiveNormalRaid = "25" .. "|cFF" .. SecondaryFontColor .. "N" .."|r"
+        local TenHeroicRaid = "10" .. "|cFF" .. SecondaryFontColor .. "H" .."|r"
+        local TwentyFiveHeroicRaid = "25" .. "|cFF" .. SecondaryFontColor .. "H" .."|r"
+        local FortyRaid = "40" .. "|cFF" .. SecondaryFontColor .. "M" .."|r"
+        local TimewalkingRaid = "|cFF" .. SecondaryFontColor .. InstanceSize .. "|r" .. "TW"
+        local LFR = "|cFF" .. SecondaryFontColor .. InstanceSize .. "|r" .. "LFR"
+        local NormalFlexRaid = "|cFF" .. SecondaryFontColor .. InstanceSize .. "|r" .. "N"
+        local HeroicFlexRaid = "|cFF" .. SecondaryFontColor .. InstanceSize .. "|r" .. "H"
+        local MythicRaid = "20" .. "|cFF" .. SecondaryFontColor .. "M" .."|r"
+
+
+        if TestingInstanceDifficulty then
+            local TestInstances = {NormalDungeon, HeroicDungeon, MythicDungeon, TenNormalRaid, TwentyFiveNormalRaid, TenHeroicRaid, TwentyFiveHeroicRaid, FortyRaid, MythicRaid}
+            return TestInstances[math.random(1, #TestInstances)]
+        end
+    
         if InstanceIndicator then 
             InstanceIndicator:ClearAllPoints() 
             InstanceIndicator:SetAlpha(0) 
@@ -188,43 +213,44 @@ function FetchInstanceDifficulty()
         if ChallengeIndicator then 
             ChallengeIndicator:ClearAllPoints()
             ChallengeIndicator:SetAlpha(0) 
-        end			
+        end
 
         if InstanceDifficulty == 0 then -- No Instance
             return " "
         elseif InGarrison then -- Garrison
             return " "
         elseif InstanceDifficulty == 1 then -- Normal Dungeon
-            return "5" .. "|cFF" .. SecondaryFontColor .. "N" .."|r"
+            return NormalDungeon
         elseif InstanceDifficulty == 2 then -- Heroic Dungeon
-            return "5" .. "|cFF" .. SecondaryFontColor .. "H" .."|r"
+            return HeroicDungeon
         elseif InstanceDifficulty == 23 then -- Mythic Dungeon
-            return "5" .. "|cFF" .. SecondaryFontColor .. "M" .."|r"
+            return MythicDungeon
         elseif InstanceDifficulty == 8 then -- Mythic+ Dungeon
-            return "+" .. "|cFF" .. SecondaryFontColor .. KeystoneLevel .."|r"
+            return MythicPlusDungeon
         elseif InstanceDifficulty == 24 then -- Timewalking Dungeon
-            return "|cFF" .. SecondaryFontColor .. "TW" .. "|r"			
+            return TimewalkingDungeon		
         elseif InstanceDifficulty == 3 then -- 10M Normal Raid
-            return "10" .. "|cFF" .. SecondaryFontColor .. "N" .."|r"
+            return TenNormalRaid
         elseif InstanceDifficulty == 5 then -- 10M Heroic Raid
-            return "10" .. "|cFF" .. SecondaryFontColor .. "H" .."|r"
+            return TenHeroicRaid
         elseif InstanceDifficulty == 4 then -- 25M Normal Raid
-            return "25" .. "|cFF" .. SecondaryFontColor .. "N" .."|r"
+            return TwentyFiveNormalRaid
         elseif InstanceDifficulty == 6 then -- 25M Heroic Raid
-            return "25" .. "|cFF" .. SecondaryFontColor .. "H" .."|r"
+            return TwentyFiveHeroicRaid
         elseif InstanceDifficulty == 9 then -- 40M Raid
-            return "40" .. "|cFF" .. SecondaryFontColor .. "N" .."|r"
+            return FortyRaid
         elseif InstanceDifficulty == 33 then -- Timewalking Raid
-            return "|cFF" .. SecondaryFontColor .. InstanceSize .. "|r" .. "TW"
+            return TimewalkingRaid
         elseif InstanceDifficulty == 17 then -- Timewalking Raid
-            return "|cFF" .. SecondaryFontColor .. InstanceSize .. "|r" .. "LFR"					
+            return LFR				
         elseif InstanceDifficulty == 14 then -- Normal Flex Raid
-            return "|cFF" .. SecondaryFontColor .. InstanceSize .. "|r" .. "N"
+            return NormalFlexRaid
         elseif InstanceDifficulty == 15 then -- Heroic Flex Raid
-            return "|cFF" .. SecondaryFontColor .. InstanceSize .. "|r" .. "H"
+            return HeroicFlexRaid
         elseif InstanceDifficulty == 16 then -- Mythic Raid
-            return "|cFF" .. SecondaryFontColor .. InstanceSize .. "|r" .. "M"
+            return MythicRaid
         end
+    end	
 end
 
 function FetchCoordinates()
@@ -322,6 +348,11 @@ function RefreshElements()
         InformationFrame:SetScript("OnUpdate", nil)
     end
     InstanceDifficultyFrame:SetScript("OnEvent", UpdateInstanceDifficultyFrame)
+    if TestingInstanceDifficulty == true then
+        InstanceDifficultyFrame:SetScript("OnUpdate", TestInstanceDifficultyFrame)
+    else
+        InstanceDifficultyFrame:SetScript("OnUpdate", nil)
+    end
 end
 
 end
@@ -411,6 +442,7 @@ function MinimapStats:OnEnable()
     local TimeFrame_LastUpdate = 0
     local InformationFrame_LastUpdate = 0
     local CoordinatesFrame_LastUpdate = 0
+    local InstanceDifficultyFrame_LastUpdate = 0
 
     function UpdateTimeFrame(TimeFrame, ElapsedTime)
         TimeFrame_LastUpdate = TimeFrame_LastUpdate + ElapsedTime
@@ -453,6 +485,17 @@ function MinimapStats:OnEnable()
 
     function UpdateInstanceDifficultyFrame(InstanceDifficultyFrame, FrameEvent)
         if FrameEvent == "ZONE_CHANGED" or FrameEvent == "ZONE_CHANGED_INDOORS" or FrameEvent == "ZONE_CHANGED_NEW_AREA" or FrameEvent == "PLAYER_ENTERING_WORLD" or FrameEvent == "GROUP_ROSTER_UPDATE" or FrameEvent == "WORLD_STATE_TIME_START" then
+            InstanceDifficultyFrameText:SetText(FetchInstanceDifficulty())
+        end
+    end
+
+    function TestInstanceDifficultyFrame(InstanceDifficultyFrame, ElapsedTime)
+        InstanceDifficultyFrame_LastUpdate = InstanceDifficultyFrame_LastUpdate + ElapsedTime
+        if InstanceDifficultyFrame_LastUpdate > 3 then
+            if DebugMode then
+                print(AddOnName .. ": Instance Difficulty Frame: Updated")
+            end
+            InstanceDifficultyFrame_LastUpdate = 0
             InstanceDifficultyFrameText:SetText(FetchInstanceDifficulty())
         end
     end
@@ -798,6 +841,12 @@ function MinimapStats:OnEnable()
             DisplayInstanceDifficultyCheckBox:SetValue(self.db.global.DisplayInstanceDifficulty)
             DisplayInstanceDifficultyCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayInstanceDifficulty = value RefreshElements() end)
             InstanceDifficultyToggleContainer:AddChild(DisplayInstanceDifficultyCheckBox)
+
+            TestInstanceDifficultyCheckBox = MSGUI:Create("CheckBox")
+            TestInstanceDifficultyCheckBox:SetLabel("Test Instance Difficulty")
+            TestInstanceDifficultyCheckBox:SetValue(TestingInstanceDifficulty)
+            TestInstanceDifficultyCheckBox:SetCallback("OnValueChanged", function(widget, event, value) TestingInstanceDifficulty = value RefreshElements() end)
+            InstanceDifficultyToggleContainer:AddChild(TestInstanceDifficultyCheckBox)
 
             local InstanceDifficultyFontSize = MSGUI:Create("Slider")
             InstanceDifficultyFontSize:SetLabel("Font Size")
