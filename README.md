@@ -72,4 +72,4 @@ Elements such **Location** & **Instance Difficulty** are updated on events and t
 
 1. Download the latest version of MinimapStats from the [CurseForge](https://www.curseforge.com/wow/addons/minimapstats).
 2. Use the CurseForge app to install the AddOn or extract the downloaded archive to your WoW AddOns folder.
-3. Reload your UI or restart the game.
+3. Reload your UI or restart the game client.
