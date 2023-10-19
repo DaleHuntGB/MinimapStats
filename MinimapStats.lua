@@ -542,14 +542,13 @@ function MinimapStats:OnEnable()
 
         MSGUIShown = true
 
-        local MSGUIContainer = MSGUI:Create("Frame") 
-        MSGUIContainer:SetTitle(AddOnName)
+        local MSGUIContainer = MSGUI:Create("Window") 
+        MSGUIContainer:SetTitle(AddOnName .. " V" .. AddOnVersion)
         MSGUIContainer:SetCallback("OnClose", function(widget) MSGUI:Release(widget) MSGUIShown = false end)
         MSGUIContainer:SetLayout("Fill")
         MSGUIContainer:SetWidth(750)
-        MSGUIContainer:SetHeight(750)
+        MSGUIContainer:SetHeight(700)
         MSGUIContainer:EnableResize(false)
-        MSGUIContainer:SetStatusText("V"..AddOnVersion)
 
         local function DrawTimeContainer(MSGUIContainer)
 
@@ -585,7 +584,21 @@ function MinimapStats:OnEnable()
 
             local TimeFormatDropdown = MSGUI:Create("Dropdown")
             TimeFormatDropdown:SetLabel("Format")
-            TimeFormatDropdown:SetList({["TwentyFourHourTime"] = "24 Hour", ["TwelveHourTime"] = "12 Hour (AM/PM)", ["ServerTime"] = "24 Hour [Server Time]", ["TwelverHourServerTime"] = "12 Hour (AM/PM) [Server Time]"})
+            local TimeFormatDropdownData = 
+            {
+                ["TwentyFourHourTime"] = "24 Hour",
+                ["TwelveHourTime"] = "12 Hour (AM/PM)",
+                ["ServerTime"] = "24 Hour [Server Time]",
+                ["TwelverHourServerTime"] = "12 Hour (AM/PM) [Server Time]"
+            }
+            local TimeFormatDropdownOrder = 
+            {
+                "TwentyFourHourTime",
+                "TwelveHourTime",
+                "ServerTime",
+                "TwelverHourServerTime"
+            }
+            TimeFormatDropdown:SetList(TimeFormatDropdownData, TimeFormatDropdownOrder)
             TimeFormatDropdown:SetValue(self.db.global.TimeFormat)
             TimeFormatDropdown:SetFullWidth(true)
             TimeFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.TimeFormat = value RefreshElements() end)
@@ -727,7 +740,6 @@ function MinimapStats:OnEnable()
             GroupDesc:SetFullWidth(true)
             MSGUIContainer:AddChild(GroupDesc)
 
-
             local InformationToggleContainer = MSGUI:Create("InlineGroup")
             InformationToggleContainer:SetTitle("Toggle Options")
             InformationToggleContainer:SetFullWidth(true) 
@@ -756,7 +768,25 @@ function MinimapStats:OnEnable()
 
             local InformationFormatDropdown = MSGUI:Create("Dropdown")
             InformationFormatDropdown:SetLabel("Format")
-            InformationFormatDropdown:SetList({["FPSHomeMS"] = "FPS [Home MS]", ["FPSWorldMS"] = "FPS [World MS]", ["FPSOnly"] = "FPS", ["HomeMSOnly"] = "Home MS", ["WorldMSOnly"] = "World MS", ["MSOnly"] = "Home MS [World MS]"})
+            local InformationFormatDropdownData = 
+            {
+                ["FPSHomeMS"] = "FPS [Home MS]", 
+                ["FPSWorldMS"] = "FPS [World MS]", 
+                ["FPSOnly"] = "FPS", 
+                ["HomeMSOnly"] = "Home MS", 
+                ["WorldMSOnly"] = "World MS", 
+                ["MSOnly"] = "Home MS [World MS]"
+            }
+            local InformationFormatDataOrder = 
+            {
+                "FPSHomeMS",
+                "FPSWorldMS",
+                "FPSOnly",
+                "MSOnly",
+                "HomeMSOnly",
+                "WorldMSOnly",
+            }
+            InformationFormatDropdown:SetList(InformationFormatDropdownData, InformationFormatDataOrder)
             InformationFormatDropdown:SetValue(self.db.global.InformationFormat)
             InformationFormatDropdown:SetFullWidth(true)
             InformationFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InformationFormat = value RefreshElements() end)
@@ -831,7 +861,7 @@ function MinimapStats:OnEnable()
             MSGUIContainer:AddChild(InstanceDifficultyToggleContainer)
 
             local InstanceDifficultyFontSizeContainer = MSGUI:Create("InlineGroup")
-            InstanceDifficultyFontSizeContainer:SetTitle("Font Size")
+            InstanceDifficultyFontSizeContainer:SetTitle("Font Size Options")
             InstanceDifficultyFontSizeContainer:SetFullWidth(true)
             InstanceDifficultyFontSizeContainer:SetLayout("Flow")
             MSGUIContainer:AddChild(InstanceDifficultyFontSizeContainer)
@@ -991,10 +1021,6 @@ function MinimapStats:OnEnable()
             CoordinatesToggleContainer:SetLayout("Flow")
             MSGUIContainer:AddChild(CoordinatesToggleContainer)
 
-            local CoordinatesMiscContainer = MSGUI:Create("InlineGroup")
-            CoordinatesMiscContainer:SetTitle("Misc Options")
-            CoordinatesMiscContainer:SetFullWidth(true) 
-            MSGUIContainer:AddChild(CoordinatesMiscContainer)
 
             local CoordinatesFormatContainer = MSGUI:Create("InlineGroup")
             CoordinatesFormatContainer:SetTitle("Format Options")
@@ -1003,10 +1029,15 @@ function MinimapStats:OnEnable()
             MSGUIContainer:AddChild(CoordinatesFormatContainer)
 
             local CoordinatesFontSizeContainer = MSGUI:Create("InlineGroup")
-            CoordinatesFontSizeContainer:SetTitle("Font Size")
+            CoordinatesFontSizeContainer:SetTitle("Font Size Options")
             CoordinatesFontSizeContainer:SetFullWidth(true)
             CoordinatesFontSizeContainer:SetLayout("Flow")
             MSGUIContainer:AddChild(CoordinatesFontSizeContainer)
+
+            local CoordinatesMiscContainer = MSGUI:Create("InlineGroup")
+            CoordinatesMiscContainer:SetTitle("Misc Options")
+            CoordinatesMiscContainer:SetFullWidth(true) 
+            MSGUIContainer:AddChild(CoordinatesMiscContainer)
 
             local DisplayCoordinatesCheckBox = MSGUI:Create("CheckBox")
             DisplayCoordinatesCheckBox:SetLabel("Show / Hide")
