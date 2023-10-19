@@ -18,5 +18,8 @@
         "MinimapCluster",
         "ToggleCalendar",
         "ReloadUI"
+    ],
+    "Lua.diagnostics.disable": [
+        "undefined-field"
     ]
 }
