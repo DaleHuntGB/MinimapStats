@@ -527,6 +527,14 @@ function MinimapStats:OnEnable()
         print(AddOnName .. ": Settings Reset.")
     end
 
+    function DebugModeDetection()
+        if DebugMode == false then 
+            ToggleDebugModeButton:SetText("Debug Mode: |cFFFF4040Disabled|r") 
+        else 
+            ToggleDebugModeButton:SetText("Debug Mode: |cFF40FF40Enabled|r")
+        end
+    end
+
     function ToggleDebugMode()
         if DebugMode then
             DebugMode = false
@@ -548,7 +556,7 @@ function MinimapStats:OnEnable()
         MSGUIContainer:SetLayout("Fill")
         MSGUIContainer:SetWidth(750)
         MSGUIContainer:SetHeight(700)
-        MSGUIContainer:EnableResize(true)
+        MSGUIContainer:EnableResize(false)
 
         local function DrawTimeContainer(MSGUIContainer)
 
@@ -996,10 +1004,10 @@ function MinimapStats:OnEnable()
             MiscContainer:SetLayout("Flow")
             MSGUIContainer:AddChild(MiscContainer)
 
-            local ToggleDebugModeButton = MSGUI:Create("Button")
-            ToggleDebugModeButton:SetText("Toggle Debug Mode")
+            ToggleDebugModeButton = MSGUI:Create("Button")
+            ToggleDebugModeButton:SetText(DebugModeDetection())
             ToggleDebugModeButton:SetFullWidth(true)
-            ToggleDebugModeButton:SetCallback("OnClick", function() ToggleDebugMode() end)
+            ToggleDebugModeButton:SetCallback("OnClick", function() ToggleDebugMode() DebugModeDetection() MSGUIContainer:DoLayout() end)
             MiscContainer:AddChild(ToggleDebugModeButton)
                         
             local ResetDefaultsButton = MSGUI:Create("Button")
@@ -1045,11 +1053,6 @@ function MinimapStats:OnEnable()
             CoordinatesMiscContainer:SetFullWidth(true) 
             MSGUIContainer:AddChild(CoordinatesMiscContainer)
 
-            local DisplayCoordinatesCheckBox = MSGUI:Create("CheckBox")
-            DisplayCoordinatesCheckBox:SetLabel("Show / Hide")
-            DisplayCoordinatesCheckBox:SetValue(self.db.global.DisplayCoordinates)
-            DisplayCoordinatesCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayCoordinates = value RefreshElements() end)
-            CoordinatesToggleContainer:AddChild(DisplayCoordinatesCheckBox)
 
             local CoordinatesFormatDropdown = MSGUI:Create("Dropdown")
             CoordinatesFormatDropdown:SetLabel("Format")
@@ -1123,6 +1126,7 @@ function MinimapStats:OnEnable()
                 DrawCoordinatesContainer(MSGUIContainer)
             elseif SelectedGroup == "tab6" then
                 DrawFontandColourContainer(MSGUIContainer)
+                DebugModeDetection()
             end
          end
 
