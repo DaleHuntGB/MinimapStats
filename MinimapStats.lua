@@ -1029,7 +1029,6 @@ function MinimapStats:OnEnable()
             CoordinatesToggleContainer:SetLayout("Flow")
             MSGUIContainer:AddChild(CoordinatesToggleContainer)
 
-
             local CoordinatesFormatContainer = MSGUI:Create("InlineGroup")
             CoordinatesFormatContainer:SetTitle("Format Options")
             CoordinatesFormatContainer:SetFullWidth(true)
@@ -1053,6 +1052,11 @@ function MinimapStats:OnEnable()
             CoordinatesMiscContainer:SetFullWidth(true) 
             MSGUIContainer:AddChild(CoordinatesMiscContainer)
 
+            local DisplayCoordinatesCheckBox = MSGUI:Create("CheckBox")
+            DisplayCoordinatesCheckBox:SetLabel("Show / Hide")
+            DisplayCoordinatesCheckBox:SetValue(self.db.global.DisplayCoordinates)
+            DisplayCoordinatesCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayCoordinates = value RefreshElements() MSGUIContainer:DoLayout() end)
+            CoordinatesToggleContainer:AddChild(DisplayCoordinatesCheckBox)
 
             local CoordinatesFormatDropdown = MSGUI:Create("Dropdown")
             CoordinatesFormatDropdown:SetLabel("Format")
