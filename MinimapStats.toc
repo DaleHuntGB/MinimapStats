@@ -1,6 +1,6 @@
 ## Title: |cFF8080FFMinimapStats|r
 ## Interface: 100107
-## Version: 4.0.5
+## Version: 4.0.6
 ## Author: Unhalted
 ## SavedVariables: MSDB
 ## OptionalDeps: SharedMedia-3.0, LibSharedMedia-3.0
