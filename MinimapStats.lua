@@ -340,7 +340,7 @@ function MinimapStats:OnInitialize()
         LocationFrame:SetScript("OnEvent", UpdateLocationFrame)
         if self.db.global.DisplayInformation then
             InformationFrame:SetScript("OnUpdate", UpdateInformationFrame)
-            InformationFrame:SetScript("OnMouseDown", function(self, button) if button == "MiddleButton" then ReloadUI() elseif button == "RightButton" then if MSGUIShown == false then RunMSGUI() else return end end end)
+            InformationFrame:SetScript("OnMouseDown", function(self, button) if button == "MiddleButton" then ReloadUI() elseif button == "RightButton" then if MSGUIShown == false then RunMSGUI() else return end elseif button == "LeftButton" then collectgarbage("collect") print(AddOnName.. ": Garbage Collected!") end end)
         else
             InformationFrame:SetScript("OnUpdate", nil)
         end
@@ -520,9 +520,7 @@ function MinimapStats:OnEnable()
     LocationFrame:SetScript("OnEvent", UpdateLocationFrame)
     if self.db.global.DisplayInformation then
         InformationFrame:SetScript("OnUpdate", UpdateInformationFrame)
-        InformationFrame:SetScript("OnMouseDown",
-            function(self, button) if button == "MiddleButton" then ReloadUI() elseif button == "RightButton" then if MSGUIShown == false then
-                        RunMSGUI() else return end end end)
+        InformationFrame:SetScript("OnMouseDown", function(self, button) if button == "MiddleButton" then ReloadUI() elseif button == "RightButton" then if MSGUIShown == false then RunMSGUI() else return end elseif button == "LeftButton" then collectgarbage("collect") print(AddOnName.. ": Garbage Collected!") end end)
     else
         InformationFrame:SetScript("OnUpdate", nil)
     end
