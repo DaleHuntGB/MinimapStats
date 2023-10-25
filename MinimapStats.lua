@@ -15,9 +15,8 @@ local DefaultSettings = {
         DisplayLocation = true,
         DisplayReactionColor = false,
         DisplayInformation = true,
-        InformationFormat = "FPSHomeMS",
         CoordinatesFormat = "NoDecimal",
-        InformationLayout = "SquareBrackets",
+        InformationFormatString = "FPS [HomeMS]",
         DisplayInstanceDifficulty = true,
         UseClassColours = true,
         DisplayCoordinates = true,
@@ -140,51 +139,19 @@ function MinimapStats:OnInitialize()
     function FetchInformation()
         local FPS = ceil(GetFramerate())
         local _, _, HomeMS, WorldMS = GetNetStats()
+        local FormatString = self.db.global.InformationFormatString;
 
         local FPSText = FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r"
         local HomeMSText = HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
         local WorldMSText = WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
 
-        local FPSHomeMS
-        local FPSWorldMS
-        local MSOnly
-        local FPSOnly = FPSText
-        local HomeMSOnly = HomeMSText
-        local WorldMSOnly = WorldMSText
+        local KeyCodes = { ["FPS"] = FPSText, ["HomeMS"] = HomeMSText, ["WorldMS"] = WorldMSText, ["DualMS"] = HomeMSText .. " " .. WorldMSText}
 
-        if self.db.global.InformationLayout == "SquareBrackets" then
-            FPSHomeMS = FPSText .. " [" .. HomeMSText .. "]"
-            FPSWorldMS = FPSText .. " [" .. WorldMSText .. "]"
-            MSOnly = HomeMSText .. " [" .. WorldMSText .. "]"
-        elseif self.db.global.InformationLayout == "RoundBrackets" then
-            FPSHomeMS = FPSText .. " (" .. HomeMSText .. ")"
-            FPSWorldMS = FPSText .. " (" .. WorldMSText .. ")"
-            MSOnly = HomeMSText .. " (" .. WorldMSText .. ")"
-        elseif self.db.global.InformationLayout == "AngledBrackets" then
-            FPSHomeMS = FPSText .. " <" .. HomeMSText .. ">"
-            FPSWorldMS = FPSText .. " <" .. WorldMSText .. ">"
-            MSOnly = HomeMSText .. " <" .. WorldMSText .. ">"
-        elseif self.db.global.InformationLayout == "Line" then
-            FPSHomeMS = FPSText .. " | " .. HomeMSText
-            FPSWorldMS = FPSText .. " | " .. WorldMSText
-            MSOnly = HomeMSText .. " | " .. WorldMSText
+        for KeyCode, value in pairs(KeyCodes) do
+            FormatString = FormatString:gsub(KeyCode, value)
         end
 
-        if self.db.global.DisplayInformation then
-            if self.db.global.InformationFormat == "FPSHomeMS" then
-                return FPSHomeMS
-            elseif self.db.global.InformationFormat == "FPSWorldMS" then
-                return FPSWorldMS
-            elseif self.db.global.InformationFormat == "FPSOnly" then
-                return FPSOnly
-            elseif self.db.global.InformationFormat == "HomeMSOnly" then
-                return HomeMSOnly
-            elseif self.db.global.InformationFormat == "WorldMSOnly" then
-                return WorldMSOnly
-            elseif self.db.global.InformationFormat == "MSOnly" then
-                return MSOnly
-            end
-        end
+        return FormatString
     end
 
     function FetchInstanceDifficulty()
@@ -581,8 +548,8 @@ function MinimapStats:OnEnable()
             MSGUIShown = false
         end)
         MSGUIContainer:SetLayout("Fill")
-        MSGUIContainer:SetWidth(750)
-        MSGUIContainer:SetHeight(700)
+        MSGUIContainer:SetWidth(800)
+        MSGUIContainer:SetHeight(750)
         MSGUIContainer:EnableResize(false)
 
         local function DrawTimeContainer(MSGUIContainer)
@@ -794,34 +761,17 @@ function MinimapStats:OnEnable()
             DisplayInformationCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayInformation = value RefreshElements() end)
             InformationToggleContainer:AddChild(DisplayInformationCheckBox)
 
-            local InformationFormatDropdown = MSGUI:Create("Dropdown")
-            InformationFormatDropdown:SetLabel("Format")
-            local InformationFormatDropdownData = { ["FPSHomeMS"] = "FPS [Home MS]", ["FPSWorldMS"] = "FPS [World MS]", ["FPSOnly"] = "FPS", ["HomeMSOnly"] = "Home MS", ["WorldMSOnly"] = "World MS", ["MSOnly"] = "Home MS [World MS]" }
-            local InformationFormatDataOrder = { "FPSHomeMS", "FPSWorldMS", "FPSOnly", "MSOnly", "HomeMSOnly", "WorldMSOnly", }
-            InformationFormatDropdown:SetList(InformationFormatDropdownData, InformationFormatDataOrder)
-            InformationFormatDropdown:SetValue(self.db.global.InformationFormat)
-            InformationFormatDropdown:SetFullWidth(true)
-            InformationFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InformationFormat = value RefreshElements() if self.db.global.InformationFormat == "FPSOnly" or self.db.global.InformationFormat == "HomeMSOnly" or self.db.global.InformationFormat == "WorldMSOnly" then InformationLayoutDropdown:SetDisabled(true) else InformationLayoutDropdown:SetDisabled(false) end end)
-            InformationFormatContainer:AddChild(InformationFormatDropdown)
-            InformationLayoutDropdown = MSGUI:Create("Dropdown")
-            InformationLayoutDropdown:SetLabel("Layout")
-            local InformationLayoutDropdownData = { ["SquareBrackets"] = "420FPS [69MS]", ["RoundBrackets"] = "420FPS (69MS)", ["AngledBrackets"] = "420FPS <69MS>", ["Line"] = "420FPS | 69MS" }
-            local InformationLayoutDropdownOrder = { "SquareBrackets", "RoundBrackets", "AngledBrackets", "Line" }
-            InformationLayoutDropdown:SetList(InformationLayoutDropdownData, InformationLayoutDropdownOrder)
-            InformationLayoutDropdown:SetValue(self.db.global.InformationLayout)
-            InformationLayoutDropdown:SetFullWidth(true)
-            if self.db.global.InformationFormat == "FPSOnly" or self.db.global.InformationFormat == "HomeMSOnly" or self.db.global.InformationFormat == "WorldMSOnly" then
-                InformationLayoutDropdown:SetDisabled(true)
-            else
-                InformationLayoutDropdown:SetDisabled(false)
-            end
-            InformationLayoutDropdown:SetCallback("OnValueChanged",
-                function(widget, event, value)
-                    self.db.global.InformationLayout = value
-                    RefreshElements()
-                end)
-            InformationFormatContainer:AddChild(InformationLayoutDropdown)
+            local InformationFormatEditBox = MSGUI:Create("EditBox")
+            InformationFormatEditBox:SetLabel("Format")
+            InformationFormatEditBox:SetFullWidth(true)
+            InformationFormatEditBox:SetText(self.db.global.InformationFormatString)
+            InformationFormatEditBox:SetCallback("OnEnterPressed", function(widget, event, value) if value:match("^%s*$") then value = "FPS [HomeMS]" InformationFormatEditBox:SetText("FPS [HomeMS]") end self.db.global.InformationFormatString = value  RefreshElements() InformationFormatEditBox:ClearFocus() end)
+            InformationFormatContainer:AddChild(InformationFormatEditBox)
 
+            local InformationFormatEditBoxHelp = MSGUI:Create("Label")
+            InformationFormatEditBoxHelp:SetFullWidth(true)
+            InformationFormatEditBoxHelp:SetText("\n|cFFFFCC00Available Tags|r\n\n|cFF00FF00FPS|r = FPS\n|cFF00FF00HomeMS|r = Home Latency\n|cFF00FF00WorldMS|r = World Latency\n|cFF00FF00DualMS|r = Home & World MS\n\nAny seperators can be used. Some common ones are: |cFF40FF40[ ]|r or |cFF40FF40( )|r or |cFF40FF40< >|r or |cFF40FF40 | |r")
+            InformationFormatContainer:AddChild(InformationFormatEditBoxHelp)
 
             local InformationFontSize = MSGUI:Create("Slider")
             InformationFontSize:SetLabel("Font Size")
@@ -961,21 +911,14 @@ function MinimapStats:OnEnable()
             ColourContainer:SetLayout("Flow")
             MSGUIContainer:AddChild(ColourContainer)
 
-            local ClassColorCheckBox = MSGUI:Create("CheckBox")
-            ClassColorCheckBox:SetLabel("Use Class Color")
-            ClassColorCheckBox:SetValue(self.db.global.UseClassColours)
-            ClassColorCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.UseClassColours = value if value == true then SecondaryFontColor:SetDisabled(true) else SecondaryFontColor:SetDisabled(false) end RefreshElements() end)
-            ColourContainer:AddChild(ClassColorCheckBox)
-
             local PrimaryFontColor = MSGUI:Create("ColorPicker")
             PrimaryFontColor:SetLabel("Primary Font Color")
             PrimaryFontColor:SetHasAlpha(false)
             PrimaryFontColor:SetColor(self.db.global.PrimaryFontColorR, self.db.global.PrimaryFontColorG, self.db.global.PrimaryFontColorB)
             PrimaryFontColor:SetCallback("OnValueChanged", function(widget, event, r, g, b) self.db.global.PrimaryFontColorR = r self.db.global.PrimaryFontColorG = g self.db.global.PrimaryFontColorB = b RefreshElements() end)
             PrimaryFontColor:SetCallback("OnValueConfirmed", function(widget, event, r, g, b) self.db.global.PrimaryFontColorR = r self.db.global.PrimaryFontColorG = g self.db.global.PrimaryFontColorB = b RefreshElements() end)
-            ColourContainer:AddChild(PrimaryFontColor)
 
-            SecondaryFontColor = MSGUI:Create("ColorPicker")
+            local SecondaryFontColor = MSGUI:Create("ColorPicker")
             SecondaryFontColor:SetLabel("Secondary Font Color")
             SecondaryFontColor:SetHasAlpha(false)
             SecondaryFontColor:SetColor(self.db.global.SecondaryFontColorR, self.db.global.SecondaryFontColorG, self.db.global.SecondaryFontColorB)
@@ -986,7 +929,11 @@ function MinimapStats:OnEnable()
             else
                 SecondaryFontColor:SetDisabled(false)
             end
-            ColourContainer:AddChild(SecondaryFontColor)
+
+            local ClassColorCheckBox = MSGUI:Create("CheckBox")
+            ClassColorCheckBox:SetLabel("Use Class Color")
+            ClassColorCheckBox:SetValue(self.db.global.UseClassColours)
+            ClassColorCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.UseClassColours = value if value == true then SecondaryFontColor:SetDisabled(true) else SecondaryFontColor:SetDisabled(false) end RefreshElements() end)
 
             local FontContainer = MSGUI:Create("InlineGroup")
             FontContainer:SetTitle("Font Options")
@@ -1034,6 +981,11 @@ function MinimapStats:OnEnable()
             ResetDefaultsButton:SetFullWidth(true)
             ResetDefaultsButton:SetCallback("OnClick", function() ResetDefaults() end)
             MiscContainer:AddChild(ResetDefaultsButton)
+
+            ColourContainer:AddChild(ClassColorCheckBox)
+            ColourContainer:AddChild(PrimaryFontColor)
+            ColourContainer:AddChild(SecondaryFontColor)
+
         end
 
         local function DrawCoordinatesContainer(MSGUIContainer)
