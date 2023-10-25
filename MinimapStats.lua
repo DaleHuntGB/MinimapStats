@@ -17,6 +17,7 @@ local DefaultSettings = {
         DisplayInformation = true,
         InformationFormat = "FPSHomeMS",
         CoordinatesFormat = "NoDecimal",
+        InformationLayout = "SquareBrackets",
         DisplayInstanceDifficulty = true,
         UseClassColours = true,
         DisplayCoordinates = true,
@@ -140,17 +141,34 @@ function MinimapStats:OnInitialize()
         local FPS = ceil(GetFramerate())
         local _, _, HomeMS, WorldMS = GetNetStats()
 
-        local FPSText = FPS .. "|cFF" .. SecondaryFontColor .. " FPS " .. "|r"
+        local FPSText = FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r"
         local HomeMSText = HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
         local WorldMSText = WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
 
-        local FPSHomeMS = FPSText .. "[" .. HomeMSText .. "]"
-        local FPSWorldMS = FPSText .. "[" .. WorldMSText .. "]"
+        local FPSHomeMS
+        local FPSWorldMS
+        local MSOnly
         local FPSOnly = FPSText
         local HomeMSOnly = HomeMSText
         local WorldMSOnly = WorldMSText
-        local MSOnly = HomeMSText .. " [" .. WorldMSText .. "]"
 
+        if self.db.global.InformationLayout == "SquareBrackets" then
+            FPSHomeMS = FPSText .. " [" .. HomeMSText .. "]"
+            FPSWorldMS = FPSText .. " [" .. WorldMSText .. "]"
+            MSOnly = HomeMSText .. " [" .. WorldMSText .. "]"
+        elseif self.db.global.InformationLayout == "RoundBrackets" then
+            FPSHomeMS = FPSText .. " (" .. HomeMSText .. ")"
+            FPSWorldMS = FPSText .. " (" .. WorldMSText .. ")"
+            MSOnly = HomeMSText .. " (" .. WorldMSText .. ")"
+        elseif self.db.global.InformationLayout == "AngledBrackets" then
+            FPSHomeMS = FPSText .. " <" .. HomeMSText .. ">"
+            FPSWorldMS = FPSText .. " <" .. WorldMSText .. ">"
+            MSOnly = HomeMSText .. " <" .. WorldMSText .. ">"
+        elseif self.db.global.InformationLayout == "Line" then
+            FPSHomeMS = FPSText .. " | " .. HomeMSText
+            FPSWorldMS = FPSText .. " | " .. WorldMSText
+            MSOnly = HomeMSText .. " | " .. WorldMSText
+        end
 
         if self.db.global.DisplayInformation then
             if self.db.global.InformationFormat == "FPSHomeMS" then
@@ -214,29 +232,29 @@ function MinimapStats:OnInitialize()
                 ChallengeIndicator:SetAlpha(0)
             end
 
-            if InstanceDifficulty == 0 then  -- No Instance
+            if InstanceDifficulty == 0 then      -- No Instance
                 return " "
-            elseif InGarrison then           -- Garrison
+            elseif InGarrison then               -- Garrison
                 return " "
-            elseif InstanceDifficulty == 1 then -- Normal Dungeon
+            elseif InstanceDifficulty == 1 then  -- Normal Dungeon
                 return NormalDungeon
-            elseif InstanceDifficulty == 2 then -- Heroic Dungeon
+            elseif InstanceDifficulty == 2 then  -- Heroic Dungeon
                 return HeroicDungeon
             elseif InstanceDifficulty == 23 then -- Mythic Dungeon
                 return MythicDungeon
-            elseif InstanceDifficulty == 8 then -- Mythic+ Dungeon
+            elseif InstanceDifficulty == 8 then  -- Mythic+ Dungeon
                 return MythicPlusDungeon
             elseif InstanceDifficulty == 24 then -- Timewalking Dungeon
                 return TimewalkingDungeon
-            elseif InstanceDifficulty == 3 then -- 10M Normal Raid
+            elseif InstanceDifficulty == 3 then  -- 10M Normal Raid
                 return TenNormalRaid
-            elseif InstanceDifficulty == 5 then -- 10M Heroic Raid
+            elseif InstanceDifficulty == 5 then  -- 10M Heroic Raid
                 return TenHeroicRaid
-            elseif InstanceDifficulty == 4 then -- 25M Normal Raid
+            elseif InstanceDifficulty == 4 then  -- 25M Normal Raid
                 return TwentyFiveNormalRaid
-            elseif InstanceDifficulty == 6 then -- 25M Heroic Raid
+            elseif InstanceDifficulty == 6 then  -- 25M Heroic Raid
                 return TwentyFiveHeroicRaid
-            elseif InstanceDifficulty == 9 then -- 40M Raid
+            elseif InstanceDifficulty == 9 then  -- 40M Raid
                 return FortyRaid
             elseif InstanceDifficulty == 33 then -- Timewalking Raid
                 return TimewalkingRaid
@@ -333,7 +351,8 @@ function MinimapStats:OnInitialize()
         end
         if self.db.global.DisplayTime then
             TimeFrame:SetScript("OnUpdate", UpdateTimeFrame)
-            TimeFrame:SetScript("OnMouseDown", function(self, button) if button == "LeftButton" then ToggleCalendar() end end)
+            TimeFrame:SetScript("OnMouseDown",
+                function(self, button) if button == "LeftButton" then ToggleCalendar() end end)
         else
             TimeFrame:SetScript("OnUpdate", nil)
         end
@@ -358,7 +377,7 @@ function MinimapStats:OnEnable()
     MinimapStats:RegisterEvent("PLAYER_LOGIN")
 
     --[[ Time Frame ]]
-                       --
+    --
     TimeFrame = CreateFrame("Frame", "TimeFrame", Minimap)
     TimeFrame:ClearAllPoints()
     TimeFrame:SetPoint(self.db.global.TimeFrameAnchorFrom, Minimap, self.db.global.TimeFrameAnchorTo, self.db.global.TimeFrameXOffset, self.db.global.TimeFrameYOffset)
@@ -372,7 +391,7 @@ function MinimapStats:OnEnable()
     TimeFrame:SetWidth(TimeFrameText:GetStringWidth() or 200)
 
     --[[ Location Frame ]]
-                           --
+    --
     LocationFrame = CreateFrame("Frame", "LocationFrame", Minimap)
     LocationFrame:ClearAllPoints()
     LocationFrame:SetPoint(self.db.global.LocationFrameAnchorFrom, Minimap, self.db.global.LocationFrameAnchorTo, self.db.global.LocationFrameXOffset, self.db.global.LocationFrameYOffset)
@@ -387,18 +406,17 @@ function MinimapStats:OnEnable()
     LocationFrame:SetWidth(LocationFrameText:GetStringWidth() or 200)
 
     --[[ Location Frame: Event Registeration ]]
-                                                --
+    --
     LocationFrame:RegisterEvent("ZONE_CHANGED")
     LocationFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
     LocationFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     LocationFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
     --[[ Information Frame ]]
-                              --
+    --
     InformationFrame = CreateFrame("Frame", "InformationFrame", Minimap)
     InformationFrame:ClearAllPoints()
-    InformationFrame:SetPoint(self.db.global.InformationFrameAnchorFrom, Minimap, self.db.global
-    .InformationFrameAnchorTo, self.db.global.InformationFrameXOffset, self.db.global.InformationFrameYOffset)
+    InformationFrame:SetPoint(self.db.global.InformationFrameAnchorFrom, Minimap, self.db.global .InformationFrameAnchorTo, self.db.global.InformationFrameXOffset, self.db.global.InformationFrameYOffset)
     InformationFrameText = InformationFrame:CreateFontString("InformationFrameText", "BACKGROUND")
     InformationFrameText:ClearAllPoints()
     InformationFrameText:SetPoint(self.db.global.InformationFrameAnchorFrom, InformationFrame, self.db.global.InformationFrameAnchorTo, 0, 0)
@@ -409,7 +427,7 @@ function MinimapStats:OnEnable()
     InformationFrame:SetWidth(InformationFrameText:GetStringWidth() or 200)
 
     --[[ Instance Difficulty Frame ]]
-                                      --
+    --
     InstanceDifficultyFrame = CreateFrame("Frame", "InstanceDifficultyFrame", Minimap)
     InstanceDifficultyFrame:ClearAllPoints()
     InstanceDifficultyFrame:SetPoint(self.db.global.InstanceDifficultyFrameAnchorFrom, Minimap, self.db.global.InstanceDifficultyFrameAnchorTo, self.db.global.InstanceDifficultyFrameXOffset, self.db.global.InstanceDifficultyFrameYOffset)
@@ -422,7 +440,7 @@ function MinimapStats:OnEnable()
     InstanceDifficultyFrame:SetWidth(InstanceDifficultyFrameText:GetStringWidth() or 200)
 
     --[[ Instance Difficulty Frame: Event Registeration ]]
-                                                           --
+    --
     InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED")
     InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
     InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
@@ -432,8 +450,7 @@ function MinimapStats:OnEnable()
 
     CoordinatesFrame = CreateFrame("Frame", "CoordinatesFrame", Minimap)
     CoordinatesFrame:ClearAllPoints()
-    CoordinatesFrame:SetPoint(self.db.global.CoordinatesFrameAnchorFrom, Minimap, self.db.global
-    .CoordinatesFrameAnchorTo, self.db.global.CoordinatesFrameXOffset, self.db.global.CoordinatesFrameYOffset)
+    CoordinatesFrame:SetPoint(self.db.global.CoordinatesFrameAnchorFrom, Minimap, self.db.global .CoordinatesFrameAnchorTo, self.db.global.CoordinatesFrameXOffset, self.db.global.CoordinatesFrameYOffset)
     CoordinatesFrameText = CoordinatesFrame:CreateFontString("CoordinatesFrameText", "BACKGROUND")
     CoordinatesFrameText:ClearAllPoints()
     CoordinatesFrameText:SetPoint(self.db.global.CoordinatesFrameAnchorFrom, CoordinatesFrame, self.db.global.CoordinatesFrameAnchorTo, 0, 0)
@@ -505,7 +522,7 @@ function MinimapStats:OnEnable()
     end
 
     --[[ Scripts ]]
-                    --
+    --
     if self.db.global.DisplayCoordinates then
         CoordinatesFrame:SetScript("OnUpdate", UpdateCoordinatesFrame)
     else
@@ -520,7 +537,7 @@ function MinimapStats:OnEnable()
     LocationFrame:SetScript("OnEvent", UpdateLocationFrame)
     if self.db.global.DisplayInformation then
         InformationFrame:SetScript("OnUpdate", UpdateInformationFrame)
-        InformationFrame:SetScript("OnMouseDown", function(self, button) if button == "MiddleButton" then ReloadUI() elseif button == "RightButton" then if MSGUIShown == false then RunMSGUI() else return end elseif button == "LeftButton" then collectgarbage("collect") print(AddOnName.. ": Garbage Collected!") end end)
+        InformationFrame:SetScript("OnMouseDown", function(self, button) if button == "MiddleButton" then ReloadUI() elseif button == "RightButton" then if MSGUIShown == false then RunMSGUI() else return end elseif button == "LeftButton" then collectgarbage("collect") print(AddOnName .. ": Garbage Collected!") end end)
     else
         InformationFrame:SetScript("OnUpdate", nil)
     end
@@ -551,7 +568,6 @@ function MinimapStats:OnEnable()
     end
 
     function RunMSGUI()
-
         local AnchorPointData = { ["TOP"] = "Top", ["BOTTOM"] = "Bottom", ["LEFT"] = "Left", ["RIGHT"] = "Right", ["TOPLEFT"] = "Top Left", ["TOPRIGHT"] = "Top Right", ["BOTTOMLEFT"] = "Bottom Left", ["BOTTOMRIGHT"] = "Bottom Right" }
 
         local AnchorPointOrder = { "TOP", "TOPLEFT", "TOPRIGHT", "LEFT", "CENTER", "RIGHT", "BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT" }
@@ -785,8 +801,27 @@ function MinimapStats:OnEnable()
             InformationFormatDropdown:SetList(InformationFormatDropdownData, InformationFormatDataOrder)
             InformationFormatDropdown:SetValue(self.db.global.InformationFormat)
             InformationFormatDropdown:SetFullWidth(true)
-            InformationFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InformationFormat = value RefreshElements() end)
+            InformationFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InformationFormat = value RefreshElements() if self.db.global.InformationFormat == "FPSOnly" or self.db.global.InformationFormat == "HomeMSOnly" or self.db.global.InformationFormat == "WorldMSOnly" then InformationLayoutDropdown:SetDisabled(true) else InformationLayoutDropdown:SetDisabled(false) end end)
             InformationFormatContainer:AddChild(InformationFormatDropdown)
+            InformationLayoutDropdown = MSGUI:Create("Dropdown")
+            InformationLayoutDropdown:SetLabel("Layout")
+            local InformationLayoutDropdownData = { ["SquareBrackets"] = "420FPS [69MS]", ["RoundBrackets"] = "420FPS (69MS)", ["AngledBrackets"] = "420FPS <69MS>", ["Line"] = "420FPS | 69MS" }
+            local InformationLayoutDropdownOrder = { "SquareBrackets", "RoundBrackets", "AngledBrackets", "Line" }
+            InformationLayoutDropdown:SetList(InformationLayoutDropdownData, InformationLayoutDropdownOrder)
+            InformationLayoutDropdown:SetValue(self.db.global.InformationLayout)
+            InformationLayoutDropdown:SetFullWidth(true)
+            if self.db.global.InformationFormat == "FPSOnly" or self.db.global.InformationFormat == "HomeMSOnly" or self.db.global.InformationFormat == "WorldMSOnly" then
+                InformationLayoutDropdown:SetDisabled(true)
+            else
+                InformationLayoutDropdown:SetDisabled(false)
+            end
+            InformationLayoutDropdown:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.InformationLayout = value
+                    RefreshElements()
+                end)
+            InformationFormatContainer:AddChild(InformationLayoutDropdown)
+
 
             local InformationFontSize = MSGUI:Create("Slider")
             InformationFontSize:SetLabel("Font Size")
@@ -1043,8 +1078,7 @@ function MinimapStats:OnEnable()
 
             local CoordinatesFormatDropdown = MSGUI:Create("Dropdown")
             CoordinatesFormatDropdown:SetLabel("Format")
-            CoordinatesFormatDropdown:SetList({ ["NoDecimal"] = "No Decimals [00, 00]",
-                ["OneDecimal"] = "One Decimal [00.0, 00.0]", ["TwoDecimal"] = "Two Decimals [00.00, 00.00]" })
+            CoordinatesFormatDropdown:SetList({ ["NoDecimal"] = "No Decimals [00, 00]", ["OneDecimal"] = "One Decimal [00.0, 00.0]", ["TwoDecimal"] = "Two Decimals [00.00, 00.00]" })
             CoordinatesFormatDropdown:SetValue(self.db.global.CoordinatesFormat)
             CoordinatesFormatDropdown:SetFullWidth(true)
             CoordinatesFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.CoordinatesFormat = value RefreshElements() end)
