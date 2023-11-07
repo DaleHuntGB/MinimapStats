@@ -11,10 +11,14 @@ local DefaultSettings = {
     global = {
         -- Toggles
         DisplayTime = true,
+        DisplayDate = true,
+        AlternativeFormatting = false,
+        DateFormat = "DD/MM/YY",
         TimeFormat = "TwentyFourHourTime",
         DisplayLocation = true,
         DisplayReactionColor = false,
         DisplayInformation = true,
+        UpdateInRealTime = false,
         CoordinatesFormat = "NoDecimal",
         InformationFormatString = "FPS [HomeMS]",
         DisplayInstanceDifficulty = true,
@@ -29,6 +33,7 @@ local DefaultSettings = {
         SecondaryFontColorR = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].r,
         SecondaryFontColorG = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].g,
         SecondaryFontColorB = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].b,
+        ElementFrameStrata = "MEDIUM",
         -- Font Sizes
         TimeFrameFontSize = 16,
         LocationFrameFontSize = 12,
@@ -104,6 +109,28 @@ function MinimapStats:OnInitialize()
             end
         end
     end
+
+    function FetchDate()
+    
+        local CurrentDate = date("%d")
+        local CurrentMonth = date("%m")
+        local CurrentYear = date("%y")
+        local FullYear = date("%Y")
+        local CurrentMonthName = date("%B")
+
+        if self.db.global.DisplayDate then
+            if self.db.global.DateFormat == "DD/MM/YY" and self.db.global.AlternativeFormatting == false then
+                return string.format("%s/%s/%s", CurrentDate, CurrentMonth, CurrentYear)
+            elseif self.db.global.DateFormat == "DD/MM/YY" and self.db.global.AlternativeFormatting == true then
+                return string.format("%s/%s/%s", CurrentMonth, CurrentDate, CurrentYear)
+            elseif self.db.global.DateFormat == "FullDate" and self.db.global.AlternativeFormatting == false then
+                return string.format("%s %s %s", CurrentDate, CurrentMonthName, FullYear)
+            elseif self.db.global.DateFormat == "FullDate" and self.db.global.AlternativeFormatting == true then
+                return string.format("%s %s %s", CurrentMonthName, CurrentDate, FullYear)
+            end
+        end    
+    end
+
 
     local CalculateHexValue = function(r, g, b)
         return string.format("%02x%02x%02x", r * 255, g * 255, b * 255)
@@ -302,14 +329,19 @@ function MinimapStats:OnInitialize()
 
         TimeFrame:ClearAllPoints()
         TimeFrame:SetPoint(self.db.global.TimeFrameAnchorFrom, Minimap, self.db.global.TimeFrameAnchorTo, self.db.global.TimeFrameXOffset, self.db.global.TimeFrameYOffset)
+        TimeFrame:SetFrameStrata(self.db.global.ElementFrameStrata)
         LocationFrame:ClearAllPoints()
         LocationFrame:SetPoint(self.db.global.LocationFrameAnchorFrom, Minimap, self.db.global.LocationFrameAnchorTo, self.db.global.LocationFrameXOffset, self.db.global.LocationFrameYOffset)
+        LocationFrame:SetFrameStrata(self.db.global.ElementFrameStrata)
         InformationFrame:ClearAllPoints()
         InformationFrame:SetPoint(self.db.global.InformationFrameAnchorFrom, Minimap, self.db.global.InformationFrameAnchorTo, self.db.global.InformationFrameXOffset, self.db.global.InformationFrameYOffset)
+        InformationFrame:SetFrameStrata(self.db.global.ElementFrameStrata)
         InstanceDifficultyFrame:ClearAllPoints()
         InstanceDifficultyFrame:SetPoint(self.db.global.InstanceDifficultyFrameAnchorFrom, Minimap, self.db.global.InstanceDifficultyFrameAnchorTo, self.db.global.InstanceDifficultyFrameXOffset, self.db.global.InstanceDifficultyFrameYOffset)
+        InstanceDifficultyFrame:SetFrameStrata(self.db.global.ElementFrameStrata)
         CoordinatesFrame:ClearAllPoints()
         CoordinatesFrame:SetPoint(self.db.global.CoordinatesFrameAnchorFrom, Minimap, self.db.global.CoordinatesFrameAnchorTo, self.db.global.CoordinatesFrameXOffset, self.db.global.CoordinatesFrameYOffset)
+        CoordinatesFrame:SetFrameStrata(self.db.global.ElementFrameStrata)
 
         if self.db.global.DisplayCoordinates then
             CoordinatesFrame:SetScript("OnUpdate", UpdateCoordinatesFrame)
@@ -318,8 +350,14 @@ function MinimapStats:OnInitialize()
         end
         if self.db.global.DisplayTime then
             TimeFrame:SetScript("OnUpdate", UpdateTimeFrame)
-            TimeFrame:SetScript("OnMouseDown",
-                function(self, button) if button == "LeftButton" then ToggleCalendar() end end)
+            if self.db.global.DisplayDate then
+                TimeFrame:SetScript("OnEnter", function() TimeFrameText:SetText(FetchDate()) TimeFrame:SetScript("OnUpdate", nil) end)
+                TimeFrame:SetScript("OnLeave", function() TimeFrameText:SetText(FetchTime()) TimeFrame:SetScript("OnUpdate", UpdateTimeFrame) end)
+            else
+                TimeFrame:SetScript("OnEnter", nil) 
+                TimeFrame:SetScript("OnLeave", nil)
+            end
+            TimeFrame:SetScript("OnMouseDown", function(self, button) if button == "LeftButton" then ToggleCalendar() end end)
         else
             TimeFrame:SetScript("OnUpdate", nil)
         end
@@ -356,6 +394,7 @@ function MinimapStats:OnEnable()
     TimeFrameText:SetText(FetchTime())
     TimeFrame:SetHeight(TimeFrameText:GetStringHeight() or 24)
     TimeFrame:SetWidth(TimeFrameText:GetStringWidth() or 200)
+    TimeFrame:SetFrameStrata(self.db.global.ElementFrameStrata)
 
     --[[ Location Frame ]]
     --
@@ -371,6 +410,7 @@ function MinimapStats:OnEnable()
     LocationFrameText:CanWordWrap()
     LocationFrame:SetHeight(LocationFrameText:GetStringHeight() or 24)
     LocationFrame:SetWidth(LocationFrameText:GetStringWidth() or 200)
+    LocationFrame:SetFrameStrata(self.db.global.ElementFrameStrata)
 
     --[[ Location Frame: Event Registeration ]]
     --
@@ -392,6 +432,7 @@ function MinimapStats:OnEnable()
     InformationFrameText:SetText(FetchInformation())
     InformationFrame:SetHeight(InformationFrameText:GetStringHeight() or 24)
     InformationFrame:SetWidth(InformationFrameText:GetStringWidth() or 200)
+    InformationFrame:SetFrameStrata(self.db.global.ElementFrameStrata)
 
     --[[ Instance Difficulty Frame ]]
     --
@@ -405,6 +446,7 @@ function MinimapStats:OnEnable()
     InstanceDifficultyFrameText:SetText(FetchInstanceDifficulty())
     InstanceDifficultyFrame:SetHeight(InstanceDifficultyFrameText:GetStringHeight() or 24)
     InstanceDifficultyFrame:SetWidth(InstanceDifficultyFrameText:GetStringWidth() or 200)
+    InstanceDifficultyFrame:SetFrameStrata(self.db.global.ElementFrameStrata)
 
     --[[ Instance Difficulty Frame: Event Registeration ]]
     --
@@ -426,6 +468,7 @@ function MinimapStats:OnEnable()
     CoordinatesFrameText:SetText(FetchCoordinates())
     CoordinatesFrame:SetHeight(CoordinatesFrameText:GetStringHeight() or 24)
     CoordinatesFrame:SetWidth(CoordinatesFrameText:GetStringWidth() or 200)
+    CoordinatesFrame:SetFrameStrata(self.db.global.ElementFrameStrata)
 
     local TimeFrame_LastUpdate = 0
     local InformationFrame_LastUpdate = 0
@@ -450,13 +493,20 @@ function MinimapStats:OnEnable()
     end
 
     function UpdateInformationFrame(InformationFrame, ElapsedTime)
-        InformationFrame_LastUpdate = InformationFrame_LastUpdate + ElapsedTime
-        if InformationFrame_LastUpdate > self.db.global.InformationFrame_UpdateFrequency then
+        if self.db.global.UpdateInRealTime then
             if DebugMode then
                 print(AddOnName .. ": Information Frame: Updated")
             end
-            InformationFrame_LastUpdate = 0
             InformationFrameText:SetText(FetchInformation())
+        else
+            InformationFrame_LastUpdate = InformationFrame_LastUpdate + ElapsedTime
+            if InformationFrame_LastUpdate > self.db.global.InformationFrame_UpdateFrequency then
+                if DebugMode then
+                    print(AddOnName .. ": Information Frame: Updated")
+                end
+                InformationFrame_LastUpdate = 0
+                InformationFrameText:SetText(FetchInformation())
+            end
         end
     end
 
@@ -497,6 +547,13 @@ function MinimapStats:OnEnable()
     end
     if self.db.global.DisplayTime then
         TimeFrame:SetScript("OnUpdate", UpdateTimeFrame)
+        if self.db.global.DisplayDate then
+            TimeFrame:SetScript("OnEnter", function() TimeFrameText:SetText(FetchDate()) TimeFrame:SetScript("OnUpdate", nil) end)
+            TimeFrame:SetScript("OnLeave", function() TimeFrameText:SetText(FetchTime()) TimeFrame:SetScript("OnUpdate", UpdateTimeFrame) end)
+        else
+            TimeFrame:SetScript("OnEnter", nil) 
+            TimeFrame:SetScript("OnLeave", nil)
+        end
         TimeFrame:SetScript("OnMouseDown", function(self, button) if button == "LeftButton" then ToggleCalendar() end end)
     else
         TimeFrame:SetScript("OnUpdate", nil)
@@ -535,21 +592,22 @@ function MinimapStats:OnEnable()
     end
 
     function RunMSGUI()
-        local AnchorPointData = { ["TOP"] = "Top", ["BOTTOM"] = "Bottom", ["LEFT"] = "Left", ["RIGHT"] = "Right", ["TOPLEFT"] = "Top Left", ["TOPRIGHT"] = "Top Right", ["BOTTOMLEFT"] = "Bottom Left", ["BOTTOMRIGHT"] = "Bottom Right" }
+        local AnchorPointData = { ["TOP"] = "Top", ["BOTTOM"] = "Bottom", ["LEFT"] = "Left", ["RIGHT"] = "Right", ["CENTER"] = "Center", ["TOPLEFT"] = "Top Left", ["TOPRIGHT"] = "Top Right", ["BOTTOMLEFT"] = "Bottom Left", ["BOTTOMRIGHT"] = "Bottom Right" }
 
         local AnchorPointOrder = { "TOP", "TOPLEFT", "TOPRIGHT", "LEFT", "CENTER", "RIGHT", "BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT" }
 
         MSGUIShown = true
 
-        local MSGUIContainer = MSGUI:Create("Window")
+        local MSGUIContainer = MSGUI:Create("Frame")
         MSGUIContainer:SetTitle(AddOnName .. " V" .. AddOnVersion)
+        MSGUIContainer:SetStatusText("Created by |cFF8080FFUnhalted|r - Twisting Nether EU")
         MSGUIContainer:SetCallback("OnClose", function(widget)
             MSGUI:Release(widget)
             MSGUIShown = false
         end)
         MSGUIContainer:SetLayout("Fill")
         MSGUIContainer:SetWidth(800)
-        MSGUIContainer:SetHeight(750)
+        MSGUIContainer:SetHeight(900)
         MSGUIContainer:EnableResize(false)
 
         local function DrawTimeContainer(MSGUIContainer)
@@ -560,35 +618,56 @@ function MinimapStats:OnEnable()
             local TimeToggleContainer = MSGUI:Create("InlineGroup")
             TimeToggleContainer:SetTitle("Toggle Options")
             TimeToggleContainer:SetFullWidth(true)
-            MSGUIContainer:AddChild(TimeToggleContainer)
 
             local TimeFormatContainer = MSGUI:Create("InlineGroup")
             TimeFormatContainer:SetTitle("Format Options")
             TimeFormatContainer:SetFullWidth(true)
-            MSGUIContainer:AddChild(TimeFormatContainer)
 
             local TimeFontSizeContainer = MSGUI:Create("InlineGroup")
             TimeFontSizeContainer:SetTitle("Font Size Options")
             TimeFontSizeContainer:SetFullWidth(true)
-            MSGUIContainer:AddChild(TimeFontSizeContainer)
 
             local TimePositionsContainer = MSGUI:Create("InlineGroup")
             TimePositionsContainer:SetTitle("Position Options")
             TimePositionsContainer:SetFullWidth(true)
             TimePositionsContainer:SetLayout("Flow")
-            MSGUIContainer:AddChild(TimePositionsContainer)
 
             local TimeMiscContainer = MSGUI:Create("InlineGroup")
             TimeMiscContainer:SetTitle("Misc Options")
             TimeMiscContainer:SetFullWidth(true)
-            MSGUIContainer:AddChild(TimeMiscContainer)
 
+            local DateContainer = MSGUI:Create("InlineGroup")
+            DateContainer:SetTitle("Date Options")
+            DateContainer:SetFullWidth(true)
+
+            local DisplayDateOnHoverCheckBox = MSGUI:Create("CheckBox")
+            DisplayDateOnHoverCheckBox:SetLabel("Display Date [|cFF8080FFMouseover Only|r]")
+            DisplayDateOnHoverCheckBox:SetValue(self.db.global.DisplayDate)
+            DisplayDateOnHoverCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayDate = value RefreshElements() end)
+            DateContainer:AddChild(DisplayDateOnHoverCheckBox)
+
+            local AlternativeFormatFormatCheckBox = MSGUI:Create("CheckBox")
+            AlternativeFormatFormatCheckBox:SetLabel("Alternative Format (MM/DD/YY)")
+            AlternativeFormatFormatCheckBox:SetValue(self.db.global.AlternativeFormatting)
+            AlternativeFormatFormatCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.AlternativeFormatting = value RefreshElements() end)
+            DateContainer:AddChild(AlternativeFormatFormatCheckBox)
+
+            local DateFormatDropdown = MSGUI:Create("Dropdown")
+            DateFormatDropdown:SetLabel("Date Format")
+            local DateFormatDropdownData = { ["DD/MM/YY"] = "DD/MM/YY", ["FullDate"] = "01 January 2000" }
+            local DateFormatDropdownOrder = { "DD/MM/YY", "FullDate" }
+            DateFormatDropdown:SetList(DateFormatDropdownData, DateFormatDropdownOrder)
+            DateFormatDropdown:SetValue(self.db.global.DateFormat)
+            DateFormatDropdown:SetFullWidth(true)
+            DateFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DateFormat = value RefreshElements() end)
+            DateContainer:AddChild(DateFormatDropdown)
+            
             local DisplayTimeCheckBox = MSGUI:Create("CheckBox")
             DisplayTimeCheckBox:SetLabel("Show / Hide")
             DisplayTimeCheckBox:SetValue(self.db.global.DisplayTime)
             DisplayTimeCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayTime = value RefreshElements() end)
             TimeToggleContainer:AddChild(DisplayTimeCheckBox)
-
+            
             local TimeFormatDropdown = MSGUI:Create("Dropdown")
             TimeFormatDropdown:SetLabel("Format")
             local TimeFormatDropdownData = { ["TwentyFourHourTime"] = "24 Hour", ["TwelveHourTime"] = "12 Hour (AM/PM)", ["ServerTime"] = "24 Hour [Server Time]", ["TwelverHourServerTime"] = "12 Hour (AM/PM) [Server Time]" }
@@ -647,6 +726,21 @@ function MinimapStats:OnEnable()
             TimePositionsContainer:AddChild(TimePositionAnchorTo)
             TimePositionsContainer:AddChild(TimePositionXOffset)
             TimePositionsContainer:AddChild(TimePositionYOffset)
+
+            MSGUIContainer:AddChild(TimeToggleContainer)
+
+            MSGUIContainer:AddChild(TimeFormatContainer)
+            
+            MSGUIContainer:AddChild(TimeFontSizeContainer)
+
+            MSGUIContainer:AddChild(TimePositionsContainer)
+
+            MSGUIContainer:AddChild(DateContainer)
+
+            MSGUIContainer:AddChild(TimeMiscContainer)
+
+            
+
         end
 
         local function DrawLocationContainer(MSGUIContainer)
@@ -761,6 +855,13 @@ function MinimapStats:OnEnable()
             DisplayInformationCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayInformation = value RefreshElements() end)
             InformationToggleContainer:AddChild(DisplayInformationCheckBox)
 
+            local UpdateInformationInRealTimeCheckBox = MSGUI:Create("CheckBox")
+            UpdateInformationInRealTimeCheckBox:SetLabel("Real Time Update [Every Frame Update - |cFFFF4040Performance Intensive|r]")
+            UpdateInformationInRealTimeCheckBox:SetFullWidth(true)
+            UpdateInformationInRealTimeCheckBox:SetValue(self.db.global.UpdateInRealTime)
+            UpdateInformationInRealTimeCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.UpdateInRealTime = value RefreshElements() end)
+            InformationToggleContainer:AddChild(UpdateInformationInRealTimeCheckBox)
+            
             local InformationFormatEditBox = MSGUI:Create("EditBox")
             InformationFormatEditBox:SetLabel("Format")
             InformationFormatEditBox:SetFullWidth(true)
@@ -900,7 +1001,7 @@ function MinimapStats:OnEnable()
             InstanceDifficultyPositionsContainer:AddChild(InstanceDifficultyPositionYOffset)
         end
 
-        local function DrawFontandColourContainer(MSGUIContainer)
+        local function DrawMiscellaneousContainer(MSGUIContainer)
             local GroupDesc = MSGUI:Create("Label")
             GroupDesc:SetFullWidth(true)
             MSGUIContainer:AddChild(GroupDesc)
@@ -964,6 +1065,22 @@ function MinimapStats:OnEnable()
             FontOutline:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.FontOutline = value RefreshElements() end)
             FontContainer:AddChild(FontOutline)
 
+            local FrameStrataContainer = MSGUI:Create("InlineGroup")
+            FrameStrataContainer:SetTitle("Frame Strata Options")
+            FrameStrataContainer:SetFullWidth(true)
+            FrameStrataContainer:SetLayout("Flow")
+            MSGUIContainer:AddChild(FrameStrataContainer)
+
+            local ElementFrameStrata = MSGUI:Create("Dropdown")
+            ElementFrameStrata:SetLabel("Frame Strata")
+            ElementFrameStrataDropdownData = { ["LOW"] = "Low", ["MEDIUM"] = "Medium", ["HIGH"] = "High"}
+            ElementFrameStrataDropdownOrder = { "LOW", "MEDIUM", "HIGH" }
+            ElementFrameStrata:SetList(ElementFrameStrataDropdownData, ElementFrameStrataDropdownOrder)
+            ElementFrameStrata:SetValue(self.db.global.ElementFrameStrata)
+            ElementFrameStrata:SetFullWidth(true)
+            ElementFrameStrata:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.ElementFrameStrata = value RefreshElements() end)
+            FrameStrataContainer:AddChild(ElementFrameStrata)
+            
             local MiscContainer = MSGUI:Create("InlineGroup")
             MiscContainer:SetTitle("Misc Options")
             MiscContainer:SetFullWidth(true)
@@ -1098,13 +1215,13 @@ function MinimapStats:OnEnable()
             elseif SelectedGroup == "tab5" then
                 DrawCoordinatesContainer(MSGUIContainer)
             elseif SelectedGroup == "tab6" then
-                DrawFontandColourContainer(MSGUIContainer)
+                DrawMiscellaneousContainer(MSGUIContainer)
                 DebugModeDetection()
             end
         end
 
         local SelectedTab = MSGUI:Create("TabGroup")
-        SelectedTab:SetTabs({ { text = "Time", value = "tab1" }, { text = "Location", value = "tab2" }, { text = "Information", value = "tab3" }, { text = "Instance Difficulty", value = "tab4" }, { text = "Coordinates", value = "tab5" }, { text = "Font and Colour", value = "tab6" } })
+        SelectedTab:SetTabs({ { text = "Time", value = "tab1" }, { text = "Location", value = "tab2" }, { text = "Information", value = "tab3" }, { text = "Instance Difficulty", value = "tab4" }, { text = "Coordinates", value = "tab5" }, { text = "Miscellaneous", value = "tab6" } })
         SelectedTab:SetCallback("OnGroupSelected", GroupSelect)
         SelectedTab:SelectTab("tab1")
         MSGUIContainer:AddChild(SelectedTab)
