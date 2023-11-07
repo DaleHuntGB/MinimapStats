@@ -77,8 +77,10 @@ function MinimapStats:OnInitialize()
         self.db.global.SecondaryFontColorG = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].g
         self.db.global.SecondaryFontColorB = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].b
     end
-    local SecondaryFontColorRGB = { r = self.db.global.SecondaryFontColorR, g = self.db.global.SecondaryFontColorG, b = self.db.global.SecondaryFontColorB }
-    local SecondaryFontColor = string.format("%02x%02x%02x", SecondaryFontColorRGB.r * 255, SecondaryFontColorRGB.g * 255, SecondaryFontColorRGB.b * 255)
+    local SecondaryFontColorRGB = { r = self.db.global.SecondaryFontColorR, g = self.db.global.SecondaryFontColorG, b =
+    self.db.global.SecondaryFontColorB }
+    local SecondaryFontColor = string.format("%02x%02x%02x", SecondaryFontColorRGB.r * 255, SecondaryFontColorRGB.g * 255,
+        SecondaryFontColorRGB.b * 255)
 
     function FetchTime()
         local CurrentHour = date("%H")
@@ -111,7 +113,6 @@ function MinimapStats:OnInitialize()
     end
 
     function FetchDate()
-    
         local CurrentDate = date("%d")
         local CurrentMonth = date("%m")
         local CurrentYear = date("%y")
@@ -128,9 +129,8 @@ function MinimapStats:OnInitialize()
             elseif self.db.global.DateFormat == "FullDate" and self.db.global.AlternativeFormatting == true then
                 return string.format("%s %s %s", CurrentMonthName, CurrentDate, FullYear)
             end
-        end    
+        end
     end
-
 
     local CalculateHexValue = function(r, g, b)
         return string.format("%02x%02x%02x", r * 255, g * 255, b * 255)
@@ -172,7 +172,8 @@ function MinimapStats:OnInitialize()
         local HomeMSText = HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
         local WorldMSText = WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
 
-        local KeyCodes = { ["FPS"] = FPSText, ["HomeMS"] = HomeMSText, ["WorldMS"] = WorldMSText, ["DualMS"] = HomeMSText .. " " .. WorldMSText}
+        local KeyCodes = { ["FPS"] = FPSText, ["HomeMS"] = HomeMSText, ["WorldMS"] = WorldMSText, ["DualMS"] = HomeMSText ..
+        " " .. WorldMSText }
 
         for KeyCode, value in pairs(KeyCodes) do
             FormatString = FormatString:gsub(KeyCode, value)
@@ -186,10 +187,14 @@ function MinimapStats:OnInitialize()
             local _, _, InstanceDifficulty, _, _, _, _, InstanceID, InstanceSize = GetInstanceInfo()
             local KeystoneLevel = C_ChallengeMode.GetActiveKeystoneInfo()
             local InstanceDifficultyIndicator = MinimapCluster.InstanceDifficulty
-            local InstanceIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Instance or _G["MiniMapInstanceDifficulty"]
-            local GuildIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Guild or _G["GuildInstanceDifficulty"]
-            local ChallengeIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.ChallengeMode or _G["MiniMapChallengeMode"]
-            local InGarrison = InstanceID == 1152 or InstanceID == 1153 or InstanceID == 1154 or InstanceID == 1158 or InstanceID == 1159 or InstanceID == 1160
+            local InstanceIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Instance or
+            _G["MiniMapInstanceDifficulty"]
+            local GuildIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Guild or
+            _G["GuildInstanceDifficulty"]
+            local ChallengeIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.ChallengeMode or
+            _G["MiniMapChallengeMode"]
+            local InGarrison = InstanceID == 1152 or InstanceID == 1153 or InstanceID == 1154 or InstanceID == 1158 or
+            InstanceID == 1159 or InstanceID == 1160
 
             local NormalDungeon = "5" .. "|cFF" .. SecondaryFontColor .. "N" .. "|r"
             local HeroicDungeon = "5" .. "|cFF" .. SecondaryFontColor .. "H" .. "|r"
@@ -209,7 +214,8 @@ function MinimapStats:OnInitialize()
 
 
             if TestingInstanceDifficulty then
-                local TestInstances = { NormalDungeon, HeroicDungeon, MythicDungeon, TenNormalRaid, TwentyFiveNormalRaid, TenHeroicRaid, TwentyFiveHeroicRaid, FortyRaid, MythicRaid }
+                local TestInstances = { NormalDungeon, HeroicDungeon, MythicDungeon, TenNormalRaid, TwentyFiveNormalRaid,
+                    TenHeroicRaid, TwentyFiveHeroicRaid, FortyRaid, MythicRaid }
                 return TestInstances[math.random(1, #TestInstances)]
             end
 
@@ -298,8 +304,10 @@ function MinimapStats:OnInitialize()
             self.db.global.SecondaryFontColorB = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].b
         end
 
-        SecondaryFontColorRGB = { r = self.db.global.SecondaryFontColorR, g = self.db.global.SecondaryFontColorG, b = self.db.global.SecondaryFontColorB }
-        SecondaryFontColor = string.format("%02x%02x%02x", SecondaryFontColorRGB.r * 255, SecondaryFontColorRGB.g * 255, SecondaryFontColorRGB.b * 255)
+        SecondaryFontColorRGB = { r = self.db.global.SecondaryFontColorR, g = self.db.global.SecondaryFontColorG, b =
+        self.db.global.SecondaryFontColorB }
+        SecondaryFontColor = string.format("%02x%02x%02x", SecondaryFontColorRGB.r * 255, SecondaryFontColorRGB.g * 255,
+            SecondaryFontColorRGB.b * 255)
 
         TimeFrameText:SetText(FetchTime())
         LocationFrameText:SetText(FetchLocation())
@@ -309,12 +317,18 @@ function MinimapStats:OnInitialize()
 
         TimeFrameText:SetFont(self.db.global.Font, self.db.global.TimeFrameFontSize, self.db.global.FontOutline)
         LocationFrameText:SetFont(self.db.global.Font, self.db.global.LocationFrameFontSize, self.db.global.FontOutline)
-        InformationFrameText:SetFont(self.db.global.Font, self.db.global.InformationFrameFontSize, self.db.global.FontOutline)
-        InstanceDifficultyFrameText:SetFont(self.db.global.Font, self.db.global.InstanceDifficultyFrameFontSize, self.db.global.FontOutline)
-        CoordinatesFrameText:SetFont(self.db.global.Font, self.db.global.CoordinatesFrameFontSize, self.db.global.FontOutline)
-        TimeFrameText:SetTextColor(self.db.global.PrimaryFontColorR, self.db.global.PrimaryFontColorG, self.db.global.PrimaryFontColorB)
-        InformationFrameText:SetTextColor(self.db.global.PrimaryFontColorR, self.db.global.PrimaryFontColorG, self.db.global.PrimaryFontColorB)
-        CoordinatesFrameText:SetTextColor(self.db.global.PrimaryFontColorR, self.db.global.PrimaryFontColorG, self.db.global.PrimaryFontColorB)
+        InformationFrameText:SetFont(self.db.global.Font, self.db.global.InformationFrameFontSize,
+            self.db.global.FontOutline)
+        InstanceDifficultyFrameText:SetFont(self.db.global.Font, self.db.global.InstanceDifficultyFrameFontSize,
+            self.db.global.FontOutline)
+        CoordinatesFrameText:SetFont(self.db.global.Font, self.db.global.CoordinatesFrameFontSize,
+            self.db.global.FontOutline)
+        TimeFrameText:SetTextColor(self.db.global.PrimaryFontColorR, self.db.global.PrimaryFontColorG,
+            self.db.global.PrimaryFontColorB)
+        InformationFrameText:SetTextColor(self.db.global.PrimaryFontColorR, self.db.global.PrimaryFontColorG,
+            self.db.global.PrimaryFontColorB)
+        CoordinatesFrameText:SetTextColor(self.db.global.PrimaryFontColorR, self.db.global.PrimaryFontColorG,
+            self.db.global.PrimaryFontColorB)
 
         TimeFrame:SetHeight(TimeFrameText:GetStringHeight() or 24)
         TimeFrame:SetWidth(TimeFrameText:GetStringWidth() or 200)
@@ -328,19 +342,27 @@ function MinimapStats:OnInitialize()
         CoordinatesFrame:SetWidth(CoordinatesFrameText:GetStringWidth() or 200)
 
         TimeFrame:ClearAllPoints()
-        TimeFrame:SetPoint(self.db.global.TimeFrameAnchorFrom, Minimap, self.db.global.TimeFrameAnchorTo, self.db.global.TimeFrameXOffset, self.db.global.TimeFrameYOffset)
+        TimeFrame:SetPoint(self.db.global.TimeFrameAnchorFrom, Minimap, self.db.global.TimeFrameAnchorTo,
+            self.db.global.TimeFrameXOffset, self.db.global.TimeFrameYOffset)
         TimeFrame:SetFrameStrata(self.db.global.ElementFrameStrata)
         LocationFrame:ClearAllPoints()
-        LocationFrame:SetPoint(self.db.global.LocationFrameAnchorFrom, Minimap, self.db.global.LocationFrameAnchorTo, self.db.global.LocationFrameXOffset, self.db.global.LocationFrameYOffset)
+        LocationFrame:SetPoint(self.db.global.LocationFrameAnchorFrom, Minimap, self.db.global.LocationFrameAnchorTo,
+            self.db.global.LocationFrameXOffset, self.db.global.LocationFrameYOffset)
         LocationFrame:SetFrameStrata(self.db.global.ElementFrameStrata)
         InformationFrame:ClearAllPoints()
-        InformationFrame:SetPoint(self.db.global.InformationFrameAnchorFrom, Minimap, self.db.global.InformationFrameAnchorTo, self.db.global.InformationFrameXOffset, self.db.global.InformationFrameYOffset)
+        InformationFrame:SetPoint(self.db.global.InformationFrameAnchorFrom, Minimap,
+            self.db.global.InformationFrameAnchorTo, self.db.global.InformationFrameXOffset,
+            self.db.global.InformationFrameYOffset)
         InformationFrame:SetFrameStrata(self.db.global.ElementFrameStrata)
         InstanceDifficultyFrame:ClearAllPoints()
-        InstanceDifficultyFrame:SetPoint(self.db.global.InstanceDifficultyFrameAnchorFrom, Minimap, self.db.global.InstanceDifficultyFrameAnchorTo, self.db.global.InstanceDifficultyFrameXOffset, self.db.global.InstanceDifficultyFrameYOffset)
+        InstanceDifficultyFrame:SetPoint(self.db.global.InstanceDifficultyFrameAnchorFrom, Minimap,
+            self.db.global.InstanceDifficultyFrameAnchorTo, self.db.global.InstanceDifficultyFrameXOffset,
+            self.db.global.InstanceDifficultyFrameYOffset)
         InstanceDifficultyFrame:SetFrameStrata(self.db.global.ElementFrameStrata)
         CoordinatesFrame:ClearAllPoints()
-        CoordinatesFrame:SetPoint(self.db.global.CoordinatesFrameAnchorFrom, Minimap, self.db.global.CoordinatesFrameAnchorTo, self.db.global.CoordinatesFrameXOffset, self.db.global.CoordinatesFrameYOffset)
+        CoordinatesFrame:SetPoint(self.db.global.CoordinatesFrameAnchorFrom, Minimap,
+            self.db.global.CoordinatesFrameAnchorTo, self.db.global.CoordinatesFrameXOffset,
+            self.db.global.CoordinatesFrameYOffset)
         CoordinatesFrame:SetFrameStrata(self.db.global.ElementFrameStrata)
 
         if self.db.global.DisplayCoordinates then
@@ -351,20 +373,34 @@ function MinimapStats:OnInitialize()
         if self.db.global.DisplayTime then
             TimeFrame:SetScript("OnUpdate", UpdateTimeFrame)
             if self.db.global.DisplayDate then
-                TimeFrame:SetScript("OnEnter", function() TimeFrameText:SetText(FetchDate()) TimeFrame:SetScript("OnUpdate", nil) end)
-                TimeFrame:SetScript("OnLeave", function() TimeFrameText:SetText(FetchTime()) TimeFrame:SetScript("OnUpdate", UpdateTimeFrame) end)
+                TimeFrame:SetScript("OnEnter",
+                    function()
+                        TimeFrameText:SetText(FetchDate())
+                        TimeFrame:SetScript("OnUpdate", nil)
+                    end)
+                TimeFrame:SetScript("OnLeave",
+                    function()
+                        TimeFrameText:SetText(FetchTime())
+                        TimeFrame:SetScript("OnUpdate", UpdateTimeFrame)
+                    end)
             else
-                TimeFrame:SetScript("OnEnter", nil) 
+                TimeFrame:SetScript("OnEnter", nil)
                 TimeFrame:SetScript("OnLeave", nil)
             end
-            TimeFrame:SetScript("OnMouseDown", function(self, button) if button == "LeftButton" then ToggleCalendar() end end)
+            TimeFrame:SetScript("OnMouseDown",
+                function(self, button) if button == "LeftButton" then ToggleCalendar() end end)
         else
             TimeFrame:SetScript("OnUpdate", nil)
         end
         LocationFrame:SetScript("OnEvent", UpdateLocationFrame)
         if self.db.global.DisplayInformation then
             InformationFrame:SetScript("OnUpdate", UpdateInformationFrame)
-            InformationFrame:SetScript("OnMouseDown", function(self, button) if button == "MiddleButton" then ReloadUI() elseif button == "RightButton" then if MSGUIShown == false then RunMSGUI() else return end elseif button == "LeftButton" then collectgarbage("collect") print(AddOnName.. ": Garbage Collected!") end end)
+            InformationFrame:SetScript("OnMouseDown",
+                function(self, button) if button == "MiddleButton" then ReloadUI() elseif button == "RightButton" then if MSGUIShown == false then
+                            RunMSGUI() else return end elseif button == "LeftButton" then
+                        collectgarbage("collect")
+                        print(AddOnName .. ": Garbage Collected!")
+                    end end)
         else
             InformationFrame:SetScript("OnUpdate", nil)
         end
@@ -385,12 +421,14 @@ function MinimapStats:OnEnable()
     --
     TimeFrame = CreateFrame("Frame", "TimeFrame", Minimap)
     TimeFrame:ClearAllPoints()
-    TimeFrame:SetPoint(self.db.global.TimeFrameAnchorFrom, Minimap, self.db.global.TimeFrameAnchorTo, self.db.global.TimeFrameXOffset, self.db.global.TimeFrameYOffset)
+    TimeFrame:SetPoint(self.db.global.TimeFrameAnchorFrom, Minimap, self.db.global.TimeFrameAnchorTo,
+        self.db.global.TimeFrameXOffset, self.db.global.TimeFrameYOffset)
     TimeFrameText = TimeFrame:CreateFontString("TimeFrameText", "BACKGROUND")
     TimeFrameText:ClearAllPoints()
     TimeFrameText:SetPoint(self.db.global.TimeFrameAnchorFrom, TimeFrame, self.db.global.TimeFrameAnchorTo, 0, 0)
     TimeFrameText:SetFont(self.db.global.Font, self.db.global.TimeFrameFontSize, self.db.global.FontOutline)
-    TimeFrameText:SetTextColor(self.db.global.PrimaryFontColorR, self.db.global.PrimaryFontColorG, self.db.global.PrimaryFontColorB)
+    TimeFrameText:SetTextColor(self.db.global.PrimaryFontColorR, self.db.global.PrimaryFontColorG,
+        self.db.global.PrimaryFontColorB)
     TimeFrameText:SetText(FetchTime())
     TimeFrame:SetHeight(TimeFrameText:GetStringHeight() or 24)
     TimeFrame:SetWidth(TimeFrameText:GetStringWidth() or 200)
@@ -400,10 +438,12 @@ function MinimapStats:OnEnable()
     --
     LocationFrame = CreateFrame("Frame", "LocationFrame", Minimap)
     LocationFrame:ClearAllPoints()
-    LocationFrame:SetPoint(self.db.global.LocationFrameAnchorFrom, Minimap, self.db.global.LocationFrameAnchorTo, self.db.global.LocationFrameXOffset, self.db.global.LocationFrameYOffset)
+    LocationFrame:SetPoint(self.db.global.LocationFrameAnchorFrom, Minimap, self.db.global.LocationFrameAnchorTo,
+        self.db.global.LocationFrameXOffset, self.db.global.LocationFrameYOffset)
     LocationFrameText = LocationFrame:CreateFontString("LocationFrameText", "BACKGROUND")
     LocationFrameText:ClearAllPoints()
-    LocationFrameText:SetPoint(self.db.global.LocationFrameAnchorFrom, LocationFrame, self.db.global.LocationFrameAnchorTo, 0, 0)
+    LocationFrameText:SetPoint(self.db.global.LocationFrameAnchorFrom, LocationFrame,
+        self.db.global.LocationFrameAnchorTo, 0, 0)
     LocationFrameText:SetFont(self.db.global.Font, self.db.global.LocationFrameFontSize, self.db.global.FontOutline)
     LocationFrameText:SetText(FetchLocation())
     LocationFrameText:SetWidth(Minimap:GetWidth() * 80 / 100)
@@ -423,12 +463,17 @@ function MinimapStats:OnEnable()
     --
     InformationFrame = CreateFrame("Frame", "InformationFrame", Minimap)
     InformationFrame:ClearAllPoints()
-    InformationFrame:SetPoint(self.db.global.InformationFrameAnchorFrom, Minimap, self.db.global .InformationFrameAnchorTo, self.db.global.InformationFrameXOffset, self.db.global.InformationFrameYOffset)
+    InformationFrame:SetPoint(self.db.global.InformationFrameAnchorFrom, Minimap,
+        self.db.global.InformationFrameAnchorTo, self.db.global.InformationFrameXOffset,
+        self.db.global.InformationFrameYOffset)
     InformationFrameText = InformationFrame:CreateFontString("InformationFrameText", "BACKGROUND")
     InformationFrameText:ClearAllPoints()
-    InformationFrameText:SetPoint(self.db.global.InformationFrameAnchorFrom, InformationFrame, self.db.global.InformationFrameAnchorTo, 0, 0)
-    InformationFrameText:SetFont(self.db.global.Font, self.db.global.InformationFrameFontSize, self.db.global .FontOutline)
-    InformationFrameText:SetTextColor(self.db.global.PrimaryFontColorR, self.db.global.PrimaryFontColorG, self.db.global.PrimaryFontColorB)
+    InformationFrameText:SetPoint(self.db.global.InformationFrameAnchorFrom, InformationFrame,
+        self.db.global.InformationFrameAnchorTo, 0, 0)
+    InformationFrameText:SetFont(self.db.global.Font, self.db.global.InformationFrameFontSize,
+        self.db.global.FontOutline)
+    InformationFrameText:SetTextColor(self.db.global.PrimaryFontColorR, self.db.global.PrimaryFontColorG,
+        self.db.global.PrimaryFontColorB)
     InformationFrameText:SetText(FetchInformation())
     InformationFrame:SetHeight(InformationFrameText:GetStringHeight() or 24)
     InformationFrame:SetWidth(InformationFrameText:GetStringWidth() or 200)
@@ -438,11 +483,15 @@ function MinimapStats:OnEnable()
     --
     InstanceDifficultyFrame = CreateFrame("Frame", "InstanceDifficultyFrame", Minimap)
     InstanceDifficultyFrame:ClearAllPoints()
-    InstanceDifficultyFrame:SetPoint(self.db.global.InstanceDifficultyFrameAnchorFrom, Minimap, self.db.global.InstanceDifficultyFrameAnchorTo, self.db.global.InstanceDifficultyFrameXOffset, self.db.global.InstanceDifficultyFrameYOffset)
+    InstanceDifficultyFrame:SetPoint(self.db.global.InstanceDifficultyFrameAnchorFrom, Minimap,
+        self.db.global.InstanceDifficultyFrameAnchorTo, self.db.global.InstanceDifficultyFrameXOffset,
+        self.db.global.InstanceDifficultyFrameYOffset)
     InstanceDifficultyFrameText = InstanceDifficultyFrame:CreateFontString("InstanceDifficultyFrameText", "BACKGROUND")
     InstanceDifficultyFrameText:ClearAllPoints()
-    InstanceDifficultyFrameText:SetPoint(self.db.global.InstanceDifficultyFrameAnchorFrom, InstanceDifficultyFrame, self.db.global.InstanceDifficultyFrameAnchorTo, 0, 0)
-    InstanceDifficultyFrameText:SetFont(self.db.global.Font, self.db.global.InstanceDifficultyFrameFontSize, self.db.global.FontOutline)
+    InstanceDifficultyFrameText:SetPoint(self.db.global.InstanceDifficultyFrameAnchorFrom, InstanceDifficultyFrame,
+        self.db.global.InstanceDifficultyFrameAnchorTo, 0, 0)
+    InstanceDifficultyFrameText:SetFont(self.db.global.Font, self.db.global.InstanceDifficultyFrameFontSize,
+        self.db.global.FontOutline)
     InstanceDifficultyFrameText:SetText(FetchInstanceDifficulty())
     InstanceDifficultyFrame:SetHeight(InstanceDifficultyFrameText:GetStringHeight() or 24)
     InstanceDifficultyFrame:SetWidth(InstanceDifficultyFrameText:GetStringWidth() or 200)
@@ -459,12 +508,17 @@ function MinimapStats:OnEnable()
 
     CoordinatesFrame = CreateFrame("Frame", "CoordinatesFrame", Minimap)
     CoordinatesFrame:ClearAllPoints()
-    CoordinatesFrame:SetPoint(self.db.global.CoordinatesFrameAnchorFrom, Minimap, self.db.global .CoordinatesFrameAnchorTo, self.db.global.CoordinatesFrameXOffset, self.db.global.CoordinatesFrameYOffset)
+    CoordinatesFrame:SetPoint(self.db.global.CoordinatesFrameAnchorFrom, Minimap,
+        self.db.global.CoordinatesFrameAnchorTo, self.db.global.CoordinatesFrameXOffset,
+        self.db.global.CoordinatesFrameYOffset)
     CoordinatesFrameText = CoordinatesFrame:CreateFontString("CoordinatesFrameText", "BACKGROUND")
     CoordinatesFrameText:ClearAllPoints()
-    CoordinatesFrameText:SetPoint(self.db.global.CoordinatesFrameAnchorFrom, CoordinatesFrame, self.db.global.CoordinatesFrameAnchorTo, 0, 0)
-    CoordinatesFrameText:SetFont(self.db.global.Font, self.db.global.CoordinatesFrameFontSize, self.db.global .FontOutline)
-    CoordinatesFrameText:SetTextColor(self.db.global.PrimaryFontColorR, self.db.global.PrimaryFontColorG, self.db.global.PrimaryFontColorB)
+    CoordinatesFrameText:SetPoint(self.db.global.CoordinatesFrameAnchorFrom, CoordinatesFrame,
+        self.db.global.CoordinatesFrameAnchorTo, 0, 0)
+    CoordinatesFrameText:SetFont(self.db.global.Font, self.db.global.CoordinatesFrameFontSize,
+        self.db.global.FontOutline)
+    CoordinatesFrameText:SetTextColor(self.db.global.PrimaryFontColorR, self.db.global.PrimaryFontColorG,
+        self.db.global.PrimaryFontColorB)
     CoordinatesFrameText:SetText(FetchCoordinates())
     CoordinatesFrame:SetHeight(CoordinatesFrameText:GetStringHeight() or 24)
     CoordinatesFrame:SetWidth(CoordinatesFrameText:GetStringWidth() or 200)
@@ -548,10 +602,18 @@ function MinimapStats:OnEnable()
     if self.db.global.DisplayTime then
         TimeFrame:SetScript("OnUpdate", UpdateTimeFrame)
         if self.db.global.DisplayDate then
-            TimeFrame:SetScript("OnEnter", function() TimeFrameText:SetText(FetchDate()) TimeFrame:SetScript("OnUpdate", nil) end)
-            TimeFrame:SetScript("OnLeave", function() TimeFrameText:SetText(FetchTime()) TimeFrame:SetScript("OnUpdate", UpdateTimeFrame) end)
+            TimeFrame:SetScript("OnEnter",
+                function()
+                    TimeFrameText:SetText(FetchDate())
+                    TimeFrame:SetScript("OnUpdate", nil)
+                end)
+            TimeFrame:SetScript("OnLeave",
+                function()
+                    TimeFrameText:SetText(FetchTime())
+                    TimeFrame:SetScript("OnUpdate", UpdateTimeFrame)
+                end)
         else
-            TimeFrame:SetScript("OnEnter", nil) 
+            TimeFrame:SetScript("OnEnter", nil)
             TimeFrame:SetScript("OnLeave", nil)
         end
         TimeFrame:SetScript("OnMouseDown", function(self, button) if button == "LeftButton" then ToggleCalendar() end end)
@@ -561,7 +623,12 @@ function MinimapStats:OnEnable()
     LocationFrame:SetScript("OnEvent", UpdateLocationFrame)
     if self.db.global.DisplayInformation then
         InformationFrame:SetScript("OnUpdate", UpdateInformationFrame)
-        InformationFrame:SetScript("OnMouseDown", function(self, button) if button == "MiddleButton" then ReloadUI() elseif button == "RightButton" then if MSGUIShown == false then RunMSGUI() else return end elseif button == "LeftButton" then collectgarbage("collect") print(AddOnName .. ": Garbage Collected!") end end)
+        InformationFrame:SetScript("OnMouseDown",
+            function(self, button) if button == "MiddleButton" then ReloadUI() elseif button == "RightButton" then if MSGUIShown == false then
+                        RunMSGUI() else return end elseif button == "LeftButton" then
+                    collectgarbage("collect")
+                    print(AddOnName .. ": Garbage Collected!")
+                end end)
     else
         InformationFrame:SetScript("OnUpdate", nil)
     end
@@ -592,9 +659,12 @@ function MinimapStats:OnEnable()
     end
 
     function RunMSGUI()
-        local AnchorPointData = { ["TOP"] = "Top", ["BOTTOM"] = "Bottom", ["LEFT"] = "Left", ["RIGHT"] = "Right", ["CENTER"] = "Center", ["TOPLEFT"] = "Top Left", ["TOPRIGHT"] = "Top Right", ["BOTTOMLEFT"] = "Bottom Left", ["BOTTOMRIGHT"] = "Bottom Right" }
+        local AnchorPointData = { ["TOP"] = "Top", ["BOTTOM"] = "Bottom", ["LEFT"] = "Left", ["RIGHT"] = "Right",
+            ["CENTER"] = "Center", ["TOPLEFT"] = "Top Left", ["TOPRIGHT"] = "Top Right", ["BOTTOMLEFT"] = "Bottom Left",
+            ["BOTTOMRIGHT"] = "Bottom Right" }
 
-        local AnchorPointOrder = { "TOP", "TOPLEFT", "TOPRIGHT", "LEFT", "CENTER", "RIGHT", "BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT" }
+        local AnchorPointOrder = { "TOP", "TOPLEFT", "TOPRIGHT", "LEFT", "CENTER", "RIGHT", "BOTTOM", "BOTTOMLEFT",
+            "BOTTOMRIGHT" }
 
         MSGUIShown = true
 
@@ -643,46 +713,80 @@ function MinimapStats:OnEnable()
             local DisplayDateOnHoverCheckBox = MSGUI:Create("CheckBox")
             DisplayDateOnHoverCheckBox:SetLabel("Display Date [|cFF8080FFMouseover Only|r]")
             DisplayDateOnHoverCheckBox:SetValue(self.db.global.DisplayDate)
-            DisplayDateOnHoverCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayDate = value RefreshElements() end)
+            DisplayDateOnHoverCheckBox:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.DisplayDate = value
+                    if value == false then
+                        DateFormatDropdown:SetDisabled(true)
+                        AlternativeFormatCheckBox:SetDisabled(true)
+                    else
+                        DateFormatDropdown:SetDisabled(false)
+                        AlternativeFormatCheckBox:SetDisabled(false)
+                    end
+                    RefreshElements()
+                end)
             DateContainer:AddChild(DisplayDateOnHoverCheckBox)
 
-            local AlternativeFormatFormatCheckBox = MSGUI:Create("CheckBox")
-            AlternativeFormatFormatCheckBox:SetLabel("Alternative Format (MM/DD/YY)")
-            AlternativeFormatFormatCheckBox:SetValue(self.db.global.AlternativeFormatting)
-            AlternativeFormatFormatCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.AlternativeFormatting = value RefreshElements() end)
-            DateContainer:AddChild(AlternativeFormatFormatCheckBox)
+            AlternativeFormatCheckBox = MSGUI:Create("CheckBox")
+            AlternativeFormatCheckBox:SetLabel("Alternative Format (MM/DD/YY)")
+            AlternativeFormatCheckBox:SetValue(self.db.global.AlternativeFormatting)
+            AlternativeFormatCheckBox:SetFullWidth(true)
+            AlternativeFormatCheckBox:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.AlternativeFormatting = value
+                    RefreshElements()
+                end)
+            DateContainer:AddChild(AlternativeFormatCheckBox)
 
-            local DateFormatDropdown = MSGUI:Create("Dropdown")
+            DateFormatDropdown = MSGUI:Create("Dropdown")
             DateFormatDropdown:SetLabel("Date Format")
             local DateFormatDropdownData = { ["DD/MM/YY"] = "DD/MM/YY", ["FullDate"] = "01 January 2000" }
             local DateFormatDropdownOrder = { "DD/MM/YY", "FullDate" }
             DateFormatDropdown:SetList(DateFormatDropdownData, DateFormatDropdownOrder)
             DateFormatDropdown:SetValue(self.db.global.DateFormat)
             DateFormatDropdown:SetFullWidth(true)
-            DateFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DateFormat = value RefreshElements() end)
+            DateFormatDropdown:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.DateFormat = value
+                    RefreshElements()
+                end)
             DateContainer:AddChild(DateFormatDropdown)
-            
+
             local DisplayTimeCheckBox = MSGUI:Create("CheckBox")
             DisplayTimeCheckBox:SetLabel("Show / Hide")
             DisplayTimeCheckBox:SetValue(self.db.global.DisplayTime)
-            DisplayTimeCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayTime = value RefreshElements() end)
+            DisplayTimeCheckBox:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.DisplayTime = value
+                    RefreshElements()
+                end)
             TimeToggleContainer:AddChild(DisplayTimeCheckBox)
-            
+
             local TimeFormatDropdown = MSGUI:Create("Dropdown")
             TimeFormatDropdown:SetLabel("Format")
-            local TimeFormatDropdownData = { ["TwentyFourHourTime"] = "24 Hour", ["TwelveHourTime"] = "12 Hour (AM/PM)", ["ServerTime"] = "24 Hour [Server Time]", ["TwelverHourServerTime"] = "12 Hour (AM/PM) [Server Time]" }
-            local TimeFormatDropdownOrder = { "TwentyFourHourTime", "TwelveHourTime", "ServerTime", "TwelverHourServerTime" }
+            local TimeFormatDropdownData = { ["TwentyFourHourTime"] = "24 Hour", ["TwelveHourTime"] = "12 Hour (AM/PM)",
+                ["ServerTime"] = "24 Hour [Server Time]", ["TwelverHourServerTime"] = "12 Hour (AM/PM) [Server Time]" }
+            local TimeFormatDropdownOrder = { "TwentyFourHourTime", "TwelveHourTime", "ServerTime",
+                "TwelverHourServerTime" }
             TimeFormatDropdown:SetList(TimeFormatDropdownData, TimeFormatDropdownOrder)
             TimeFormatDropdown:SetValue(self.db.global.TimeFormat)
             TimeFormatDropdown:SetFullWidth(true)
-            TimeFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.TimeFormat = value RefreshElements() end)
+            TimeFormatDropdown:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.TimeFormat = value
+                    RefreshElements()
+                end)
             TimeFormatContainer:AddChild(TimeFormatDropdown)
 
             local TimeFontSize = MSGUI:Create("Slider")
             TimeFontSize:SetLabel("Font Size")
             TimeFontSize:SetSliderValues(1, 100, 1)
             TimeFontSize:SetValue(self.db.global.TimeFrameFontSize)
-            TimeFontSize:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.TimeFrameFontSize = value RefreshElements() end)
+            TimeFontSize:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.TimeFrameFontSize = value
+                    RefreshElements()
+                end)
             TimeFontSize:SetFullWidth(true)
             TimeFontSizeContainer:AddChild(TimeFontSize)
 
@@ -691,35 +795,55 @@ function MinimapStats:OnEnable()
             TimePositionAnchorFrom:SetFullWidth(true)
             TimePositionAnchorFrom:SetList(AnchorPointData, AnchorPointOrder)
             TimePositionAnchorFrom:SetValue(self.db.global.TimeFrameAnchorFrom)
-            TimePositionAnchorFrom:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.TimeFrameAnchorFrom = value RefreshElements() end)
+            TimePositionAnchorFrom:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.TimeFrameAnchorFrom = value
+                    RefreshElements()
+                end)
 
             local TimePositionAnchorTo = MSGUI:Create("Dropdown")
             TimePositionAnchorTo:SetLabel("Anchor To")
             TimePositionAnchorTo:SetFullWidth(true)
             TimePositionAnchorTo:SetList(AnchorPointData, AnchorPointOrder)
             TimePositionAnchorTo:SetValue(self.db.global.TimeFrameAnchorFrom)
-            TimePositionAnchorTo:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.TimeFrameAnchorTo = value RefreshElements() end)
+            TimePositionAnchorTo:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.TimeFrameAnchorTo = value
+                    RefreshElements()
+                end)
 
             local TimePositionXOffset = MSGUI:Create("Slider")
             TimePositionXOffset:SetLabel("X Offset")
             TimePositionXOffset:SetFullWidth(true)
             TimePositionXOffset:SetSliderValues(-1000, 1000, 1)
             TimePositionXOffset:SetValue(self.db.global.TimeFrameXOffset)
-            TimePositionXOffset:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.TimeFrameXOffset = value RefreshElements() end)
+            TimePositionXOffset:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.TimeFrameXOffset = value
+                    RefreshElements()
+                end)
 
             local TimePositionYOffset = MSGUI:Create("Slider")
             TimePositionYOffset:SetLabel("Y Offset")
             TimePositionYOffset:SetFullWidth(true)
             TimePositionYOffset:SetSliderValues(-1000, 1000, 1)
             TimePositionYOffset:SetValue(self.db.global.TimeFrameYOffset)
-            TimePositionYOffset:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.TimeFrameYOffset = value RefreshElements() end)
+            TimePositionYOffset:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.TimeFrameYOffset = value
+                    RefreshElements()
+                end)
 
             local TimeUpdateFrequency = MSGUI:Create("Slider")
             TimeUpdateFrequency:SetLabel("Update Frequency [Seconds]")
             TimeUpdateFrequency:SetFullWidth(true)
             TimeUpdateFrequency:SetSliderValues(1, 60, 1)
             TimeUpdateFrequency:SetValue(self.db.global.TimeFrame_UpdateFrequency)
-            TimeUpdateFrequency:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.TimeFrame_UpdateFrequency = value RefreshElements() end)
+            TimeUpdateFrequency:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.TimeFrame_UpdateFrequency = value
+                    RefreshElements()
+                end)
             TimeMiscContainer:AddChild(TimeUpdateFrequency)
 
             TimePositionsContainer:AddChild(TimePositionAnchorFrom)
@@ -730,7 +854,7 @@ function MinimapStats:OnEnable()
             MSGUIContainer:AddChild(TimeToggleContainer)
 
             MSGUIContainer:AddChild(TimeFormatContainer)
-            
+
             MSGUIContainer:AddChild(TimeFontSizeContainer)
 
             MSGUIContainer:AddChild(TimePositionsContainer)
@@ -738,9 +862,6 @@ function MinimapStats:OnEnable()
             MSGUIContainer:AddChild(DateContainer)
 
             MSGUIContainer:AddChild(TimeMiscContainer)
-
-            
-
         end
 
         local function DrawLocationContainer(MSGUIContainer)
@@ -761,20 +882,32 @@ function MinimapStats:OnEnable()
             local DisplayLocationCheckBox = MSGUI:Create("CheckBox")
             DisplayLocationCheckBox:SetLabel("Show / Hide")
             DisplayLocationCheckBox:SetValue(self.db.global.DisplayLocation)
-            DisplayLocationCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayLocation = value RefreshElements() end)
+            DisplayLocationCheckBox:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.DisplayLocation = value
+                    RefreshElements()
+                end)
             LocationToggleContainer:AddChild(DisplayLocationCheckBox)
 
             local DisplayReactionColorCheckBox = MSGUI:Create("CheckBox")
             DisplayReactionColorCheckBox:SetLabel("Display Reaction Color")
             DisplayReactionColorCheckBox:SetValue(self.db.global.DisplayReactionColor)
-            DisplayReactionColorCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayReactionColor = value RefreshElements() end)
+            DisplayReactionColorCheckBox:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.DisplayReactionColor = value
+                    RefreshElements()
+                end)
             LocationToggleContainer:AddChild(DisplayReactionColorCheckBox)
 
             local LocationFontSize = MSGUI:Create("Slider")
             LocationFontSize:SetLabel("Font Size")
             LocationFontSize:SetSliderValues(1, 100, 1)
             LocationFontSize:SetValue(self.db.global.LocationFrameFontSize)
-            LocationFontSize:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.LocationFrameFontSize = value RefreshElements() end)
+            LocationFontSize:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.LocationFrameFontSize = value
+                    RefreshElements()
+                end)
             LocationFontSize:SetFullWidth(true)
             LocationFontSizeContainer:AddChild(LocationFontSize)
 
@@ -789,28 +922,44 @@ function MinimapStats:OnEnable()
             LocationPositionAnchorFrom:SetFullWidth(true)
             LocationPositionAnchorFrom:SetList(AnchorPointData, AnchorPointOrder)
             LocationPositionAnchorFrom:SetValue(self.db.global.LocationFrameAnchorFrom)
-            LocationPositionAnchorFrom:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.LocationFrameAnchorFrom = value RefreshElements() end)
+            LocationPositionAnchorFrom:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.LocationFrameAnchorFrom = value
+                    RefreshElements()
+                end)
 
             local LocationPositionAnchorTo = MSGUI:Create("Dropdown")
             LocationPositionAnchorTo:SetLabel("Anchor To")
             LocationPositionAnchorTo:SetFullWidth(true)
             LocationPositionAnchorTo:SetList(AnchorPointData, AnchorPointOrder)
             LocationPositionAnchorTo:SetValue(self.db.global.LocationFrameAnchorTo)
-            LocationPositionAnchorTo:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.LocationFrameAnchorTo = value RefreshElements() end)
+            LocationPositionAnchorTo:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.LocationFrameAnchorTo = value
+                    RefreshElements()
+                end)
 
             local LocationPositionXOffset = MSGUI:Create("Slider")
             LocationPositionXOffset:SetLabel("X Offset")
             LocationPositionXOffset:SetFullWidth(true)
             LocationPositionXOffset:SetSliderValues(-1000, 1000, 1)
             LocationPositionXOffset:SetValue(self.db.global.LocationFrameXOffset)
-            LocationPositionXOffset:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.LocationFrameXOffset = value RefreshElements() end)
+            LocationPositionXOffset:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.LocationFrameXOffset = value
+                    RefreshElements()
+                end)
 
             local LocationPositionYOffset = MSGUI:Create("Slider")
             LocationPositionYOffset:SetLabel("Y Offset")
             LocationPositionYOffset:SetFullWidth(true)
             LocationPositionYOffset:SetSliderValues(-1000, 1000, 1)
             LocationPositionYOffset:SetValue(self.db.global.LocationFrameYOffset)
-            LocationPositionYOffset:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.LocationFrameYOffset = value RefreshElements() end)
+            LocationPositionYOffset:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.LocationFrameYOffset = value
+                    RefreshElements()
+                end)
 
             LocationPositionsContainer:AddChild(LocationPositionAnchorFrom)
             LocationPositionsContainer:AddChild(LocationPositionAnchorTo)
@@ -852,33 +1001,56 @@ function MinimapStats:OnEnable()
             local DisplayInformationCheckBox = MSGUI:Create("CheckBox")
             DisplayInformationCheckBox:SetLabel("Show / Hide")
             DisplayInformationCheckBox:SetValue(self.db.global.DisplayInformation)
-            DisplayInformationCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayInformation = value RefreshElements() end)
+            DisplayInformationCheckBox:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.DisplayInformation = value
+                    RefreshElements()
+                end)
             InformationToggleContainer:AddChild(DisplayInformationCheckBox)
 
             local UpdateInformationInRealTimeCheckBox = MSGUI:Create("CheckBox")
-            UpdateInformationInRealTimeCheckBox:SetLabel("Real Time Update [Every Frame Update - |cFFFF4040Performance Intensive|r]")
+            UpdateInformationInRealTimeCheckBox:SetLabel(
+            "Real Time Update [Every Frame Update - |cFFFF4040Performance Intensive|r]")
             UpdateInformationInRealTimeCheckBox:SetFullWidth(true)
             UpdateInformationInRealTimeCheckBox:SetValue(self.db.global.UpdateInRealTime)
-            UpdateInformationInRealTimeCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.UpdateInRealTime = value RefreshElements() end)
+            UpdateInformationInRealTimeCheckBox:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.UpdateInRealTime = value
+                    RefreshElements()
+                end)
             InformationToggleContainer:AddChild(UpdateInformationInRealTimeCheckBox)
-            
+
             local InformationFormatEditBox = MSGUI:Create("EditBox")
             InformationFormatEditBox:SetLabel("Format")
             InformationFormatEditBox:SetFullWidth(true)
             InformationFormatEditBox:SetText(self.db.global.InformationFormatString)
-            InformationFormatEditBox:SetCallback("OnEnterPressed", function(widget, event, value) if value:match("^%s*$") then value = "FPS [HomeMS]" InformationFormatEditBox:SetText("FPS [HomeMS]") end self.db.global.InformationFormatString = value  RefreshElements() InformationFormatEditBox:ClearFocus() end)
+            InformationFormatEditBox:SetCallback("OnEnterPressed",
+                function(widget, event, value)
+                    if value:match("^%s*$") then
+                        value = "FPS [HomeMS]"
+                        InformationFormatEditBox:SetText("FPS [HomeMS]")
+                    end
+                    self.db.global.InformationFormatString = value
+                    RefreshElements()
+                    InformationFormatEditBox:ClearFocus()
+                end)
             InformationFormatContainer:AddChild(InformationFormatEditBox)
 
             local InformationFormatEditBoxHelp = MSGUI:Create("Label")
             InformationFormatEditBoxHelp:SetFullWidth(true)
-            InformationFormatEditBoxHelp:SetText("\n|cFFFFCC00Available Tags|r\n\n|cFF00FF00FPS|r = FPS\n|cFF00FF00HomeMS|r = Home Latency\n|cFF00FF00WorldMS|r = World Latency\n|cFF00FF00DualMS|r = Home & World MS\n\nAny seperators can be used. Some common ones are: |cFF40FF40[ ]|r or |cFF40FF40( )|r or |cFF40FF40< >|r or |cFF40FF40 | |r")
+            InformationFormatEditBoxHelp:SetText(
+            "\n|cFFFFCC00Available Tags|r\n\n|cFF00FF00FPS|r = FPS\n|cFF00FF00HomeMS|r = Home Latency\n|cFF00FF00WorldMS|r = World Latency\n|cFF00FF00DualMS|r = Home & World MS\n\nAny seperators can be used. Some common ones are: |cFF40FF40[ ]|r or |cFF40FF40( )|r or |cFF40FF40< >|r or |cFF40FF40 | |r")
             InformationFormatContainer:AddChild(InformationFormatEditBoxHelp)
 
             local InformationFontSize = MSGUI:Create("Slider")
             InformationFontSize:SetLabel("Font Size")
             InformationFontSize:SetSliderValues(1, 100, 1)
             InformationFontSize:SetValue(self.db.global.InformationFrameFontSize)
-            InformationFontSize:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InformationFrameFontSize = value RefreshElements() end)
+            InformationFontSize:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.InformationFrameFontSize = value
+                    RefreshElements()
+                end)
             InformationFontSize:SetFullWidth(true)
             InformationFontSizeContainer:AddChild(InformationFontSize)
 
@@ -887,35 +1059,55 @@ function MinimapStats:OnEnable()
             InformationPositionAnchorFrom:SetFullWidth(true)
             InformationPositionAnchorFrom:SetList(AnchorPointData, AnchorPointOrder)
             InformationPositionAnchorFrom:SetValue(self.db.global.InformationFrameAnchorFrom)
-            InformationPositionAnchorFrom:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InformationFrameAnchorFrom = value RefreshElements() end)
+            InformationPositionAnchorFrom:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.InformationFrameAnchorFrom = value
+                    RefreshElements()
+                end)
 
             local InformationPositionAnchorTo = MSGUI:Create("Dropdown")
             InformationPositionAnchorTo:SetLabel("Anchor To")
             InformationPositionAnchorTo:SetFullWidth(true)
             InformationPositionAnchorTo:SetList(AnchorPointData, AnchorPointOrder)
             InformationPositionAnchorTo:SetValue(self.db.global.InformationFrameAnchorTo)
-            InformationPositionAnchorTo:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InformationFrameAnchorTo = value RefreshElements() end)
+            InformationPositionAnchorTo:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.InformationFrameAnchorTo = value
+                    RefreshElements()
+                end)
 
             local InformationPositionXOffset = MSGUI:Create("Slider")
             InformationPositionXOffset:SetLabel("X Offset")
             InformationPositionXOffset:SetFullWidth(true)
             InformationPositionXOffset:SetSliderValues(-1000, 1000, 1)
             InformationPositionXOffset:SetValue(self.db.global.InformationFrameXOffset)
-            InformationPositionXOffset:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InformationFrameXOffset = value RefreshElements() end)
+            InformationPositionXOffset:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.InformationFrameXOffset = value
+                    RefreshElements()
+                end)
 
             local InformationPositionYOffset = MSGUI:Create("Slider")
             InformationPositionYOffset:SetLabel("Y Offset")
             InformationPositionYOffset:SetFullWidth(true)
             InformationPositionYOffset:SetSliderValues(-1000, 1000, 1)
             InformationPositionYOffset:SetValue(self.db.global.InformationFrameYOffset)
-            InformationPositionYOffset:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InformationFrameYOffset = value RefreshElements() end)
+            InformationPositionYOffset:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.InformationFrameYOffset = value
+                    RefreshElements()
+                end)
 
             local InformationUpdateFrequency = MSGUI:Create("Slider")
             InformationUpdateFrequency:SetLabel("Update Frequency [Seconds]")
             InformationUpdateFrequency:SetFullWidth(true)
             InformationUpdateFrequency:SetSliderValues(1, 60, 1)
             InformationUpdateFrequency:SetValue(self.db.global.InformationFrame_UpdateFrequency)
-            InformationUpdateFrequency:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InformationFrame_UpdateFrequency = value RefreshElements() end)
+            InformationUpdateFrequency:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.InformationFrame_UpdateFrequency = value
+                    RefreshElements()
+                end)
             InformationMiscContainer:AddChild(InformationUpdateFrequency)
 
             InformationPositionsContainer:AddChild(InformationPositionAnchorFrom)
@@ -944,20 +1136,32 @@ function MinimapStats:OnEnable()
             local DisplayInstanceDifficultyCheckBox = MSGUI:Create("CheckBox")
             DisplayInstanceDifficultyCheckBox:SetLabel("Show / Hide")
             DisplayInstanceDifficultyCheckBox:SetValue(self.db.global.DisplayInstanceDifficulty)
-            DisplayInstanceDifficultyCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayInstanceDifficulty = value RefreshElements() end)
+            DisplayInstanceDifficultyCheckBox:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.DisplayInstanceDifficulty = value
+                    RefreshElements()
+                end)
             InstanceDifficultyToggleContainer:AddChild(DisplayInstanceDifficultyCheckBox)
 
             TestInstanceDifficultyCheckBox = MSGUI:Create("CheckBox")
             TestInstanceDifficultyCheckBox:SetLabel("Test Instance Difficulty")
             TestInstanceDifficultyCheckBox:SetValue(TestingInstanceDifficulty)
-            TestInstanceDifficultyCheckBox:SetCallback("OnValueChanged", function(widget, event, value) TestingInstanceDifficulty = value RefreshElements() end)
+            TestInstanceDifficultyCheckBox:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    TestingInstanceDifficulty = value
+                    RefreshElements()
+                end)
             InstanceDifficultyToggleContainer:AddChild(TestInstanceDifficultyCheckBox)
 
             local InstanceDifficultyFontSize = MSGUI:Create("Slider")
             InstanceDifficultyFontSize:SetLabel("Font Size")
             InstanceDifficultyFontSize:SetSliderValues(1, 100, 1)
             InstanceDifficultyFontSize:SetValue(self.db.global.InstanceDifficultyFrameFontSize)
-            InstanceDifficultyFontSize:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InstanceDifficultyFrameFontSize = value RefreshElements() end)
+            InstanceDifficultyFontSize:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.InstanceDifficultyFrameFontSize = value
+                    RefreshElements()
+                end)
             InstanceDifficultyFontSize:SetFullWidth(true)
             InstanceDifficultyFontSizeContainer:AddChild(InstanceDifficultyFontSize)
 
@@ -972,28 +1176,44 @@ function MinimapStats:OnEnable()
             InstanceDifficultyPositionAnchorFrom:SetFullWidth(true)
             InstanceDifficultyPositionAnchorFrom:SetList(AnchorPointData, AnchorPointOrder)
             InstanceDifficultyPositionAnchorFrom:SetValue(self.db.global.InstanceDifficultyFrameAnchorFrom)
-            InstanceDifficultyPositionAnchorFrom:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InstanceDifficultyFrameAnchorFrom = value RefreshElements() end)
+            InstanceDifficultyPositionAnchorFrom:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.InstanceDifficultyFrameAnchorFrom = value
+                    RefreshElements()
+                end)
 
             local InstanceDifficultyPositionAnchorTo = MSGUI:Create("Dropdown")
             InstanceDifficultyPositionAnchorTo:SetLabel("Anchor To")
             InstanceDifficultyPositionAnchorTo:SetFullWidth(true)
             InstanceDifficultyPositionAnchorTo:SetList(AnchorPointData, AnchorPointOrder)
             InstanceDifficultyPositionAnchorTo:SetValue(self.db.global.InstanceDifficultyFrameAnchorTo)
-            InstanceDifficultyPositionAnchorTo:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InstanceDifficultyFrameAnchorTo = value RefreshElements() end)
+            InstanceDifficultyPositionAnchorTo:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.InstanceDifficultyFrameAnchorTo = value
+                    RefreshElements()
+                end)
 
             local InstanceDifficultyPositionXOffset = MSGUI:Create("Slider")
             InstanceDifficultyPositionXOffset:SetLabel("X Offset")
             InstanceDifficultyPositionXOffset:SetFullWidth(true)
             InstanceDifficultyPositionXOffset:SetSliderValues(-1000, 1000, 1)
             InstanceDifficultyPositionXOffset:SetValue(self.db.global.InstanceDifficultyFrameXOffset)
-            InstanceDifficultyPositionXOffset:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InstanceDifficultyFrameXOffset = value RefreshElements() end)
+            InstanceDifficultyPositionXOffset:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.InstanceDifficultyFrameXOffset = value
+                    RefreshElements()
+                end)
 
             local InstanceDifficultyPositionYOffset = MSGUI:Create("Slider")
             InstanceDifficultyPositionYOffset:SetLabel("Y Offset")
             InstanceDifficultyPositionYOffset:SetFullWidth(true)
             InstanceDifficultyPositionYOffset:SetSliderValues(-1000, 1000, 1)
             InstanceDifficultyPositionYOffset:SetValue(self.db.global.InstanceDifficultyFrameYOffset)
-            InstanceDifficultyPositionYOffset:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InstanceDifficultyFrameYOffset = value RefreshElements() end)
+            InstanceDifficultyPositionYOffset:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.InstanceDifficultyFrameYOffset = value
+                    RefreshElements()
+                end)
 
             InstanceDifficultyPositionsContainer:AddChild(InstanceDifficultyPositionAnchorFrom)
             InstanceDifficultyPositionsContainer:AddChild(InstanceDifficultyPositionAnchorTo)
@@ -1015,16 +1235,42 @@ function MinimapStats:OnEnable()
             local PrimaryFontColor = MSGUI:Create("ColorPicker")
             PrimaryFontColor:SetLabel("Primary Font Color")
             PrimaryFontColor:SetHasAlpha(false)
-            PrimaryFontColor:SetColor(self.db.global.PrimaryFontColorR, self.db.global.PrimaryFontColorG, self.db.global.PrimaryFontColorB)
-            PrimaryFontColor:SetCallback("OnValueChanged", function(widget, event, r, g, b) self.db.global.PrimaryFontColorR = r self.db.global.PrimaryFontColorG = g self.db.global.PrimaryFontColorB = b RefreshElements() end)
-            PrimaryFontColor:SetCallback("OnValueConfirmed", function(widget, event, r, g, b) self.db.global.PrimaryFontColorR = r self.db.global.PrimaryFontColorG = g self.db.global.PrimaryFontColorB = b RefreshElements() end)
+            PrimaryFontColor:SetColor(self.db.global.PrimaryFontColorR, self.db.global.PrimaryFontColorG,
+                self.db.global.PrimaryFontColorB)
+            PrimaryFontColor:SetCallback("OnValueChanged",
+                function(widget, event, r, g, b)
+                    self.db.global.PrimaryFontColorR = r
+                    self.db.global.PrimaryFontColorG = g
+                    self.db.global.PrimaryFontColorB = b
+                    RefreshElements()
+                end)
+            PrimaryFontColor:SetCallback("OnValueConfirmed",
+                function(widget, event, r, g, b)
+                    self.db.global.PrimaryFontColorR = r
+                    self.db.global.PrimaryFontColorG = g
+                    self.db.global.PrimaryFontColorB = b
+                    RefreshElements()
+                end)
 
             local SecondaryFontColor = MSGUI:Create("ColorPicker")
             SecondaryFontColor:SetLabel("Secondary Font Color")
             SecondaryFontColor:SetHasAlpha(false)
-            SecondaryFontColor:SetColor(self.db.global.SecondaryFontColorR, self.db.global.SecondaryFontColorG, self.db.global.SecondaryFontColorB)
-            SecondaryFontColor:SetCallback("OnValueChanged", function(widget, event, r, g, b) self.db.global.SecondaryFontColorR = r self.db.global.SecondaryFontColorG = g self.db.global.SecondaryFontColorB = b RefreshElements() end)
-            SecondaryFontColor:SetCallback("OnValueConfirmed", function(widget, event, r, g, b) self.db.global.SecondaryFontColorR = r self.db.global.SecondaryFontColorG = g self.db.global.SecondaryFontColorB = b RefreshElements() end)
+            SecondaryFontColor:SetColor(self.db.global.SecondaryFontColorR, self.db.global.SecondaryFontColorG,
+                self.db.global.SecondaryFontColorB)
+            SecondaryFontColor:SetCallback("OnValueChanged",
+                function(widget, event, r, g, b)
+                    self.db.global.SecondaryFontColorR = r
+                    self.db.global.SecondaryFontColorG = g
+                    self.db.global.SecondaryFontColorB = b
+                    RefreshElements()
+                end)
+            SecondaryFontColor:SetCallback("OnValueConfirmed",
+                function(widget, event, r, g, b)
+                    self.db.global.SecondaryFontColorR = r
+                    self.db.global.SecondaryFontColorG = g
+                    self.db.global.SecondaryFontColorB = b
+                    RefreshElements()
+                end)
             if self.db.global.UseClassColours == true then
                 SecondaryFontColor:SetDisabled(true)
             else
@@ -1034,7 +1280,12 @@ function MinimapStats:OnEnable()
             local ClassColorCheckBox = MSGUI:Create("CheckBox")
             ClassColorCheckBox:SetLabel("Use Class Color")
             ClassColorCheckBox:SetValue(self.db.global.UseClassColours)
-            ClassColorCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.UseClassColours = value if value == true then SecondaryFontColor:SetDisabled(true) else SecondaryFontColor:SetDisabled(false) end RefreshElements() end)
+            ClassColorCheckBox:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.UseClassColours = value
+                    if value == true then SecondaryFontColor:SetDisabled(true) else SecondaryFontColor:SetDisabled(false) end
+                    RefreshElements()
+                end)
 
             local FontContainer = MSGUI:Create("InlineGroup")
             FontContainer:SetTitle("Font Options")
@@ -1062,7 +1313,11 @@ function MinimapStats:OnEnable()
             FontOutline:SetList({ ["NONE"] = "None", ["OUTLINE"] = "Outline", ["THICKOUTLINE"] = "Thick Outline" })
             FontOutline:SetValue(self.db.global.FontOutline)
             FontOutline:SetFullWidth(true)
-            FontOutline:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.FontOutline = value RefreshElements() end)
+            FontOutline:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.FontOutline = value
+                    RefreshElements()
+                end)
             FontContainer:AddChild(FontOutline)
 
             local FrameStrataContainer = MSGUI:Create("InlineGroup")
@@ -1073,14 +1328,18 @@ function MinimapStats:OnEnable()
 
             local ElementFrameStrata = MSGUI:Create("Dropdown")
             ElementFrameStrata:SetLabel("Frame Strata")
-            ElementFrameStrataDropdownData = { ["LOW"] = "Low", ["MEDIUM"] = "Medium", ["HIGH"] = "High"}
+            ElementFrameStrataDropdownData = { ["LOW"] = "Low", ["MEDIUM"] = "Medium", ["HIGH"] = "High" }
             ElementFrameStrataDropdownOrder = { "LOW", "MEDIUM", "HIGH" }
             ElementFrameStrata:SetList(ElementFrameStrataDropdownData, ElementFrameStrataDropdownOrder)
             ElementFrameStrata:SetValue(self.db.global.ElementFrameStrata)
             ElementFrameStrata:SetFullWidth(true)
-            ElementFrameStrata:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.ElementFrameStrata = value RefreshElements() end)
+            ElementFrameStrata:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.ElementFrameStrata = value
+                    RefreshElements()
+                end)
             FrameStrataContainer:AddChild(ElementFrameStrata)
-            
+
             local MiscContainer = MSGUI:Create("InlineGroup")
             MiscContainer:SetTitle("Misc Options")
             MiscContainer:SetFullWidth(true)
@@ -1090,7 +1349,12 @@ function MinimapStats:OnEnable()
             ToggleDebugModeButton = MSGUI:Create("Button")
             ToggleDebugModeButton:SetText(DebugModeDetection())
             ToggleDebugModeButton:SetFullWidth(true)
-            ToggleDebugModeButton:SetCallback("OnClick", function() ToggleDebugMode() DebugModeDetection() MSGUIContainer:DoLayout() end)
+            ToggleDebugModeButton:SetCallback("OnClick",
+                function()
+                    ToggleDebugMode()
+                    DebugModeDetection()
+                    MSGUIContainer:DoLayout()
+                end)
             MiscContainer:AddChild(ToggleDebugModeButton)
 
             local ResetDefaultsButton = MSGUI:Create("Button")
@@ -1102,7 +1366,6 @@ function MinimapStats:OnEnable()
             ColourContainer:AddChild(ClassColorCheckBox)
             ColourContainer:AddChild(PrimaryFontColor)
             ColourContainer:AddChild(SecondaryFontColor)
-
         end
 
         local function DrawCoordinatesContainer(MSGUIContainer)
@@ -1142,22 +1405,36 @@ function MinimapStats:OnEnable()
             local DisplayCoordinatesCheckBox = MSGUI:Create("CheckBox")
             DisplayCoordinatesCheckBox:SetLabel("Show / Hide")
             DisplayCoordinatesCheckBox:SetValue(self.db.global.DisplayCoordinates)
-            DisplayCoordinatesCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayCoordinates = value RefreshElements() MSGUIContainer:DoLayout() end)
+            DisplayCoordinatesCheckBox:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.DisplayCoordinates = value
+                    RefreshElements()
+                    MSGUIContainer:DoLayout()
+                end)
             CoordinatesToggleContainer:AddChild(DisplayCoordinatesCheckBox)
 
             local CoordinatesFormatDropdown = MSGUI:Create("Dropdown")
             CoordinatesFormatDropdown:SetLabel("Format")
-            CoordinatesFormatDropdown:SetList({ ["NoDecimal"] = "No Decimals [00, 00]", ["OneDecimal"] = "One Decimal [00.0, 00.0]", ["TwoDecimal"] = "Two Decimals [00.00, 00.00]" })
+            CoordinatesFormatDropdown:SetList({ ["NoDecimal"] = "No Decimals [00, 00]", ["OneDecimal"] =
+            "One Decimal [00.0, 00.0]", ["TwoDecimal"] = "Two Decimals [00.00, 00.00]" })
             CoordinatesFormatDropdown:SetValue(self.db.global.CoordinatesFormat)
             CoordinatesFormatDropdown:SetFullWidth(true)
-            CoordinatesFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.CoordinatesFormat = value RefreshElements() end)
+            CoordinatesFormatDropdown:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.CoordinatesFormat = value
+                    RefreshElements()
+                end)
             CoordinatesFormatContainer:AddChild(CoordinatesFormatDropdown)
 
             local CoordinatesFontSize = MSGUI:Create("Slider")
             CoordinatesFontSize:SetLabel("Font Size")
             CoordinatesFontSize:SetSliderValues(1, 100, 1)
             CoordinatesFontSize:SetValue(self.db.global.CoordinatesFrameFontSize)
-            CoordinatesFontSize:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.CoordinatesFrameFontSize = value RefreshElements() end)
+            CoordinatesFontSize:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.CoordinatesFrameFontSize = value
+                    RefreshElements()
+                end)
             CoordinatesFontSize:SetFullWidth(true)
             CoordinatesFontSizeContainer:AddChild(CoordinatesFontSize)
 
@@ -1166,7 +1443,11 @@ function MinimapStats:OnEnable()
             CoordinatesPositionAnchorFrom:SetFullWidth(true)
             CoordinatesPositionAnchorFrom:SetList(AnchorPointData, AnchorPointOrder)
             CoordinatesPositionAnchorFrom:SetValue(self.db.global.CoordinatesFrameAnchorFrom)
-            CoordinatesPositionAnchorFrom:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.CoordinatesFrameAnchorFrom = value RefreshElements() end)
+            CoordinatesPositionAnchorFrom:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.CoordinatesFrameAnchorFrom = value
+                    RefreshElements()
+                end)
             CoordinatesPositionsContainer:AddChild(CoordinatesPositionAnchorFrom)
 
             local CoordinatesPositionAnchorTo = MSGUI:Create("Dropdown")
@@ -1174,7 +1455,11 @@ function MinimapStats:OnEnable()
             CoordinatesPositionAnchorTo:SetFullWidth(true)
             CoordinatesPositionAnchorTo:SetList(AnchorPointData, AnchorPointOrder)
             CoordinatesPositionAnchorTo:SetValue(self.db.global.CoordinatesFrameAnchorTo)
-            CoordinatesPositionAnchorTo:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.CoordinatesFrameAnchorTo = value RefreshElements() end)
+            CoordinatesPositionAnchorTo:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.CoordinatesFrameAnchorTo = value
+                    RefreshElements()
+                end)
             CoordinatesPositionsContainer:AddChild(CoordinatesPositionAnchorTo)
 
             local CoordinatesPositionXOffset = MSGUI:Create("Slider")
@@ -1182,7 +1467,11 @@ function MinimapStats:OnEnable()
             CoordinatesPositionXOffset:SetFullWidth(true)
             CoordinatesPositionXOffset:SetSliderValues(-1000, 1000, 1)
             CoordinatesPositionXOffset:SetValue(self.db.global.CoordinatesFrameXOffset)
-            CoordinatesPositionXOffset:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.CoordinatesFrameXOffset = value RefreshElements() end)
+            CoordinatesPositionXOffset:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.CoordinatesFrameXOffset = value
+                    RefreshElements()
+                end)
             CoordinatesPositionsContainer:AddChild(CoordinatesPositionXOffset)
 
             local CoordinatesPositionYOffset = MSGUI:Create("Slider")
@@ -1190,7 +1479,11 @@ function MinimapStats:OnEnable()
             CoordinatesPositionYOffset:SetFullWidth(true)
             CoordinatesPositionYOffset:SetSliderValues(-1000, 1000, 1)
             CoordinatesPositionYOffset:SetValue(self.db.global.CoordinatesFrameYOffset)
-            CoordinatesPositionYOffset:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.CoordinatesFrameYOffset = value RefreshElements() end)
+            CoordinatesPositionYOffset:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.CoordinatesFrameYOffset = value
+                    RefreshElements()
+                end)
             CoordinatesPositionsContainer:AddChild(CoordinatesPositionYOffset)
 
             local CoordinatesUpdateFrequency = MSGUI:Create("Slider")
@@ -1198,7 +1491,11 @@ function MinimapStats:OnEnable()
             CoordinatesUpdateFrequency:SetFullWidth(true)
             CoordinatesUpdateFrequency:SetSliderValues(1, 60, 1)
             CoordinatesUpdateFrequency:SetValue(self.db.global.CoordinatesFrame_UpdateFrequency)
-            CoordinatesUpdateFrequency:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.CoordinatesFrame_UpdateFrequency = value RefreshElements() end)
+            CoordinatesUpdateFrequency:SetCallback("OnValueChanged",
+                function(widget, event, value)
+                    self.db.global.CoordinatesFrame_UpdateFrequency = value
+                    RefreshElements()
+                end)
             CoordinatesMiscContainer:AddChild(CoordinatesUpdateFrequency)
         end
 
