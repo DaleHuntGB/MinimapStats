@@ -204,6 +204,7 @@ function MinimapStats:OnInitialize()
             for _, line in ipairs(dungeons) do
                 GameTooltip:AddLine(line, 1, 1, 1)
             end
+            GameTooltip:AddLine(" ")
         end
 
         if #raids > 0 then
@@ -211,6 +212,7 @@ function MinimapStats:OnInitialize()
             for _, line in ipairs(raids) do
                 GameTooltip:AddLine(line, 1, 1, 1)
             end
+            GameTooltip:AddLine(" ")
         end
     end
 
@@ -240,6 +242,7 @@ function MinimapStats:OnInitialize()
                 GameTooltip:AddLine("|cFF" .. PrimaryFontColor .. btagName .. "|r" .. ": " .. "|c" .. characterClassColor .. characterName .. "|r " .. "[" .. characterLevel .. "]")
             end
         end
+        GameTooltip:AddLine(" ")
     end
 
     local function GetMythicPlusInformation()
@@ -278,6 +281,7 @@ function MinimapStats:OnInitialize()
                     GameTooltip:AddLine(line, 1, 1, 1)
                 end
             end
+            GameTooltip:AddLine(" ")
         end    
     end
 
@@ -298,11 +302,8 @@ function MinimapStats:OnInitialize()
         GameTooltip:SetOwner(InformationFrame, "ANCHOR_BOTTOM", 0, 0)
 
         GetDungeonandRaidLockouts()
-        GameTooltip:AddLine(" ")
         GetFriendInformation()
-        GameTooltip:AddLine(" ")
         GetMythicPlusInformation()
-        GameTooltip:AddLine(" ")
         GetPlayerKeystone()
         GameTooltip:Show()    
     end
