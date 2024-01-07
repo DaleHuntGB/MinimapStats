@@ -7,5 +7,5 @@
 ## IconTexture: Interface\AddOns\MinimapStats\Libraries\MinimapStatsLogo
 ## DefaultState: Enabled
 
-MinimapStats.lua
 Libraries\Embeds.xml
+MinimapStats.lua
