@@ -249,14 +249,8 @@ function MinimapStats:OnInitialize()
         local MythicPlusAbbr =
         {
             -- Season 3 Dungeons
-            ["The Everbloom"] = "EB",
             ["Dawn of the Infinite: Galakrond's Fall"] = "DOTI: Galakrond's Fall",
             ["Dawn of the Infinite: Murozond's Rise"] = "DOTI: Murozond's Rise",
-            ["Atal'Dazar"] = "AD",
-            ["Waycrest Manor"] = "WM",
-            ["Black Rook Hold"] = "BRH",
-            ["Darkheart Thicket"] = "DHT",
-            ["Throne of the Tides"] = "TOTT",
         }
         
         for _, run in ipairs(mythicRuns) do
@@ -1020,7 +1014,7 @@ function MinimapStats:OnEnable()
             local TooltipInformationCheckBox = MSGUI:Create("CheckBox")
             TooltipInformationCheckBox:SetLabel("Tooltip Information [Mouseover]")
             TooltipInformationCheckBox:SetFullWidth(true)
-            TooltipInformationCheckBox:SetDescription("Dungeon/Raid Lockouts\nTotal Friends & Characters Online.")
+            TooltipInformationCheckBox:SetDescription("Dungeon/Raid Lockouts\nTotal Friends & Characters Online\nWeekly Keys Completed\nCurrent Keystone")
             TooltipInformationCheckBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
             TooltipInformationCheckBox:SetValue(self.db.global.DisplayTooltipInformation)
             TooltipInformationCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayTooltipInformation = value RefreshElements() end)
