@@ -219,27 +219,28 @@ function MinimapStats:OnInitialize()
     local function GetFriendInformation() 
         local PrimaryFontColor = string.format("%02x%02x%02x", self.db.global.PrimaryFontColorR * 255, self.db.global.PrimaryFontColorG * 255, self.db.global.PrimaryFontColorB * 255)
         local totalFriends, onlineFriends = BNGetNumFriends()
-        
+        if totalFriends > 0 then
         GameTooltip:AddLine("Friends" .." [" .. "|cFF" .. PrimaryFontColor .. totalFriends .. "|r".. "]", self.db.global.SecondaryFontColorR, self.db.global.SecondaryFontColorG, self.db.global.SecondaryFontColorB)
         for i = 1, onlineFriends do
-            local btagName = C_BattleNet.GetFriendAccountInfo(i).accountName
-            local characterName = C_BattleNet.GetFriendAccountInfo(i).gameAccountInfo.characterName
-            local wowProjectID = C_BattleNet.GetFriendAccountInfo(i).gameAccountInfo.wowProjectID
-            if characterName ~= nil then
-                local characterClass = C_BattleNet.GetFriendAccountInfo(i).gameAccountInfo.className:gsub("%s+", "")
-                local characterLevel = C_BattleNet.GetFriendAccountInfo(i).gameAccountInfo.characterLevel
-                local characterClassColor = C_ClassColor.GetClassColor(characterClass:upper()):GenerateHexColor()
+                local btagName = C_BattleNet.GetFriendAccountInfo(i).accountName
+                local characterName = C_BattleNet.GetFriendAccountInfo(i).gameAccountInfo.characterName
+                local wowProjectID = C_BattleNet.GetFriendAccountInfo(i).gameAccountInfo.wowProjectID
+                if characterName ~= nil then
+                    local characterClass = C_BattleNet.GetFriendAccountInfo(i).gameAccountInfo.className:gsub("%s+", "")
+                    local characterLevel = C_BattleNet.GetFriendAccountInfo(i).gameAccountInfo.characterLevel
+                    local characterClassColor = C_ClassColor.GetClassColor(characterClass:upper()):GenerateHexColor()
 
-                if wowProjectID == 1 then
-                    btagName = btagName .. " [" .. "|cFF8080FF" .. "Retail" .. "|r" .. "]"
-                elseif wowProjectID == 2 then
-                    btagName = btagName .. " [" .. "|cFF8080FF" .. "Classic / SoD" .. "|r" .. "]"
-                elseif wowProjectID == 5 then
-                    btagName = btagName .. " [" .. "|cFF8080FF" .. "BC" .. "|r" .. "]"
-                elseif wowProjectID == 11 then
-                    btagName = btagName .. " [" .. "|cFF8080FF" .. "WotLK" .. "|r" .. "]"
+                    if wowProjectID == 1 then
+                        btagName = btagName .. " [" .. "|cFF8080FF" .. "Retail" .. "|r" .. "]"
+                    elseif wowProjectID == 2 then
+                        btagName = btagName .. " [" .. "|cFF8080FF" .. "Classic / SoD" .. "|r" .. "]"
+                    elseif wowProjectID == 5 then
+                        btagName = btagName .. " [" .. "|cFF8080FF" .. "BC" .. "|r" .. "]"
+                    elseif wowProjectID == 11 then
+                        btagName = btagName .. " [" .. "|cFF8080FF" .. "WotLK" .. "|r" .. "]"
+                    end
+                    GameTooltip:AddLine("|cFF" .. PrimaryFontColor .. btagName .. "|r" .. ": " .. "|c" .. characterClassColor .. characterName .. "|r " .. "[" .. characterLevel .. "]")
                 end
-                GameTooltip:AddLine("|cFF" .. PrimaryFontColor .. btagName .. "|r" .. ": " .. "|c" .. characterClassColor .. characterName .. "|r " .. "[" .. characterLevel .. "]")
             end
         end
         GameTooltip:AddLine(" ")
