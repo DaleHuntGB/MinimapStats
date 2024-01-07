@@ -182,13 +182,9 @@ function MinimapStats:OnInitialize()
         return FormatString
     end
 
-    function FetchTooltipInformation()
-        GameTooltip:SetOwner(InformationFrame, "ANCHOR_BOTTOM", 0, 0)
-        local totalFriends, onlineFriends = BNGetNumFriends()
-        local PrimaryFontColor = string.format("%02x%02x%02x", self.db.global.PrimaryFontColorR * 255, self.db.global.PrimaryFontColorG * 255, self.db.global.PrimaryFontColorB * 255)
+    local function GetDungeonandRaidLockouts()
         local dungeons = {}
         local raids = {}
-        
         for i = 1, GetNumSavedInstances() do
             local name, _, _, _, isLocked, _, _, isRaid, _, difficultyName, numEncounters, encounterProgress, _, _ = GetSavedInstanceInfo(i)
             local formattedInstanceInformation = string.format("%s: %d/%d %s", name, encounterProgress, numEncounters, difficultyName)
@@ -207,7 +203,6 @@ function MinimapStats:OnInitialize()
             for _, line in ipairs(dungeons) do
                 GameTooltip:AddLine(line, 1, 1, 1)
             end
-            GameTooltip:AddLine(" ")
         end
 
         if #raids > 0 then
@@ -215,9 +210,13 @@ function MinimapStats:OnInitialize()
             for _, line in ipairs(raids) do
                 GameTooltip:AddLine(line, 1, 1, 1)
             end
-            GameTooltip:AddLine(" ")
         end
+    end
 
+    local function GetFriendInformation() 
+        local PrimaryFontColor = string.format("%02x%02x%02x", self.db.global.PrimaryFontColorR * 255, self.db.global.PrimaryFontColorG * 255, self.db.global.PrimaryFontColorB * 255)
+        local totalFriends, onlineFriends = BNGetNumFriends()
+        
         GameTooltip:AddLine("Friends" .." [" .. "|cFF" .. PrimaryFontColor .. totalFriends .. "|r".. "]", self.db.global.SecondaryFontColorR, self.db.global.SecondaryFontColorG, self.db.global.SecondaryFontColorB)
         for i = 1, onlineFriends do
             local btagName = C_BattleNet.GetFriendAccountInfo(i).accountName
@@ -240,9 +239,62 @@ function MinimapStats:OnInitialize()
                 GameTooltip:AddLine("|cFF" .. PrimaryFontColor .. btagName .. "|r" .. ": " .. "|c" .. characterClassColor .. characterName .. "|r " .. "[" .. characterLevel .. "]")
             end
         end
+    end
 
-        GameTooltip:Show()
-    
+    local function GetMythicPlusInformation()
+        local mythicRuns = C_MythicPlus.GetRunHistory(false, true)
+        local PrimaryFontColor = string.format("%02x%02x%02x", self.db.global.PrimaryFontColorR * 255, self.db.global.PrimaryFontColorG * 255, self.db.global.PrimaryFontColorB * 255)
+        local formattedRuns = {}
+        local MythicPlusAbbr =
+        {
+            ["The Everbloom"] = "EB",
+            ["Dawn of the Infinite: Galakrond's Fall"] = "DOTI: Galakrond's Fall",
+            ["Dawn of the Infinite: Murozond's Rise"] = "DOTI: Murozond's Rise",
+            ["Atal'Dazar"] = "AD",
+            ["Waycrest Manor"] = "WM",
+            ["Black Rook Hold"] = "BRH",
+            ["Darkheart Thicket"] = "DHT",
+            ["Throne of the Tides"] = "TOTT",
+        }
+        
+        for _, run in ipairs(mythicRuns) do
+            local name = C_ChallengeMode.GetMapUIInfo(run.mapChallengeModeID)
+            local abbrName = MythicPlusAbbr[name] or name
+            table.insert(formattedRuns, string.format("%s [%d]", abbrName, run.level))
+        end
+
+        table.sort(formattedRuns, function(a, b) 
+            return tonumber(a:match("%d+")) > tonumber(b:match("%d+")) 
+        end)
+        
+        for i = 9, #formattedRuns do
+            formattedRuns[i] = nil
+        end
+
+        if #formattedRuns > 0 then
+            local r, g, b = self.db.global.SecondaryFontColorR, self.db.global.SecondaryFontColorG, self.db.global.SecondaryFontColorB
+            GameTooltip:AddLine("Mythic+ Runs", r, g, b)
+        
+            for number, line in ipairs(formattedRuns) do
+                if number == 1 or number == 4 or number == 8 then
+                    GameTooltip:AddLine(line, 255/255, 204/255, 0/255)
+                else
+                    GameTooltip:AddLine(line, 1, 1, 1)
+                end
+            end
+        end    
+    end
+
+
+    function FetchTooltipInformation()
+        GameTooltip:SetOwner(InformationFrame, "ANCHOR_BOTTOM", 0, 0)
+
+        GetDungeonandRaidLockouts()
+        GameTooltip:AddLine(" ")
+        GetFriendInformation()
+        GameTooltip:AddLine(" ")
+        GetMythicPlusInformation()
+        GameTooltip:Show()    
     end
 
     function FetchInstanceDifficulty()

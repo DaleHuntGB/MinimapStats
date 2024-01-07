@@ -1,4 +1,4 @@
-# MinimapStats V4.1.2 [Updated 07 - 01 - 2024]
+# MinimapStats V4.1.3 [Updated 07 - 01 - 2024]
 
 **Clean**. **Functional**. **Minimal**.
 
@@ -43,7 +43,7 @@ MinimapStats, created & maintained by [Unhalted](https://github.com/DaleHuntGB),
 
 - Format: FPS [HomeMS], FPS [WorldMS], FPS, HomeMS [WorldMS], HomeMS, WorldMS.
 - Update Frequency in Seconds.
-- Hovering over the element will display some useful information in the tooltip. These include Raid / Dungeon Lockouts and Friend List information.
+- Hovering over the element will display some useful information in the tooltip. These include Raid / Dungeon Lockouts, Friend List information, Weekly M+ Runs.
 
 ##### Instance Difficulty
 
