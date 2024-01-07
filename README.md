@@ -1,4 +1,4 @@
-# MinimapStats
+# MinimapStats V4.1.2 [Updated 07 - 01 - 2024]
 
 **Clean**. **Functional**. **Minimal**.
 
@@ -33,6 +33,7 @@ MinimapStats, created & maintained by [Unhalted](https://github.com/DaleHuntGB),
 
 - Format: 12 Hour, 24 Hour, 12 Hour Server Time, 24 Hour Server Time.
 - Update Frequency in Seconds.
+- Hovering over the element will display the date.
 
 ##### Location
 
@@ -42,6 +43,7 @@ MinimapStats, created & maintained by [Unhalted](https://github.com/DaleHuntGB),
 
 - Format: FPS [HomeMS], FPS [WorldMS], FPS, HomeMS [WorldMS], HomeMS, WorldMS.
 - Update Frequency in Seconds.
+- Hovering over the element will display some useful information in the tooltip. These include Raid / Dungeon Lockouts and Friend List information.
 
 ##### Instance Difficulty
 
