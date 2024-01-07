@@ -43,7 +43,8 @@ MinimapStats, created & maintained by [Unhalted](https://github.com/DaleHuntGB),
 
 - Format: FPS [HomeMS], FPS [WorldMS], FPS, HomeMS [WorldMS], HomeMS, WorldMS.
 - Update Frequency in Seconds.
-- Hovering over the element will display some useful information in the tooltip. These include Raid / Dungeon Lockouts, Friend List information, Weekly M+ Runs & Your Keystone ![Tooltip Information](https://i.imgur.com/UyNt7RG.png).
+- Hovering over the element will display some useful information in the tooltip. These include Raid / Dungeon Lockouts, Friend List information, Weekly M+ Runs & Your Keystone.
+- ![Tooltip Information](https://i.imgur.com/UyNt7RG.png)
 
 ##### Instance Difficulty
 
