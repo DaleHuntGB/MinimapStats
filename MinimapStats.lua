@@ -3,6 +3,7 @@ local MSGUI = LibStub("AceGUI-3.0")
 local AddOnName = C_AddOns.GetAddOnMetadata("MinimapStats", "Title")
 local AddOnVersion = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
 local LSM = LibStub("LibSharedMedia-3.0")
+local OR = LibStub:GetLibrary("LibOpenRaid-1.0")
 local MSGUIShown = false
 local DebugMode = false
 local TestingInstanceDifficulty = false
@@ -247,6 +248,7 @@ function MinimapStats:OnInitialize()
         local formattedRuns = {}
         local MythicPlusAbbr =
         {
+            -- Season 3 Dungeons
             ["The Everbloom"] = "EB",
             ["Dawn of the Infinite: Galakrond's Fall"] = "DOTI: Galakrond's Fall",
             ["Dawn of the Infinite: Murozond's Rise"] = "DOTI: Murozond's Rise",
@@ -285,6 +287,18 @@ function MinimapStats:OnInitialize()
         end    
     end
 
+    local function GetPlayerKeystone()
+        local ORLibrary = OR.GetKeystoneInfo("player")
+        local playerKeystoneLevel = ORLibrary.level
+        local playerKeystone, _, _, keystoneIcon = C_ChallengeMode.GetMapUIInfo(ORLibrary.mythicPlusMapID)
+        local texturedIcon = "|T" .. keystoneIcon .. ":18:18:0|t "
+        if playerKeystone ~= nil then
+            GameTooltip:AddLine("Your Keystone", self.db.global.SecondaryFontColorR, self.db.global.SecondaryFontColorG, self.db.global.SecondaryFontColorB)
+            GameTooltip:AddLine(texturedIcon .. playerKeystone .. " [" .. playerKeystoneLevel .. "]", 1, 1, 1)
+        end
+    end
+
+
 
     function FetchTooltipInformation()
         GameTooltip:SetOwner(InformationFrame, "ANCHOR_BOTTOM", 0, 0)
@@ -294,6 +308,8 @@ function MinimapStats:OnInitialize()
         GetFriendInformation()
         GameTooltip:AddLine(" ")
         GetMythicPlusInformation()
+        GameTooltip:AddLine(" ")
+        GetPlayerKeystone()
         GameTooltip:Show()    
     end
 
