@@ -216,36 +216,6 @@ function MinimapStats:OnInitialize()
         end
     end
 
-    local function GetFriendInformation() 
-        local PrimaryFontColor = string.format("%02x%02x%02x", self.db.global.PrimaryFontColorR * 255, self.db.global.PrimaryFontColorG * 255, self.db.global.PrimaryFontColorB * 255)
-        local totalFriends, onlineFriends = BNGetNumFriends()
-        if totalFriends > 0 then
-        GameTooltip:AddLine("Friends" .." [" .. "|cFF" .. PrimaryFontColor .. totalFriends .. "|r".. "]", self.db.global.SecondaryFontColorR, self.db.global.SecondaryFontColorG, self.db.global.SecondaryFontColorB)
-        for i = 1, onlineFriends do
-                local btagName = C_BattleNet.GetFriendAccountInfo(i).accountName
-                local characterName = C_BattleNet.GetFriendAccountInfo(i).gameAccountInfo.characterName
-                local wowProjectID = C_BattleNet.GetFriendAccountInfo(i).gameAccountInfo.wowProjectID
-                if characterName ~= nil then
-                    local characterClass = C_BattleNet.GetFriendAccountInfo(i).gameAccountInfo.className:gsub("%s+", "")
-                    local characterLevel = C_BattleNet.GetFriendAccountInfo(i).gameAccountInfo.characterLevel
-                    local characterClassColor = C_ClassColor.GetClassColor(characterClass:upper()):GenerateHexColor()
-
-                    if wowProjectID == 1 then
-                        btagName = btagName .. " [" .. "|cFF8080FF" .. "Retail" .. "|r" .. "]"
-                    elseif wowProjectID == 2 then
-                        btagName = btagName .. " [" .. "|cFF8080FF" .. "Classic / SoD" .. "|r" .. "]"
-                    elseif wowProjectID == 5 then
-                        btagName = btagName .. " [" .. "|cFF8080FF" .. "BC" .. "|r" .. "]"
-                    elseif wowProjectID == 11 then
-                        btagName = btagName .. " [" .. "|cFF8080FF" .. "WotLK" .. "|r" .. "]"
-                    end
-                    GameTooltip:AddLine("|cFF" .. PrimaryFontColor .. btagName .. "|r" .. ": " .. "|c" .. characterClassColor .. characterName .. "|r " .. "[" .. characterLevel .. "]")
-                end
-            end
-        end
-        GameTooltip:AddLine(" ")
-    end
-
     local function GetMythicPlusInformation()
         local mythicRuns = C_MythicPlus.GetRunHistory(false, true)
         local PrimaryFontColor = string.format("%02x%02x%02x", self.db.global.PrimaryFontColorR * 255, self.db.global.PrimaryFontColorG * 255, self.db.global.PrimaryFontColorB * 255)
@@ -303,7 +273,6 @@ function MinimapStats:OnInitialize()
         GameTooltip:SetOwner(InformationFrame, "ANCHOR_BOTTOM", 0, 0)
 
         GetDungeonandRaidLockouts()
-        GetFriendInformation()
         GetMythicPlusInformation()
         GetPlayerKeystone()
         GameTooltip:Show()    
@@ -1007,7 +976,6 @@ function MinimapStats:OnEnable()
 
             local UpdateInformationInRealTimeCheckBox = MSGUI:Create("CheckBox")
             UpdateInformationInRealTimeCheckBox:SetLabel("Real Time Update")
-            UpdateInformationInRealTimeCheckBox:SetDescription("|cFFFF4040Performance Intensive|r")
             UpdateInformationInRealTimeCheckBox:SetFullWidth(true)
             UpdateInformationInRealTimeCheckBox:SetValue(self.db.global.UpdateInRealTime)
             UpdateInformationInRealTimeCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.UpdateInRealTime = value RefreshElements() end)
@@ -1016,7 +984,6 @@ function MinimapStats:OnEnable()
             local TooltipInformationCheckBox = MSGUI:Create("CheckBox")
             TooltipInformationCheckBox:SetLabel("Tooltip Information [Mouseover]")
             TooltipInformationCheckBox:SetFullWidth(true)
-            TooltipInformationCheckBox:SetDescription("Dungeon/Raid Lockouts\nTotal Friends & Characters Online\nWeekly Keys Completed\nCurrent Keystone")
             TooltipInformationCheckBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
             TooltipInformationCheckBox:SetValue(self.db.global.DisplayTooltipInformation)
             TooltipInformationCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayTooltipInformation = value RefreshElements() end)
