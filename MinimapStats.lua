@@ -166,21 +166,23 @@ function MinimapStats:OnInitialize()
     end
 
     function FetchInformation()
-        local FPS = ceil(GetFramerate())
-        local _, _, HomeMS, WorldMS = GetNetStats()
-        local FormatString = self.db.global.InformationFormatString;
+        if self.db.global.DisplayInformation then
+            local FPS = ceil(GetFramerate())
+            local _, _, HomeMS, WorldMS = GetNetStats()
+            local FormatString = self.db.global.InformationFormatString;
 
-        local FPSText = FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r"
-        local HomeMSText = HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
-        local WorldMSText = WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
+            local FPSText = FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r"
+            local HomeMSText = HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
+            local WorldMSText = WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
 
-        local KeyCodes = { ["FPS"] = FPSText, ["HomeMS"] = HomeMSText, ["WorldMS"] = WorldMSText, ["DualMS"] = HomeMSText .. " " .. WorldMSText}
+            local KeyCodes = { ["FPS"] = FPSText, ["HomeMS"] = HomeMSText, ["WorldMS"] = WorldMSText, ["DualMS"] = HomeMSText .. " " .. WorldMSText}
 
-        for KeyCode, value in pairs(KeyCodes) do
-            FormatString = FormatString:gsub(KeyCode, value)
+            for KeyCode, value in pairs(KeyCodes) do
+                FormatString = FormatString:gsub(KeyCode, value)
+            end
+
+            return FormatString
         end
-
-        return FormatString
     end
 
     local function GetDungeonandRaidLockouts()
