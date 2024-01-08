@@ -21,7 +21,8 @@ local DefaultSettings = {
         DisplayInformation = true,
         UpdateInRealTime = false,
         CoordinatesFormat = "NoDecimal",
-        InformationFormatString = "FPS [HomeMS]",
+        --InformationFormatString = "FPS [HomeMS]",
+        InformationFormat = "FPS [HomeMS]",
         DisplayInstanceDifficulty = true,
         UseClassColours = true,
         DisplayCoordinates = true,
@@ -169,20 +170,47 @@ function MinimapStats:OnInitialize()
         if self.db.global.DisplayInformation then
             local FPS = ceil(GetFramerate())
             local _, _, HomeMS, WorldMS = GetNetStats()
-            local FormatString = self.db.global.InformationFormatString;
+            --local FormatString = self.db.global.InformationFormatString;
 
-            local FPSText = FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r"
+            --[[local FPSText = FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r"
             local HomeMSText = HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
-            local WorldMSText = WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
+            local WorldMSText = WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"]]
 
-            local KeyCodes = { ["FPS"] = FPSText, ["HomeMS"] = HomeMSText, ["WorldMS"] = WorldMSText, ["DualMS"] = HomeMSText .. " " .. WorldMSText}
+            --local KeyCodes = { ["FPS"] = FPSText, ["HomeMS"] = HomeMSText, ["WorldMS"] = WorldMSText, ["DualMS"] = HomeMSText .. " " .. WorldMSText}
 
-            for KeyCode, value in pairs(KeyCodes) do
+            --[[for KeyCode, value in pairs(KeyCodes) do
                 FormatString = FormatString:gsub(KeyCode, value)
             end
 
-            return FormatString
+            return FormatString]]
+
+            if self.db.global.InformationFormat == "FPS [HomeMS]" then -- FPS [HomeMS]
+                return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " [" .. HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. "]"
+            elseif self.db.global.InformationFormat == "FPS [WorldMS]" then -- FPS [WorldMS]
+                return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " [" .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. "]"
+            elseif self.db.global.InformationFormat == "FPS | HomeMS" then -- FPS | HomeMS
+                return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " | " .. HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
+            elseif self.db.global.InformationFormat == "FPS | WorldMS" then -- FPS | WorldMS
+                return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " | " .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
+            elseif self.db.global.InformationFormat == "FPS (HomeMS)" then -- FPS (HomeMS)
+                return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " (" .. HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. ")"
+            elseif self.db.global.InformationFormat == "FPS (WorldMS)" then -- FPS (WorldMS)
+                return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " (" .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. ")"
+            elseif self.db.global.InformationFormat == "FPS" then -- FPS
+                return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r"
+            elseif self.db.global.InformationFormat == "HomeMS" then -- HomeMS
+                return HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
+            elseif self.db.global.InformationFormat == "WorldMS" then -- WorldMS
+                return WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
+            elseif self.db.global.InformationFormat == "HomeMS [WorldMS]" then -- HomeMS [WorldMS]
+                return HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. " [" .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. "]"
+            elseif self.db.global.InformationFormat == "HomeMS | WorldMS" then -- HomeMS | WorldMS
+                return HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. " | " .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
+            elseif self.db.global.InformationFormat == "HomeMS (WorldMS)" then -- HomeMS (WorldMS)
+                return HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. " (" .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. ")"               
+            end
         end
+
     end
 
     local function GetDungeonandRaidLockouts()
@@ -1060,7 +1088,17 @@ function MinimapStats:OnEnable()
             TooltipInformationCheckBox:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.DisplayTooltipInformation = value RefreshInformationElement() end)
             InformationToggleContainer:AddChild(TooltipInformationCheckBox)
 
-            local InformationFormatEditBox = MSGUI:Create("EditBox")
+            local InformationFormatDropdown = MSGUI:Create("Dropdown")
+            InformationFormatDropdown:SetLabel("Format")
+            local InformationFormatDropdownData = {["FPS [HomeMS]"] = "FPS [HomeMS]", ["FPS [WorldMS]"] = "FPS [WorldMS]", ["FPS | HomeMS"] = "FPS | HomeMS", ["FPS | WorldMS"] = "FPS | WorldMS", ["FPS (HomeMS)"] = "FPS (HomeMS)", ["FPS (WorldMS)"] = "FPS (WorldMS)", ["FPS"] = "FPS", ["HomeMS"] = "HomeMS", ["WorldMS"] = "WorldMS", ["HomeMS [WorldMS]"] = "HomeMS [WorldMS]", ["HomeMS | WorldMS"] = "HomeMS | WorldMS", ["HomeMS (WorldMS)"] = "HomeMS (WorldMS)"}
+            local InformationFormatDropdownOrder = { "FPS [HomeMS]", "FPS [WorldMS]", "FPS | HomeMS", "FPS | WorldMS", "FPS (HomeMS)", "FPS (WorldMS)", "FPS", "HomeMS", "WorldMS", "HomeMS [WorldMS]", "HomeMS | WorldMS", "HomeMS (WorldMS)" }
+            InformationFormatDropdown:SetList(InformationFormatDropdownData, InformationFormatDropdownOrder)
+            InformationFormatDropdown:SetValue(self.db.global.InformationFormat)
+            InformationFormatDropdown:SetFullWidth(true)
+            InformationFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) self.db.global.InformationFormat = value RefreshInformationElement() end)
+            InformationFormatContainer:AddChild(InformationFormatDropdown)
+
+            --[[local InformationFormatEditBox = MSGUI:Create("EditBox")
             InformationFormatEditBox:SetLabel("Format")
             InformationFormatEditBox:SetFullWidth(true)
             InformationFormatEditBox:SetText(self.db.global.InformationFormatString)
@@ -1070,7 +1108,7 @@ function MinimapStats:OnEnable()
             local InformationFormatEditBoxHelp = MSGUI:Create("Label")
             InformationFormatEditBoxHelp:SetFullWidth(true)
             InformationFormatEditBoxHelp:SetText("\n|cFFFFCC00Available Tags|r\n\n|cFF00FF00FPS|r = FPS\n|cFF00FF00HomeMS|r = Home Latency\n|cFF00FF00WorldMS|r = World Latency\n|cFF00FF00DualMS|r = Home & World MS\n\nAny seperators can be used. Some common ones are: |cFF40FF40[ ]|r or |cFF40FF40( )|r or |cFF40FF40< >|r or |cFF40FF40 | |r")
-            InformationFormatContainer:AddChild(InformationFormatEditBoxHelp)
+            InformationFormatContainer:AddChild(InformationFormatEditBoxHelp)]]
 
             local InformationFontSize = MSGUI:Create("Slider")
             InformationFontSize:SetLabel("Font Size")
