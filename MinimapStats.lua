@@ -414,7 +414,7 @@ function MinimapStats:OnInitialize()
         if MS.db.global.DisplayInstanceDifficulty then
             InstanceDifficultyFrame:SetScript("OnEvent", UpdateInstanceDifficultyFrame)
             if TestingInstanceDifficulty == true then
-                InstanceDifficultyFrame:SetScript("OnUpdate", MS:TestInstanceDifficultyFrame())
+                InstanceDifficultyFrame:SetScript("OnUpdate", TestInstanceDifficultyFrame)
             else
                 InstanceDifficultyFrame:SetScript("OnUpdate", nil)
             end
@@ -422,7 +422,7 @@ function MinimapStats:OnInitialize()
             InstanceDifficultyFrame:SetScript("OnEvent", nil)
         end
         if MS.db.global.DisplayCoordinates then
-            CoordinatesFrame:SetScript("OnUpdate", MS:UpdateCoordinatesFrame())
+            CoordinatesFrame:SetScript("OnUpdate", UpdateCoordinatesFrame)
         else
             CoordinatesFrame:SetScript("OnUpdate", nil)
         end
