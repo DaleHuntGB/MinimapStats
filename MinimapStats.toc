@@ -6,6 +6,5 @@
 ## OptionalDeps: SharedMedia-3.0, LibSharedMedia-3.0
 ## IconTexture: Interface\AddOns\MinimapStats\Libraries\MinimapStatsLogo
 ## DefaultState: Enabled
-
 Libraries\Embeds.xml
 MinimapStats.lua
