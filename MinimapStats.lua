@@ -260,8 +260,8 @@ function MinimapStats:OnInitialize()
         local ORLibrary = OR.GetKeystoneInfo("player")
         local playerKeystoneLevel = ORLibrary.level
         local playerKeystone, _, _, keystoneIcon = C_ChallengeMode.GetMapUIInfo(ORLibrary.mythicPlusMapID)
-        local texturedIcon = "|T" .. keystoneIcon .. ":18:18:0|t "
         if playerKeystone ~= nil then
+            local texturedIcon = "|T" .. keystoneIcon .. ":18:18:0|t "
             GameTooltip:AddDoubleLine("Your Keystone", texturedIcon .. playerKeystone .. " [" .. playerKeystoneLevel .. "]", MS.db.global.SecondaryFontColorR, MS.db.global.SecondaryFontColorG, MS.db.global.SecondaryFontColorB, 1, 1, 1)
         end
     end
