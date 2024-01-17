@@ -1,5 +1,5 @@
 ## Title: |cFF8080FFMinimapStats|r
-## Interface: 100200
+## Interface: 100205
 ## Version: 4.2.0
 ## Author: Unhalted
 ## SavedVariables: MSDB
