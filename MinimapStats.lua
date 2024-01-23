@@ -80,15 +80,21 @@ function MinimapStats:OnInitialize()
     local SecondaryFontColorRGB = { r = MS.db.global.SecondaryFontColorR, g = MS.db.global.SecondaryFontColorG, b = MS.db.global.SecondaryFontColorB }
     local SecondaryFontColor = string.format("%02x%02x%02x", SecondaryFontColorRGB.r * 255, SecondaryFontColorRGB.g * 255, SecondaryFontColorRGB.b * 255)
     function MS:FetchTime()
-        local CurrentHour = date("%H")
-        local CurrentMins = date("%M")
-        local CurrentHourTwelve = date("%I")
-        local CurrentMinsTwelve = date("%M")
-        local CurrentAMPM = date("%p")
+        local CurrentHour, CurrentMins = date("%H"), date("%M")
+        local CurrentHourTwelve, CurrentAMPM = date("%I"), date("%p")
         local CurrentServerHour, CurrentServerMins = GetGameTime()
-        local TwentyFourHourTime = CurrentHour .. ":" .. CurrentMins
-        local TwelveHourTime = CurrentHourTwelve .. ":" .. CurrentMinsTwelve .. " " .. CurrentAMPM
-        local ServerTime = CurrentServerHour .. ":" .. CurrentServerMins
+        
+        local TwentyFourHourTime = string.format("%s:%s", CurrentHour, CurrentMins)
+        local TwelveHourTime = string.format("%s:%s %s", CurrentHourTwelve, CurrentMins, CurrentAMPM)
+        local ServerTime = string.format("%02d:%02d", CurrentServerHour, CurrentServerMins)
+        local ServerTimeTwelveHour = ServerTime .. " AM"
+        
+        if CurrentServerHour > 12 then
+            ServerTimeTwelveHour = string.format("%02d:%02d PM", CurrentServerHour - 12, CurrentServerMins)
+        elseif CurrentServerHour == 12 then
+            ServerTimeTwelveHour = ServerTime .. " PM"
+        end
+    
         if MS.db.global.DisplayTime then
             if MS.db.global.TimeFormat == "TwentyFourHourTime" then
                 return TwentyFourHourTime
@@ -97,13 +103,7 @@ function MinimapStats:OnInitialize()
             elseif MS.db.global.TimeFormat == "ServerTime" then
                 return ServerTime
             elseif MS.db.global.TimeFormat == "TwelverHourServerTime" then
-                if CurrentServerHour < 12 then
-                    return string.format("%02d:%02d" .. " AM", CurrentServerHour, CurrentServerMins)
-                elseif CurrentServerHour > 12 then
-                    return string.format("%02d:%02d" .. " PM", CurrentServerHour - 12, CurrentServerMins)
-                elseif CurrentServerHour == 12 and CurrentServerMins < 60 then
-                    return string.format("%02d:%02d" .. " PM", CurrentServerHour, CurrentServerMins)
-                end
+                return ServerTimeTwelveHour
             end
         end
     end
