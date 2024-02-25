@@ -1178,6 +1178,9 @@ function MS:UpdateTimeFrame()
     MS.TimeFrame:ClearAllPoints()
     MS.TimeFrame:SetPoint(MSDB.TimeFrame.Point, Minimap, MSDB.TimeFrame.RelativePoint, MSDB.TimeFrame.OffsetX, MSDB.TimeFrame.OffsetY)
     MS.TimeFrameText:SetFont(MSDB.General.Font, MSDB.TimeFrame.FontSize, MSDB.General.FontOutline)
+    if MSDB.TimeFrame.Toggle then
+        MS.TimeFrameText:SetText(MS:GetCurrentTime())
+    end
     MS:SetupTimeFrameScripts()
 end
 
@@ -1186,6 +1189,9 @@ function MS:UpdateDateFrame()
     MS.DateFrame:ClearAllPoints()
     MS.DateFrame:SetPoint(MSDB.DateFrame.Point, Minimap, MSDB.DateFrame.RelativePoint, MSDB.DateFrame.OffsetX, MSDB.DateFrame.OffsetY)
     MS.DateFrameText:SetFont(MSDB.General.Font, MSDB.DateFrame.FontSize, MSDB.General.FontOutline)
+    if MSDB.DateFrame.Toggle then
+        MS.DateFrameText:SetText(MS:GetCurrentDate())
+    end
     MS:SetupDateFrameScripts()
 end
 
@@ -1194,6 +1200,9 @@ function MS:UpdateSystemStatsFrame()
     MS.SystemStatsFrame:ClearAllPoints()
     MS.SystemStatsFrame:SetPoint(MSDB.SystemStatsFrame.Point, Minimap, MSDB.SystemStatsFrame.RelativePoint, MSDB.SystemStatsFrame.OffsetX, MSDB.SystemStatsFrame.OffsetY)
     MS.SystemStatsFrameText:SetFont(MSDB.General.Font, MSDB.SystemStatsFrame.FontSize, MSDB.General.FontOutline)
+    if MSDB.SystemStatsFrame.Toggle then
+        MS.SystemStatsFrameText:SetText(MS:GetSystemStats())
+    end
     MS:SetupSystemStatsFrameScripts()
 end
 
@@ -1210,6 +1219,9 @@ function MS:UpdateInstanceDifficultyFrame()
     MS.InstanceDifficultyFrame:ClearAllPoints()
     MS.InstanceDifficultyFrame:SetPoint(MSDB.InstanceDifficultyFrame.Point, Minimap, MSDB.InstanceDifficultyFrame.RelativePoint, MSDB.InstanceDifficultyFrame.OffsetX, MSDB.InstanceDifficultyFrame.OffsetY)
     MS.InstanceDifficultyFrameText:SetFont(MSDB.General.Font, MSDB.InstanceDifficultyFrame.FontSize, MSDB.General.FontOutline)
+    if MSDB.InstanceDifficultyFrame.Toggle then
+        MS.InstanceDifficultyFrameText:SetText(MS:GetInstanceDifficulty())
+    end
     MS:SetupInstanceDifficultyFrameScripts()
 end
 
@@ -1218,12 +1230,14 @@ function MS:UpdateCoordinatesFrame()
     MS.CoordinatesFrame:ClearAllPoints()
     MS.CoordinatesFrame:SetPoint(MSDB.CoordinatesFrame.Point, Minimap, MSDB.CoordinatesFrame.RelativePoint, MSDB.CoordinatesFrame.OffsetX, MSDB.CoordinatesFrame.OffsetY)
     MS.CoordinatesFrameText:SetFont(MSDB.General.Font, MSDB.CoordinatesFrame.FontSize, MSDB.General.FontOutline)
+    if MSDB.CoordinatesFrame.Toggle then
+        MS.CoordinatesFrameText:SetText(MS:GetCoordinates())
+    end
     MS:SetupCoordinatesFrameScripts()
 end
 
 function MS:SetupTimeFrameScripts()
     if MSDB.TimeFrame.Toggle then
-        MS.TimeFrameText:SetText(MS:GetCurrentTime())
         MS.TimeFrame:SetScript("OnUpdate", function()
             if not TimeLastUpdate or TimeLastUpdate < GetTime() - MSDB.TimeFrame.UpdateRate then
                 TimeLastUpdate = GetTime()
@@ -1334,7 +1348,6 @@ end
 
 function MS:SetupCoordinatesFrameScripts()
     if MSDB.CoordinatesFrame.Toggle then
-        MS.CoordinatesFrameText:SetText(MS:GetCoordinates())
         MS.CoordinatesFrame:RegisterEvent("PLAYER_STARTED_MOVING")
         MS.CoordinatesFrame:RegisterEvent("PLAYER_STOPPED_MOVING")
         MS.CoordinatesFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -1361,6 +1374,7 @@ function MS:SetupCoordinatesFrameScripts()
                 MS.CoordinatesFrame:Show()
             end
         end)
+        MS.CoordinatesFrame:Show()
     else
         MS.CoordinatesFrame:UnregisterEvent("PLAYER_STARTED_MOVING")
         MS.CoordinatesFrame:UnregisterEvent("PLAYER_STOPPED_MOVING")
