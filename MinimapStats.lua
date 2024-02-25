@@ -796,76 +796,76 @@ function MS:GetInstanceDifficulty()
 end
 
 function MS:CreateTimeFrame()
-        TimeFrame = CreateFrame("Frame", "TimeFrame", Minimap)
-        TimeFrame:SetFrameStrata("MEDIUM")
-        TimeFrame:SetPoint(MSDB.TimeFrame.Point, Minimap, MSDB.TimeFrame.RelativePoint, MSDB.TimeFrame.OffsetX, MSDB.TimeFrame.OffsetY)
+        MS.TimeFrame = CreateFrame("Frame", "TimeFrame", Minimap)
+        MS.TimeFrame:SetFrameStrata("MEDIUM")
+        MS.TimeFrame:SetPoint(MSDB.TimeFrame.Point, Minimap, MSDB.TimeFrame.RelativePoint, MSDB.TimeFrame.OffsetX, MSDB.TimeFrame.OffsetY)
 
-        TimeFrameText = TimeFrame:CreateFontString("TimeFrameText", "OVERLAY")
-        TimeFrameText:SetPoint(MSDB.TimeFrame.Point, TimeFrame, MSDB.TimeFrame.RelativePoint, 0, 0)
-        TimeFrameText:SetFont(MSDB.General.Font, MSDB.TimeFrame.FontSize, MSDB.General.FontOutline)
-        TimeFrameText:SetText(MS:GetCurrentTime())
-        TimeFrameText:SetTextColor(1, 1, 1, 1)
-        TimeFrameText:SetShadowOffset(0, 0)
+        MS.TimeFrameText = MS.TimeFrame:CreateFontString("TimeFrameText", "OVERLAY")
+        MS.TimeFrameText:SetPoint(MSDB.TimeFrame.Point, MS.TimeFrame, MSDB.TimeFrame.RelativePoint, 0, 0)
+        MS.TimeFrameText:SetFont(MSDB.General.Font, MSDB.TimeFrame.FontSize, MSDB.General.FontOutline)
+        MS.TimeFrameText:SetText(MS:GetCurrentTime())
+        MS.TimeFrameText:SetTextColor(1, 1, 1, 1)
+        MS.TimeFrameText:SetShadowOffset(0, 0)
         
-        TimeFrame:SetSize(TimeFrameText:GetStringWidth() or 220, TimeFrameText:GetStringHeight() or 24)
+        MS.TimeFrame:SetSize(MS.TimeFrameText:GetStringWidth() or 220, MS.TimeFrameText:GetStringHeight() or 24)
 end
 
 function MS:CreateDateFrame()
-    DateFrame = CreateFrame("Frame", "DateFrame", Minimap)
-    DateFrame:SetFrameStrata("MEDIUM")
-    DateFrame:SetPoint(MSDB.DateFrame.Point, Minimap, MSDB.DateFrame.RelativePoint, MSDB.DateFrame.OffsetX, MSDB.DateFrame.OffsetY)
+    MS.DateFrame = CreateFrame("Frame", "DateFrame", Minimap)
+    MS.DateFrame:SetFrameStrata("MEDIUM")
+    MS.DateFrame:SetPoint(MSDB.DateFrame.Point, Minimap, MSDB.DateFrame.RelativePoint, MSDB.DateFrame.OffsetX, MSDB.DateFrame.OffsetY)
 
-    DateFrameText = DateFrame:CreateFontString("DateFrameText", "OVERLAY")
-    DateFrameText:SetPoint(MSDB.DateFrame.Point, DateFrame, MSDB.DateFrame.RelativePoint, 0, 0)
-    DateFrameText:SetFont(MSDB.General.Font, MSDB.DateFrame.FontSize, MSDB.General.FontOutline)
-    DateFrameText:SetText(MS:GetCurrentDate())
-    DateFrameText:SetTextColor(1, 1, 1, 1)
-    DateFrameText:SetShadowOffset(0, 0)
+    MS.DateFrameText = MS.DateFrame:CreateFontString("DateFrameText", "OVERLAY")
+    MS.DateFrameText:SetPoint(MSDB.DateFrame.Point, MS.DateFrame, MSDB.DateFrame.RelativePoint, 0, 0)
+    MS.DateFrameText:SetFont(MSDB.General.Font, MSDB.DateFrame.FontSize, MSDB.General.FontOutline)
+    MS.DateFrameText:SetText(MS:GetCurrentDate())
+    MS.DateFrameText:SetTextColor(1, 1, 1, 1)
+    MS.DateFrameText:SetShadowOffset(0, 0)
 
-    DateFrame:SetSize(DateFrameText:GetStringWidth() or 220, DateFrameText:GetStringHeight() or 12)
+    MS.DateFrame:SetSize(MS.DateFrameText:GetStringWidth() or 220, MS.DateFrameText:GetStringHeight() or 12)
 end
 
 function MS:CreateSystemsStatsFrame()
-    SystemStatsFrame = CreateFrame("Frame", "SystemStatsFrame", Minimap)
-    SystemStatsFrame:SetFrameStrata("MEDIUM")
-    SystemStatsFrame:SetPoint(MSDB.SystemStatsFrame.Point, Minimap, MSDB.SystemStatsFrame.RelativePoint, MSDB.SystemStatsFrame.OffsetX, MSDB.SystemStatsFrame.OffsetY)
+    MS.SystemStatsFrame = CreateFrame("Frame", "SystemStatsFrame", Minimap)
+    MS.SystemStatsFrame:SetFrameStrata("MEDIUM")
+    MS.SystemStatsFrame:SetPoint(MSDB.SystemStatsFrame.Point, Minimap, MSDB.SystemStatsFrame.RelativePoint, MSDB.SystemStatsFrame.OffsetX, MSDB.SystemStatsFrame.OffsetY)
 
-    SystemStatsFrameText = SystemStatsFrame:CreateFontString("SystemStatsFrameText", "OVERLAY")
-    SystemStatsFrameText:SetPoint(MSDB.SystemStatsFrame.Point, SystemStatsFrame, MSDB.SystemStatsFrame.RelativePoint, 0, 0)
-    SystemStatsFrameText:SetFont(MSDB.General.Font, MSDB.SystemStatsFrame.FontSize, MSDB.General.FontOutline)
-    SystemStatsFrameText:SetText(MS:GetSystemStats())
-    SystemStatsFrameText:SetShadowOffset(0, 0)
+    MS.SystemStatsFrameText = MS.SystemStatsFrame:CreateFontString("SystemStatsFrameText", "OVERLAY")
+    MS.SystemStatsFrameText:SetPoint(MSDB.SystemStatsFrame.Point, MS.SystemStatsFrame, MSDB.SystemStatsFrame.RelativePoint, 0, 0)
+    MS.SystemStatsFrameText:SetFont(MSDB.General.Font, MSDB.SystemStatsFrame.FontSize, MSDB.General.FontOutline)
+    MS.SystemStatsFrameText:SetText(MS:GetSystemStats())
+    MS.SystemStatsFrameText:SetShadowOffset(0, 0)
 
-    SystemStatsFrame:SetSize(SystemStatsFrameText:GetStringWidth() or 220, SystemStatsFrameText:GetStringHeight() or 12)
+    MS.SystemStatsFrame:SetSize(MS.SystemStatsFrameText:GetStringWidth() or 220, MS.SystemStatsFrameText:GetStringHeight() or 12)
 end
 
 function MS:CreateLocationFrame()
-    LocationFrame = CreateFrame("Frame", "LocationFrame", Minimap)
-    LocationFrame:SetFrameStrata("MEDIUM")
-    LocationFrame:SetPoint(MSDB.LocationFrame.Point, Minimap, MSDB.LocationFrame.RelativePoint, MSDB.LocationFrame.OffsetX, MSDB.LocationFrame.OffsetY)
+    MS.LocationFrame = CreateFrame("Frame", "LocationFrame", Minimap)
+    MS.LocationFrame:SetFrameStrata("MEDIUM")
+    MS.LocationFrame:SetPoint(MSDB.LocationFrame.Point, Minimap, MSDB.LocationFrame.RelativePoint, MSDB.LocationFrame.OffsetX, MSDB.LocationFrame.OffsetY)
 
-    LocationFrameText = LocationFrame:CreateFontString("LocationFrameText", "OVERLAY")
-    LocationFrameText:SetPoint(MSDB.LocationFrame.Point, LocationFrame, MSDB.LocationFrame.RelativePoint, 0, 0)
-    LocationFrameText:SetFont(MSDB.General.Font, MSDB.LocationFrame.FontSize, MSDB.General.FontOutline)
-    LocationFrameText:SetText(MS:GetLocation())
-    LocationFrameText:SetShadowOffset(0, 0)
+    MS.LocationFrameText = MS.LocationFrame:CreateFontString("LocationFrameText", "OVERLAY")
+    MS.LocationFrameText:SetPoint(MSDB.LocationFrame.Point, MS.LocationFrame, MSDB.LocationFrame.RelativePoint, 0, 0)
+    MS.LocationFrameText:SetFont(MSDB.General.Font, MSDB.LocationFrame.FontSize, MSDB.General.FontOutline)
+    MS.LocationFrameText:SetText(MS:GetLocation())
+    MS.LocationFrameText:SetShadowOffset(0, 0)
 
-    LocationFrame:SetSize(LocationFrameText:GetStringWidth() or 220, LocationFrameText:GetStringHeight() or 12)
+    MS.LocationFrame:SetSize(MS.LocationFrameText:GetStringWidth() or 220, MS.LocationFrameText:GetStringHeight() or 12)
 
 end
 
 function MS:CreateInstanceDifficultyFrame()
-    InstanceDifficultyFrame = CreateFrame("Frame", "InstanceDifficultyFrame", Minimap)
-    InstanceDifficultyFrame:SetFrameStrata("MEDIUM")
-    InstanceDifficultyFrame:SetPoint(MSDB.InstanceDifficultyFrame.Point, Minimap, MSDB.InstanceDifficultyFrame.RelativePoint, MSDB.InstanceDifficultyFrame.OffsetX, MSDB.InstanceDifficultyFrame.OffsetY)
+    MS.InstanceDifficultyFrame = CreateFrame("Frame", "InstanceDifficultyFrame", Minimap)
+    MS.InstanceDifficultyFrame:SetFrameStrata("MEDIUM")
+    MS.InstanceDifficultyFrame:SetPoint(MSDB.InstanceDifficultyFrame.Point, Minimap, MSDB.InstanceDifficultyFrame.RelativePoint, MSDB.InstanceDifficultyFrame.OffsetX, MSDB.InstanceDifficultyFrame.OffsetY)
 
-    InstanceDifficultyFrameText = InstanceDifficultyFrame:CreateFontString("InstanceDifficultyFrameText", "OVERLAY")
-    InstanceDifficultyFrameText:SetPoint(MSDB.InstanceDifficultyFrame.Point, InstanceDifficultyFrame, MSDB.InstanceDifficultyFrame.RelativePoint, 0, 0)
-    InstanceDifficultyFrameText:SetFont(MSDB.General.Font, MSDB.InstanceDifficultyFrame.FontSize, MSDB.General.FontOutline)
-    InstanceDifficultyFrameText:SetText(MS:GetInstanceDifficulty())
-    InstanceDifficultyFrameText:SetShadowOffset(0, 0)
+    MS.InstanceDifficultyFrameText = MS.InstanceDifficultyFrame:CreateFontString("InstanceDifficultyFrameText", "OVERLAY")
+    MS.InstanceDifficultyFrameText:SetPoint(MSDB.InstanceDifficultyFrame.Point, MS.InstanceDifficultyFrame, MSDB.InstanceDifficultyFrame.RelativePoint, 0, 0)
+    MS.InstanceDifficultyFrameText:SetFont(MSDB.General.Font, MSDB.InstanceDifficultyFrame.FontSize, MSDB.General.FontOutline)
+    MS.InstanceDifficultyFrameText:SetText(MS:GetInstanceDifficulty())
+    MS.InstanceDifficultyFrameText:SetShadowOffset(0, 0)
 
-    InstanceDifficultyFrame:SetSize(InstanceDifficultyFrameText:GetStringWidth() or 220, InstanceDifficultyFrameText:GetStringHeight() or 12)
+    MS.InstanceDifficultyFrame:SetSize(MS.InstanceDifficultyFrameText:GetStringWidth() or 220, MS.InstanceDifficultyFrameText:GetStringHeight() or 12)
 end
 
 function MS:UpdateFrames()
@@ -976,152 +976,152 @@ function MS:ResetDefaults()
 end
 
 function MS:UpdateTimeFrame()
-    TimeFrame:SetSize(TimeFrameText:GetStringWidth() or 220, TimeFrameText:GetStringHeight() or 24)
-    TimeFrame:ClearAllPoints()
-    TimeFrame:SetPoint(MSDB.TimeFrame.Point, Minimap, MSDB.TimeFrame.RelativePoint, MSDB.TimeFrame.OffsetX, MSDB.TimeFrame.OffsetY)
-    TimeFrameText:SetFont(MSDB.General.Font, MSDB.TimeFrame.FontSize, MSDB.General.FontOutline)
+    MS.TimeFrame:SetSize(MS.TimeFrameText:GetStringWidth() or 220, MS.TimeFrameText:GetStringHeight() or 24)
+    MS.TimeFrame:ClearAllPoints()
+    MS.TimeFrame:SetPoint(MSDB.TimeFrame.Point, Minimap, MSDB.TimeFrame.RelativePoint, MSDB.TimeFrame.OffsetX, MSDB.TimeFrame.OffsetY)
+    MS.TimeFrameText:SetFont(MSDB.General.Font, MSDB.TimeFrame.FontSize, MSDB.General.FontOutline)
     MS:SetupTimeFrameScripts()
 end
 
 function MS:UpdateDateFrame()
-    DateFrame:SetSize(DateFrameText:GetStringWidth() or 220, DateFrameText:GetStringHeight() or 12)
-    DateFrame:ClearAllPoints()
-    DateFrame:SetPoint(MSDB.DateFrame.Point, Minimap, MSDB.DateFrame.RelativePoint, MSDB.DateFrame.OffsetX, MSDB.DateFrame.OffsetY)
-    DateFrameText:SetFont(MSDB.General.Font, MSDB.DateFrame.FontSize, MSDB.General.FontOutline)
+    MS.DateFrame:SetSize(MS.DateFrameText:GetStringWidth() or 220, MS.DateFrameText:GetStringHeight() or 12)
+    MS.DateFrame:ClearAllPoints()
+    MS.DateFrame:SetPoint(MSDB.DateFrame.Point, Minimap, MSDB.DateFrame.RelativePoint, MSDB.DateFrame.OffsetX, MSDB.DateFrame.OffsetY)
+    MS.DateFrameText:SetFont(MSDB.General.Font, MSDB.DateFrame.FontSize, MSDB.General.FontOutline)
     MS:SetupDateFrameScripts()
 end
 
 function MS:UpdateSystemStatsFrame()
-    SystemStatsFrame:SetSize(SystemStatsFrameText:GetStringWidth() or 220, SystemStatsFrameText:GetStringHeight() or 12)
-    SystemStatsFrame:ClearAllPoints()
-    SystemStatsFrame:SetPoint(MSDB.SystemStatsFrame.Point, Minimap, MSDB.SystemStatsFrame.RelativePoint, MSDB.SystemStatsFrame.OffsetX, MSDB.SystemStatsFrame.OffsetY)
-    SystemStatsFrameText:SetFont(MSDB.General.Font, MSDB.SystemStatsFrame.FontSize, MSDB.General.FontOutline)
+    MS.SystemStatsFrame:SetSize(MS.SystemStatsFrameText:GetStringWidth() or 220, MS.SystemStatsFrameText:GetStringHeight() or 12)
+    MS.SystemStatsFrame:ClearAllPoints()
+    MS.SystemStatsFrame:SetPoint(MSDB.SystemStatsFrame.Point, Minimap, MSDB.SystemStatsFrame.RelativePoint, MSDB.SystemStatsFrame.OffsetX, MSDB.SystemStatsFrame.OffsetY)
+    MS.SystemStatsFrameText:SetFont(MSDB.General.Font, MSDB.SystemStatsFrame.FontSize, MSDB.General.FontOutline)
     MS:SetupSystemStatsFrameScripts()
 end
 
 function MS:UpdateLocationFrame()
-    LocationFrame:SetSize(LocationFrameText:GetStringWidth() or 220, LocationFrameText:GetStringHeight() or 12)
-    LocationFrame:ClearAllPoints()
-    LocationFrame:SetPoint(MSDB.LocationFrame.Point, Minimap, MSDB.LocationFrame.RelativePoint, MSDB.LocationFrame.OffsetX, MSDB.LocationFrame.OffsetY)
-    LocationFrameText:SetFont(MSDB.General.Font, MSDB.LocationFrame.FontSize, MSDB.General.FontOutline)
+    MS.LocationFrame:SetSize(MS.LocationFrameText:GetStringWidth() or 220, MS.LocationFrameText:GetStringHeight() or 12)
+    MS.LocationFrame:ClearAllPoints()
+    MS.LocationFrame:SetPoint(MSDB.LocationFrame.Point, Minimap, MSDB.LocationFrame.RelativePoint, MSDB.LocationFrame.OffsetX, MSDB.LocationFrame.OffsetY)
+    MS.LocationFrameText:SetFont(MSDB.General.Font, MSDB.LocationFrame.FontSize, MSDB.General.FontOutline)
     MS:SetupLocationFrameScripts()
 end
 
 function MS:UpdateInstanceDifficultyFrame()
-    InstanceDifficultyFrame:SetSize(InstanceDifficultyFrameText:GetStringWidth() or 220, InstanceDifficultyFrameText:GetStringHeight() or 12)
-    InstanceDifficultyFrame:ClearAllPoints()
-    InstanceDifficultyFrame:SetPoint(MSDB.InstanceDifficultyFrame.Point, Minimap, MSDB.InstanceDifficultyFrame.RelativePoint, MSDB.InstanceDifficultyFrame.OffsetX, MSDB.InstanceDifficultyFrame.OffsetY)
-    InstanceDifficultyFrameText:SetFont(MSDB.General.Font, MSDB.InstanceDifficultyFrame.FontSize, MSDB.General.FontOutline)
+    MS.InstanceDifficultyFrame:SetSize(MS.InstanceDifficultyFrameText:GetStringWidth() or 220, MS.InstanceDifficultyFrameText:GetStringHeight() or 12)
+    MS.InstanceDifficultyFrame:ClearAllPoints()
+    MS.InstanceDifficultyFrame:SetPoint(MSDB.InstanceDifficultyFrame.Point, Minimap, MSDB.InstanceDifficultyFrame.RelativePoint, MSDB.InstanceDifficultyFrame.OffsetX, MSDB.InstanceDifficultyFrame.OffsetY)
+    MS.InstanceDifficultyFrameText:SetFont(MSDB.General.Font, MSDB.InstanceDifficultyFrame.FontSize, MSDB.General.FontOutline)
     MS:SetupInstanceDifficultyFrameScripts()
 end
 
 function MS:SetupTimeFrameScripts()
     if MSDB.TimeFrame.Toggle then
-        TimeFrame:SetScript("OnUpdate", function()
+        MS.TimeFrame:SetScript("OnUpdate", function()
             if not TimeLastUpdate or TimeLastUpdate < GetTime() - MSDB.TimeFrame.UpdateRate then
                 TimeLastUpdate = GetTime()
-                TimeFrameText:SetText(MS:GetCurrentTime())
+                MS.TimeFrameText:SetText(MS:GetCurrentTime())
                 if DEBUG_MODE then
                     print(AddOnName .. ": Time Frame Updated")
                 end 
             end
         end)
-        TimeFrame:Show()
+        MS.TimeFrame:Show()
     else
-        TimeFrame:SetScript("OnUpdate", nil)
-        TimeFrame:Hide()
+        MS.TimeFrame:SetScript("OnUpdate", nil)
+        MS.TimeFrame:Hide()
     end
 end
 
 function MS:SetupDateFrameScripts()
     if MSDB.DateFrame.Toggle then
-        DateFrame:SetScript("OnUpdate", function()
+        MS.DateFrame:SetScript("OnUpdate", function()
             if not DateLastUpdate or DateLastUpdate < GetTime() - MSDB.DateFrame.UpdateRate then
                 DateLastUpdate = GetTime()
-                DateFrameText:SetText(MS:GetCurrentDate())
+                MS.DateFrameText:SetText(MS:GetCurrentDate())
                 if DEBUG_MODE then
                     print(AddOnName .. ": Date Frame Updated")
                 end
             end
         end)
-        DateFrame:SetScript("OnMouseDown", function(_, button) if button == "LeftButton" then ToggleCalendar() end end)
-        DateFrame:Show()
+        MS.DateFrame:SetScript("OnMouseDown", function(_, button) if button == "LeftButton" then ToggleCalendar() end end)
+        MS.DateFrame:Show()
     else
-        DateFrame:SetScript("OnUpdate", nil)
-        DateFrame:SetScript("OnMouseDown", nil)
-        DateFrame:Hide()
+        MS.DateFrame:SetScript("OnUpdate", nil)
+        MS.DateFrame:SetScript("OnMouseDown", nil)
+        MS.DateFrame:Hide()
     end
 end
 
 function MS:SetupSystemStatsFrameScripts()
     if MSDB.SystemStatsFrame.Toggle then
-        SystemStatsFrame:SetScript("OnUpdate", function()
+        MS.SystemStatsFrame:SetScript("OnUpdate", function()
             if not SystemStatsLastUpdate or SystemStatsLastUpdate < GetTime() - MSDB.SystemStatsFrame.UpdateRate then
                 SystemStatsLastUpdate = GetTime()
-                SystemStatsFrameText:SetText(MS:GetSystemStats())
+                MS.SystemStatsFrameText:SetText(MS:GetSystemStats())
                 if DEBUG_MODE then
                     print(AddOnName .. ": System Stats Frame Updated")
                 end
             end
         end)
-        SystemStatsFrame:Show()
+        MS.SystemStatsFrame:Show()
     else
-        SystemStatsFrame:SetScript("OnUpdate", nil)
-        SystemStatsFrame:Hide()
+        MS.SystemStatsFrame:SetScript("OnUpdate", nil)
+        MS.SystemStatsFrame:Hide()
     end
 end
 
 function MS:SetupLocationFrameScripts()
     if MSDB.LocationFrame.Toggle then
-        LocationFrame:RegisterEvent("ZONE_CHANGED")
-        LocationFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
-        LocationFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-        LocationFrame:SetScript("OnEvent", function(_, event)
+        MS.LocationFrame:RegisterEvent("ZONE_CHANGED")
+        MS.LocationFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
+        MS.LocationFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+        MS.LocationFrame:SetScript("OnEvent", function(_, event)
             if event == "ZONE_CHANGED" or 
             event == "ZONE_CHANGED_INDOORS" or 
             event == "ZONE_CHANGED_NEW_AREA" then
-                LocationFrameText:SetText(MS:GetLocation())
+                MS.LocationFrameText:SetText(MS:GetLocation())
                 if DEBUG_MODE then
                     print(AddOnName .. ": Location Frame Updated")
                 end
             end
         end)
-        LocationFrame:Show()
+        MS.LocationFrame:Show()
     else
-        LocationFrame:UnregisterEvent("ZONE_CHANGED")
-        LocationFrame:UnregisterEvent("ZONE_CHANGED_INDOORS")
-        LocationFrame:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
-        LocationFrame:Hide();
+        MS.LocationFrame:UnregisterEvent("ZONE_CHANGED")
+        MS.LocationFrame:UnregisterEvent("ZONE_CHANGED_INDOORS")
+        MS.LocationFrame:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
+        MS.LocationFrame:Hide();
     end
 end
 
 function MS:SetupInstanceDifficultyFrameScripts()
     if MSDB.InstanceDifficultyFrame.Toggle then
-        InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED")
-        InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
-        InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-        InstanceDifficultyFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-        InstanceDifficultyFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-        InstanceDifficultyFrame:SetScript("OnEvent", function(_, event)
+        MS.InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED")
+        MS.InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
+        MS.InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+        MS.InstanceDifficultyFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+        MS.InstanceDifficultyFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+        MS.InstanceDifficultyFrame:SetScript("OnEvent", function(_, event)
             if event == "ZONE_CHANGED" or 
             event == "ZONE_CHANGED_INDOORS" or 
             event == "ZONE_CHANGED_NEW_AREA" or 
             event == "PLAYER_ENTERING_WORLD" or 
             event == "GROUP_ROSTER_UPDATE" then
-                InstanceDifficultyFrameText:SetText(MS:GetInstanceDifficulty())
+                MS.InstanceDifficultyFrameText:SetText(MS:GetInstanceDifficulty())
                 if DEBUG_MODE then
                     print(AddOnName .. ": Instance Difficulty Frame Updated")
                 end
             end
         end)
-        InstanceDifficultyFrame:Show()
+        MS.InstanceDifficultyFrame:Show()
     else
-        InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED")
-        InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED_INDOORS")
-        InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
-        InstanceDifficultyFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
-        InstanceDifficultyFrame:UnregisterEvent("GROUP_ROSTER_UPDATE")
-        InstanceDifficultyFrame:Hide()
+        MS.InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED")
+        MS.InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED_INDOORS")
+        MS.InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
+        MS.InstanceDifficultyFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+        MS.InstanceDifficultyFrame:UnregisterEvent("GROUP_ROSTER_UPDATE")
+        MS.InstanceDifficultyFrame:Hide()
     end
 end
 
