@@ -5,6 +5,7 @@ local LSM = LibStub("LibSharedMedia-3.0")
 local ACC = LibStub("AceConfig-3.0")
 local ACD = LibStub("AceConfigDialog-3.0")
 local LSMFonts = {}
+local DEBUG_MODE = false
 
 MS.MAX_X = 1000
 MS.MAX_Y = 1000
@@ -35,6 +36,7 @@ function MS:SetupDB()
             ["ClassColor"] = false,
         },
         ["TimeFrame"] = {
+            ["Toggle"] = true,
             ["Point"] = "BOTTOM",
             ["RelativePoint"] = "BOTTOM",
             ["OffsetX"] = 0,
@@ -44,6 +46,7 @@ function MS:SetupDB()
             ["UseServerTime"] = false,
         },
         ["DateFrame"] = {
+            ["Toggle"] = true,
             ["Point"] = "TOP",
             ["RelativePoint"] = "TOP",
             ["OffsetX"] = 0,
@@ -52,6 +55,7 @@ function MS:SetupDB()
             ["UpdateRate"] = 60
         },
         ["SystemStatsFrame"] = {
+            ["Toggle"] = true,
             ["Point"] = "BOTTOM",
             ["RelativePoint"] = "BOTTOM",
             ["OffsetX"] = 0,
@@ -60,6 +64,7 @@ function MS:SetupDB()
             ["UpdateRate"] = 10
         },
         ["LocationFrame"] = {
+            ["Toggle"] = true,
             ["Point"] = "TOP",
             ["RelativePoint"] = "TOP",
             ["OffsetX"] = 0,
@@ -67,6 +72,7 @@ function MS:SetupDB()
             ["FontSize"] = 12
         },
         ["InstanceDifficultyFrame"] = {
+            ["Toggle"] = true,
             ["Point"] = "TOPLEFT",
             ["RelativePoint"] = "TOPLEFT",
             ["OffsetX"] = 3,
@@ -111,7 +117,7 @@ function MS:CreateOptions()
                             ["BOTTOMRIGHT"] = "Bottom Right"
                         },
                         get = function() return MSDB.TimeFrame.Point end,
-                        set = function(_, value) MSDB.TimeFrame.Point = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.TimeFrame.Point = value MS:UpdateTimeFrame() end
                     },
                     RelativePoint = {
                         type = "select",
@@ -131,7 +137,7 @@ function MS:CreateOptions()
                             ["BOTTOMRIGHT"] = "Bottom Right"
                         },
                         get = function() return MSDB.TimeFrame.RelativePoint end,
-                        set = function(_, value) MSDB.TimeFrame.RelativePoint = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.TimeFrame.RelativePoint = value MS:UpdateTimeFrame() end
                     },
                     OffsetX = {
                         type = "range",
@@ -143,7 +149,7 @@ function MS:CreateOptions()
                         step = 1,
                         width = "full",
                         get = function() return MSDB.TimeFrame.OffsetX end,
-                        set = function(_, value) MSDB.TimeFrame.OffsetX = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.TimeFrame.OffsetX = value MS:UpdateTimeFrame() end
                     },
                     OffsetY = {
                         type = "range",
@@ -155,7 +161,7 @@ function MS:CreateOptions()
                         step = 1,
                         width = "full",
                         get = function() return MSDB.TimeFrame.OffsetY end,
-                        set = function(_, value) MSDB.TimeFrame.OffsetY = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.TimeFrame.OffsetY = value MS:UpdateTimeFrame() end
                     },
                     FontSize = {
                         type = "range",
@@ -167,7 +173,7 @@ function MS:CreateOptions()
                         step = 1,
                         width = "full",
                         get = function() return MSDB.TimeFrame.FontSize end,
-                        set = function(_, value) MSDB.TimeFrame.FontSize = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.TimeFrame.FontSize = value MS:UpdateTimeFrame() end
                     },
                     UpdateRate = {
                         type = "range",
@@ -187,8 +193,16 @@ function MS:CreateOptions()
                         desc = "Server Time instead of Local Time",
                         order = 1,
                         get = function() return MSDB.TimeFrame.UseServerTime end,
-                        set = function(_, value) MSDB.TimeFrame.UseServerTime = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.TimeFrame.UseServerTime = value MS:UpdateTimeFrame() end
                     },
+                    Toggle = {
+                        type = "toggle",
+                        name = "Toggle",
+                        desc = "Show/Hide Time Frame",
+                        order = 2,
+                        get = function() return MSDB.TimeFrame.Toggle end,
+                        set = function(_, value) MSDB.TimeFrame.Toggle = value MS:UpdateTimeFrame() end
+                    }
                 }
             },
             DateFrame = {
@@ -201,7 +215,7 @@ function MS:CreateOptions()
                         name = "Point",
                         desc = "Change Anchor Point of the Frame",
                         width = "full",
-                        order = 1,
+                        order = 2,
                         values = {
                             ["TOPLEFT"] = "Top Left",
                             ["TOP"] = "Top",
@@ -214,13 +228,13 @@ function MS:CreateOptions()
                             ["BOTTOMRIGHT"] = "Bottom Right"
                         },
                         get = function() return MSDB.DateFrame.Point end,
-                        set = function(_, value) MSDB.DateFrame.Point = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.DateFrame.Point = value MS:UpdateDateFrame() end
                     },
                     RelativePoint = {
                         type = "select",
                         name = "Relative Point",
                         desc = "Change Relative Point of the Frame",
-                        order = 2,
+                        order = 3,
                         width = "full",
                         values = {
                             ["TOPLEFT"] = "Top Left",
@@ -234,49 +248,49 @@ function MS:CreateOptions()
                             ["BOTTOMRIGHT"] = "Bottom Right"
                         },
                         get = function() return MSDB.DateFrame.RelativePoint end,
-                        set = function(_, value) MSDB.DateFrame.RelativePoint = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.DateFrame.RelativePoint = value MS:UpdateDateFrame() end
                     },
                     OffsetX = {
                         type = "range",
                         name = "Offset X",
                         desc = "X Offset of the Frame",
-                        order = 3,
+                        order = 4,
                         min = MS.MIN_X,
                         max = MS.MAX_X,
                         step = 1,
                         width = "full",
                         get = function() return MSDB.DateFrame.OffsetX end,
-                        set = function(_, value) MSDB.DateFrame.OffsetX = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.DateFrame.OffsetX = value MS:UpdateDateFrame() end
                     },
                     OffsetY = {
                         type = "range",
                         name = "Offset Y",
                         desc = "Y Offset of the Frame",
-                        order = 4,
+                        order = 5,
                         min = MS.MIN_Y,
                         max = MS.MAX_Y,
                         step = 1,
                         width = "full",
                         get = function() return MSDB.DateFrame.OffsetY end,
-                        set = function(_, value) MSDB.DateFrame.OffsetY = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.DateFrame.OffsetY = value MS:UpdateDateFrame() end
                     },
                     FontSize = {
                         type = "range",
                         name = "Font Size",
                         desc = "Text Font Size",
-                        order = 5,
+                        order = 6,
                         min = 8,
                         max = 32,
                         step = 1,
                         width = "full",
                         get = function() return MSDB.DateFrame.FontSize end,
-                        set = function(_, value) MSDB.DateFrame.FontSize = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.DateFrame.FontSize = value MS:UpdateDateFrame() end
                     },
                     UpdateRate = {
                         type = "range",
                         name = "Update Rate",
                         desc = "Update Frequency in Seconds",
-                        order = 6,
+                        order = 7,
                         min = 1,
                         max = 60,
                         step = 1,
@@ -284,6 +298,14 @@ function MS:CreateOptions()
                         get = function() return MSDB.DateFrame.UpdateRate end,
                         set = function(_, value) MSDB.DateFrame.UpdateRate = value end
                     },
+                    Toggle = {
+                        type = "toggle",
+                        name = "Toggle",
+                        desc = "Show/Hide Date Frame",
+                        order = 1,
+                        get = function() return MSDB.DateFrame.Toggle end,
+                        set = function(_, value) MSDB.DateFrame.Toggle = value MS:UpdateDateFrame() end
+                    }
                 }
             },
             SystemStatsFrame = {
@@ -296,7 +318,7 @@ function MS:CreateOptions()
                         name = "Point",
                         desc = "Change Anchor Point of the Frame",
                         width = "full",
-                        order = 1,
+                        order = 2,
                         values = {
                             ["TOPLEFT"] = "Top Left",
                             ["TOP"] = "Top",
@@ -309,13 +331,13 @@ function MS:CreateOptions()
                             ["BOTTOMRIGHT"] = "Bottom Right"
                         },
                         get = function() return MSDB.SystemStatsFrame.Point end,
-                        set = function(_, value) MSDB.SystemStatsFrame.Point = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.SystemStatsFrame.Point = value MS:UpdateSystemStatsFrame() end
                     },
                     RelativePoint = {
                         type = "select",
                         name = "Relative Point",
                         desc = "Change Relative Point of the Frame",
-                        order = 2,
+                        order = 3,
                         width = "full",
                         values = {
                             ["TOPLEFT"] = "Top Left",
@@ -329,49 +351,49 @@ function MS:CreateOptions()
                             ["BOTTOMRIGHT"] = "Bottom Right"
                         },
                         get = function() return MSDB.SystemStatsFrame.RelativePoint end,
-                        set = function(_, value) MSDB.SystemStatsFrame.RelativePoint = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.SystemStatsFrame.RelativePoint = value MS:UpdateSystemStatsFrame() end
                     },
                     OffsetX = {
                         type = "range",
                         name = "Offset X",
                         desc = "X Offset of the Frame",
-                        order = 3,
+                        order = 4,
                         min = MS.MIN_X,
                         max = MS.MAX_X,
                         step = 1,
                         width = "full",
                         get = function() return MSDB.SystemStatsFrame.OffsetX end,
-                        set = function(_, value) MSDB.SystemStatsFrame.OffsetX = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.SystemStatsFrame.OffsetX = value MS:UpdateSystemStatsFrame() end
                     },
                     OffsetY = {
                         type = "range",
                         name = "Offset Y",
                         desc = "Y Offset of the Frame",
-                        order = 4,
+                        order = 5,
                         min = MS.MIN_Y,
                         max = MS.MAX_Y,
                         step = 1,
                         width = "full",
                         get = function() return MSDB.SystemStatsFrame.OffsetY end,
-                        set = function(_, value) MSDB.SystemStatsFrame.OffsetY = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.SystemStatsFrame.OffsetY = value MS:UpdateSystemStatsFrame() end
                     },
                     FontSize = {
                         type = "range",
                         name = "Font Size",
                         desc = "Text Font Size",
-                        order = 5,
+                        order = 6,
                         min = 8,
                         max = 32,
                         step = 1,
                         width = "full",
                         get = function() return MSDB.SystemStatsFrame.FontSize end,
-                        set = function(_, value) MSDB.SystemStatsFrame.FontSize = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.SystemStatsFrame.FontSize = value MS:UpdateSystemStatsFrame() end
                     },
                     UpdateRate = {
                         type = "range",
                         name = "Update Rate",
                         desc = "Update Frequency in Seconds",
-                        order = 6,
+                        order = 7,
                         min = 1,
                         max = 60,
                         step = 1,
@@ -379,6 +401,14 @@ function MS:CreateOptions()
                         get = function() return MSDB.SystemStatsFrame.UpdateRate end,
                         set = function(_, value) MSDB.SystemStatsFrame.UpdateRate = value end
                     },
+                    Toggle = {
+                        type = "toggle",
+                        name = "Toggle",
+                        desc = "Show/Hide System Stats Frame",
+                        order = 1,
+                        get = function() return MSDB.SystemStatsFrame.Toggle end,
+                        set = function(_, value) MSDB.SystemStatsFrame.Toggle = value MS:UpdateSystemStatsFrame() end
+                    }
                 }
             },
             LocationFrame = {
@@ -391,7 +421,7 @@ function MS:CreateOptions()
                         name = "Point",
                         desc = "Change Anchor Point of the Frame",
                         width = "full",
-                        order = 1,
+                        order = 2,
                         values = {
                             ["TOPLEFT"] = "Top Left",
                             ["TOP"] = "Top",
@@ -404,13 +434,13 @@ function MS:CreateOptions()
                             ["BOTTOMRIGHT"] = "Bottom Right"
                         },
                         get = function() return MSDB.LocationFrame.Point end,
-                        set = function(_, value) MSDB.LocationFrame.Point = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.LocationFrame.Point = value MS:UpdateLocationFrame() end
                     },
                     RelativePoint = {
                         type = "select",
                         name = "Relative Point",
                         desc = "Change Relative Point of the Frame",
-                        order = 2,
+                        order = 3,
                         width = "full",
                         values = {
                             ["TOPLEFT"] = "Top Left",
@@ -424,44 +454,52 @@ function MS:CreateOptions()
                             ["BOTTOMRIGHT"] = "Bottom Right"
                         },
                         get = function() return MSDB.LocationFrame.RelativePoint end,
-                        set = function(_, value) MSDB.LocationFrame.RelativePoint = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.LocationFrame.RelativePoint = value MS:UpdateLocationFrame() end
                     },
                     OffsetX = {
                         type = "range",
                         name = "Offset X",
                         desc = "X Offset of the Frame",
-                        order = 3,
+                        order = 4,
                         min = MS.MIN_X,
                         max = MS.MAX_X,
                         step = 1,
                         width = "full",
                         get = function() return MSDB.LocationFrame.OffsetX end,
-                        set = function(_, value) MSDB.LocationFrame.OffsetX = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.LocationFrame.OffsetX = value MS:UpdateLocationFrame() end
                     },
                     OffsetY = {
                         type = "range",
                         name = "Offset Y",
                         desc = "Y Offset of the Frame",
-                        order = 4,
+                        order = 5,
                         min = MS.MIN_Y,
                         max = MS.MAX_Y,
                         step = 1,
                         width = "full",
                         get = function() return MSDB.LocationFrame.OffsetY end,
-                        set = function(_, value) MSDB.LocationFrame.OffsetY = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.LocationFrame.OffsetY = value MS:UpdateLocationFrame() end
                     },
                     FontSize = {
                         type = "range",
                         name = "Font Size",
                         desc = "Text Font Size",
-                        order = 5,
+                        order = 6,
                         min = 8,
                         max = 32,
                         step = 1,
                         width = "full",
                         get = function() return MSDB.LocationFrame.FontSize end,
-                        set = function(_, value) MSDB.LocationFrame.FontSize = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.LocationFrame.FontSize = value MS:UpdateLocationFrame() end
                     },
+                    Toggle = {
+                        type = "toggle",
+                        name = "Toggle",
+                        desc = "Show/Hide Location Frame",
+                        order = 1,
+                        get = function() return MSDB.LocationFrame.Toggle end,
+                        set = function(_, value) MSDB.LocationFrame.Toggle = value MS:UpdateLocationFrame() end
+                    }
                 }
             },
             InstanceDifficultyFrame = {
@@ -474,7 +512,7 @@ function MS:CreateOptions()
                         name = "Point",
                         desc = "Change Anchor Point of the Frame",
                         width = "full",
-                        order = 1,
+                        order = 2,
                         values = {
                             ["TOPLEFT"] = "Top Left",
                             ["TOP"] = "Top",
@@ -487,13 +525,13 @@ function MS:CreateOptions()
                             ["BOTTOMRIGHT"] = "Bottom Right"
                         },
                         get = function() return MSDB.InstanceDifficultyFrame.Point end,
-                        set = function(_, value) MSDB.InstanceDifficultyFrame.Point = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.InstanceDifficultyFrame.Point = value MS:UpdateInstanceDifficultyFrame() end
                     },
                     RelativePoint = {
                         type = "select",
                         name = "Relative Point",
                         desc = "Change Relative Point of the Frame",
-                        order = 2,
+                        order = 3,
                         width = "full",
                         values = {
                             ["TOPLEFT"] = "Top Left",
@@ -507,44 +545,52 @@ function MS:CreateOptions()
                             ["BOTTOMRIGHT"] = "Bottom Right"
                         },
                         get = function() return MSDB.InstanceDifficultyFrame.RelativePoint end,
-                        set = function(_, value) MSDB.InstanceDifficultyFrame.RelativePoint = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.InstanceDifficultyFrame.RelativePoint = value MS:UpdateInstanceDifficultyFrame() end
                     },
                     OffsetX = {
                         type = "range",
                         name = "Offset X",
                         desc = "X Offset of the Frame",
-                        order = 3,
+                        order = 4,
                         min = MS.MIN_X,
                         max = MS.MAX_X,
                         step = 1,
                         width = "full",
                         get = function() return MSDB.InstanceDifficultyFrame.OffsetX end,
-                        set = function(_, value) MSDB.InstanceDifficultyFrame.OffsetX = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.InstanceDifficultyFrame.OffsetX = value MS:UpdateInstanceDifficultyFrame() end
                     },
                     OffsetY = {
                         type = "range",
                         name = "Offset Y",
                         desc = "Y Offset of the Frame",
-                        order = 4,
+                        order = 5,
                         min = MS.MIN_Y,
                         max = MS.MAX_Y,
                         step = 1,
                         width = "full",
                         get = function() return MSDB.InstanceDifficultyFrame.OffsetY end,
-                        set = function(_, value) MSDB.InstanceDifficultyFrame.OffsetY = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.InstanceDifficultyFrame.OffsetY = value MS:UpdateInstanceDifficultyFrame() end
                     },
                     FontSize = {
                         type = "range",
                         name = "Font Size",
                         desc = "Text Font Size",
-                        order = 5,
+                        order = 6,
                         min = 8,
                         max = 32,
                         step = 1,
                         width = "full",
                         get = function() return MSDB.InstanceDifficultyFrame.FontSize end,
-                        set = function(_, value) MSDB.InstanceDifficultyFrame.FontSize = value MS:UpdateFrames() end
+                        set = function(_, value) MSDB.InstanceDifficultyFrame.FontSize = value MS:UpdateInstanceDifficultyFrame() end
                     },
+                    Toggle = {
+                        type = "toggle",
+                        name = "Toggle",
+                        desc = "Show/Hide Instance Difficulty Frame",
+                        order = 1,
+                        get = function() return MSDB.InstanceDifficultyFrame.Toggle end,
+                        set = function(_, value) MSDB.InstanceDifficultyFrame.Toggle = value MS:UpdateInstanceDifficultyFrame() end
+                    }
                 }
             },
             General = {
@@ -583,7 +629,7 @@ function MS:CreateOptions()
                         order = 1,
                         hasAlpha = false,
                         get = function() return MSDB.General.AccentColorR, MSDB.General.AccentColorG, MSDB.General.AccentColorB end,
-                        set = function(_, r, g, b) MSDB.General.AccentColorR = r MSDB.General.AccentColorG = g MSDB.General.AccentColorB = b MSDB.General.AccentColor = string.format("|cFF%02x%02x%02x", r * 255, g * 255, b * 255) MS:UpdateColourSelection() end
+                        set = function(_, r, g, b) MSDB.General.AccentColorR = r MSDB.General.AccentColorG = g MSDB.General.AccentColorB = b MSDB.General.AccentColor = string.format("|cFF%02x%02x%02x", r * 255, g * 255, b * 255) MS:UpdateFrames() end
                     },
                     ClassColor = {
                         type = "toggle",
@@ -591,7 +637,7 @@ function MS:CreateOptions()
                         desc = "Change the accent color to your class color",
                         order = 2,
                         get = function() return MSDB.General.ClassColor end,
-                        set = function(_, value) MSDB.General.ClassColor = value MS:UpdateColourSelection() MS:UpdateFrames() end
+                        set = function(_, value) MSDB.General.ClassColor = value MS:UpdateFrames() end
                     },
                     ResetDefaults = {
                         type = "execute",
@@ -627,6 +673,7 @@ function MS:CreateFrames()
     MS:CreateSystemsStatsFrame()
     MS:CreateLocationFrame()
     MS:CreateInstanceDifficultyFrame()
+    MS:SetupScripts()
 end
 
 function MS:FetchSharedMediaFonts()
@@ -749,25 +796,18 @@ function MS:GetInstanceDifficulty()
 end
 
 function MS:CreateTimeFrame()
-    TimeFrame = CreateFrame("Frame", "TimeFrame", Minimap)
-    TimeFrame:SetFrameStrata("MEDIUM")
-    TimeFrame:SetPoint(MSDB.TimeFrame.Point, Minimap, MSDB.TimeFrame.RelativePoint, MSDB.TimeFrame.OffsetX, MSDB.TimeFrame.OffsetY)
+        TimeFrame = CreateFrame("Frame", "TimeFrame", Minimap)
+        TimeFrame:SetFrameStrata("MEDIUM")
+        TimeFrame:SetPoint(MSDB.TimeFrame.Point, Minimap, MSDB.TimeFrame.RelativePoint, MSDB.TimeFrame.OffsetX, MSDB.TimeFrame.OffsetY)
 
-    TimeFrameText = TimeFrame:CreateFontString("TimeFrameText", "OVERLAY")
-    TimeFrameText:SetPoint(MSDB.TimeFrame.Point, TimeFrame, MSDB.TimeFrame.RelativePoint, 0, 0)
-    TimeFrameText:SetFont(MSDB.General.Font, MSDB.TimeFrame.FontSize, MSDB.General.FontOutline)
-    TimeFrameText:SetText(MS:GetCurrentTime())
-    TimeFrameText:SetTextColor(1, 1, 1, 1)
-    TimeFrameText:SetShadowOffset(0, 0)
-    
-    TimeFrame:SetSize(TimeFrameText:GetStringWidth() or 220, TimeFrameText:GetStringHeight() or 24)
-
-    TimeFrame:SetScript("OnUpdate", function()
-        if not TimeLastUpdate or TimeLastUpdate < GetTime() - MSDB.TimeFrame.UpdateRate then
-            TimeLastUpdate = GetTime()
-            TimeFrameText:SetText(MS:GetCurrentTime())
-        end
-    end)
+        TimeFrameText = TimeFrame:CreateFontString("TimeFrameText", "OVERLAY")
+        TimeFrameText:SetPoint(MSDB.TimeFrame.Point, TimeFrame, MSDB.TimeFrame.RelativePoint, 0, 0)
+        TimeFrameText:SetFont(MSDB.General.Font, MSDB.TimeFrame.FontSize, MSDB.General.FontOutline)
+        TimeFrameText:SetText(MS:GetCurrentTime())
+        TimeFrameText:SetTextColor(1, 1, 1, 1)
+        TimeFrameText:SetShadowOffset(0, 0)
+        
+        TimeFrame:SetSize(TimeFrameText:GetStringWidth() or 220, TimeFrameText:GetStringHeight() or 24)
 end
 
 function MS:CreateDateFrame()
@@ -783,15 +823,6 @@ function MS:CreateDateFrame()
     DateFrameText:SetShadowOffset(0, 0)
 
     DateFrame:SetSize(DateFrameText:GetStringWidth() or 220, DateFrameText:GetStringHeight() or 12)
-
-    DateFrame:SetScript("OnUpdate", function()
-        if not DateLastUpdate or DateLastUpdate < GetTime() - MSDB.DateFrame.UpdateRate then
-            DateLastUpdate = GetTime()
-            DateFrameText:SetText(MS:GetCurrentDate())
-        end
-    end)
-
-    DateFrame:SetScript("OnMouseDown", function(_, button) if button == "LeftButton" then ToggleCalendar() end end)
 end
 
 function MS:CreateSystemsStatsFrame()
@@ -806,13 +837,6 @@ function MS:CreateSystemsStatsFrame()
     SystemStatsFrameText:SetShadowOffset(0, 0)
 
     SystemStatsFrame:SetSize(SystemStatsFrameText:GetStringWidth() or 220, SystemStatsFrameText:GetStringHeight() or 12)
-
-    SystemStatsFrame:SetScript("OnUpdate", function()
-        if not SystemStatsLastUpdate or SystemStatsLastUpdate < GetTime() - MSDB.SystemStatsFrame.UpdateRate then
-            SystemStatsLastUpdate = GetTime()
-            SystemStatsFrameText:SetText(MS:GetSystemStats())
-        end
-    end)
 end
 
 function MS:CreateLocationFrame()
@@ -828,16 +852,6 @@ function MS:CreateLocationFrame()
 
     LocationFrame:SetSize(LocationFrameText:GetStringWidth() or 220, LocationFrameText:GetStringHeight() or 12)
 
-    LocationFrame:RegisterEvent("ZONE_CHANGED")
-    LocationFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
-    LocationFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-    LocationFrame:SetScript("OnEvent", function(_, event)
-        if event == "ZONE_CHANGED" or 
-        event == "ZONE_CHANGED_INDOORS" or 
-        event == "ZONE_CHANGED_NEW_AREA" then
-            LocationFrameText:SetText(MS:GetLocation())
-        end
-    end)
 end
 
 function MS:CreateInstanceDifficultyFrame()
@@ -852,49 +866,16 @@ function MS:CreateInstanceDifficultyFrame()
     InstanceDifficultyFrameText:SetShadowOffset(0, 0)
 
     InstanceDifficultyFrame:SetSize(InstanceDifficultyFrameText:GetStringWidth() or 220, InstanceDifficultyFrameText:GetStringHeight() or 12)
-
-    InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED")
-    InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
-    InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-    InstanceDifficultyFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    InstanceDifficultyFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-    InstanceDifficultyFrame:SetScript("OnEvent", function(_, event)
-        if event == "ZONE_CHANGED" or 
-        event == "ZONE_CHANGED_INDOORS" or 
-        event == "ZONE_CHANGED_NEW_AREA" or 
-        event == "PLAYER_ENTERING_WORLD" or 
-        event == "GROUP_ROSTER_UPDATE" then
-            InstanceDifficultyFrameText:SetText(MS:GetInstanceDifficulty())
-        end
-    end)
 end
 
 function MS:UpdateFrames()
-    TimeFrame:SetSize(TimeFrameText:GetStringWidth() or 220, TimeFrameText:GetStringHeight() or 24)
-    TimeFrame:ClearAllPoints()
-    TimeFrame:SetPoint(MSDB.TimeFrame.Point, Minimap, MSDB.TimeFrame.RelativePoint, MSDB.TimeFrame.OffsetX, MSDB.TimeFrame.OffsetY)
-    TimeFrameText:SetFont(MSDB.General.Font, MSDB.TimeFrame.FontSize, MSDB.General.FontOutline)
-    TimeFrameText:SetText(MS:GetCurrentTime())
-    DateFrame:SetSize(DateFrameText:GetStringWidth() or 220, DateFrameText:GetStringHeight() or 12)
-    DateFrame:ClearAllPoints()
-    DateFrame:SetPoint(MSDB.DateFrame.Point, Minimap, MSDB.DateFrame.RelativePoint, MSDB.DateFrame.OffsetX, MSDB.DateFrame.OffsetY)
-    DateFrameText:SetFont(MSDB.General.Font, MSDB.DateFrame.FontSize, MSDB.General.FontOutline)
-    DateFrameText:SetText(MS:GetCurrentDate())
-    SystemStatsFrame:SetSize(SystemStatsFrameText:GetStringWidth() or 220, SystemStatsFrameText:GetStringHeight() or 12)
-    SystemStatsFrame:ClearAllPoints()
-    SystemStatsFrame:SetPoint(MSDB.SystemStatsFrame.Point, Minimap, MSDB.SystemStatsFrame.RelativePoint, MSDB.SystemStatsFrame.OffsetX, MSDB.SystemStatsFrame.OffsetY)
-    SystemStatsFrameText:SetFont(MSDB.General.Font, MSDB.SystemStatsFrame.FontSize, MSDB.General.FontOutline)
-    SystemStatsFrameText:SetText(MS:GetSystemStats())
-    LocationFrame:SetSize(LocationFrameText:GetStringWidth() or 220, LocationFrameText:GetStringHeight() or 12)
-    LocationFrame:ClearAllPoints()
-    LocationFrame:SetPoint(MSDB.LocationFrame.Point, Minimap, MSDB.LocationFrame.RelativePoint, MSDB.LocationFrame.OffsetX, MSDB.LocationFrame.OffsetY)
-    LocationFrameText:SetFont(MSDB.General.Font, MSDB.LocationFrame.FontSize, MSDB.General.FontOutline)
-    LocationFrameText:SetText(MS:GetLocation())
-    InstanceDifficultyFrame:SetSize(InstanceDifficultyFrameText:GetStringWidth() or 220, InstanceDifficultyFrameText:GetStringHeight() or 12)
-    InstanceDifficultyFrame:ClearAllPoints()
-    InstanceDifficultyFrame:SetPoint(MSDB.InstanceDifficultyFrame.Point, Minimap, MSDB.InstanceDifficultyFrame.RelativePoint, MSDB.InstanceDifficultyFrame.OffsetX, MSDB.InstanceDifficultyFrame.OffsetY)
-    InstanceDifficultyFrameText:SetFont(MSDB.General.Font, MSDB.InstanceDifficultyFrame.FontSize, MSDB.General.FontOutline)
-    InstanceDifficultyFrameText:SetText(MS:GetInstanceDifficulty())
+    MS:UpdateColourSelection()
+    MS:UpdateTimeFrame()
+    MS:UpdateDateFrame()
+    MS:UpdateSystemStatsFrame()
+    MS:UpdateLocationFrame()
+    MS:UpdateInstanceDifficultyFrame()
+    MS:SetupScripts()
 end
 
 function MS:SetupSlashCommands()
@@ -992,4 +973,163 @@ function MS:ResetDefaults()
     MSDB = MS:DeepCopy(MS.DefaultSettings)
     MS:UpdateColourSelection()
     MS:UpdateFrames()
+end
+
+function MS:UpdateTimeFrame()
+    TimeFrame:SetSize(TimeFrameText:GetStringWidth() or 220, TimeFrameText:GetStringHeight() or 24)
+    TimeFrame:ClearAllPoints()
+    TimeFrame:SetPoint(MSDB.TimeFrame.Point, Minimap, MSDB.TimeFrame.RelativePoint, MSDB.TimeFrame.OffsetX, MSDB.TimeFrame.OffsetY)
+    TimeFrameText:SetFont(MSDB.General.Font, MSDB.TimeFrame.FontSize, MSDB.General.FontOutline)
+    MS:SetupTimeFrameScripts()
+end
+
+function MS:UpdateDateFrame()
+    DateFrame:SetSize(DateFrameText:GetStringWidth() or 220, DateFrameText:GetStringHeight() or 12)
+    DateFrame:ClearAllPoints()
+    DateFrame:SetPoint(MSDB.DateFrame.Point, Minimap, MSDB.DateFrame.RelativePoint, MSDB.DateFrame.OffsetX, MSDB.DateFrame.OffsetY)
+    DateFrameText:SetFont(MSDB.General.Font, MSDB.DateFrame.FontSize, MSDB.General.FontOutline)
+    MS:SetupDateFrameScripts()
+end
+
+function MS:UpdateSystemStatsFrame()
+    SystemStatsFrame:SetSize(SystemStatsFrameText:GetStringWidth() or 220, SystemStatsFrameText:GetStringHeight() or 12)
+    SystemStatsFrame:ClearAllPoints()
+    SystemStatsFrame:SetPoint(MSDB.SystemStatsFrame.Point, Minimap, MSDB.SystemStatsFrame.RelativePoint, MSDB.SystemStatsFrame.OffsetX, MSDB.SystemStatsFrame.OffsetY)
+    SystemStatsFrameText:SetFont(MSDB.General.Font, MSDB.SystemStatsFrame.FontSize, MSDB.General.FontOutline)
+    MS:SetupSystemStatsFrameScripts()
+end
+
+function MS:UpdateLocationFrame()
+    LocationFrame:SetSize(LocationFrameText:GetStringWidth() or 220, LocationFrameText:GetStringHeight() or 12)
+    LocationFrame:ClearAllPoints()
+    LocationFrame:SetPoint(MSDB.LocationFrame.Point, Minimap, MSDB.LocationFrame.RelativePoint, MSDB.LocationFrame.OffsetX, MSDB.LocationFrame.OffsetY)
+    LocationFrameText:SetFont(MSDB.General.Font, MSDB.LocationFrame.FontSize, MSDB.General.FontOutline)
+    MS:SetupLocationFrameScripts()
+end
+
+function MS:UpdateInstanceDifficultyFrame()
+    InstanceDifficultyFrame:SetSize(InstanceDifficultyFrameText:GetStringWidth() or 220, InstanceDifficultyFrameText:GetStringHeight() or 12)
+    InstanceDifficultyFrame:ClearAllPoints()
+    InstanceDifficultyFrame:SetPoint(MSDB.InstanceDifficultyFrame.Point, Minimap, MSDB.InstanceDifficultyFrame.RelativePoint, MSDB.InstanceDifficultyFrame.OffsetX, MSDB.InstanceDifficultyFrame.OffsetY)
+    InstanceDifficultyFrameText:SetFont(MSDB.General.Font, MSDB.InstanceDifficultyFrame.FontSize, MSDB.General.FontOutline)
+    MS:SetupInstanceDifficultyFrameScripts()
+end
+
+function MS:SetupTimeFrameScripts()
+    if MSDB.TimeFrame.Toggle then
+        TimeFrame:SetScript("OnUpdate", function()
+            if not TimeLastUpdate or TimeLastUpdate < GetTime() - MSDB.TimeFrame.UpdateRate then
+                TimeLastUpdate = GetTime()
+                TimeFrameText:SetText(MS:GetCurrentTime())
+                if DEBUG_MODE then
+                    print(AddOnName .. ": Time Frame Updated")
+                end 
+            end
+        end)
+        TimeFrame:Show()
+    else
+        TimeFrame:SetScript("OnUpdate", nil)
+        TimeFrame:Hide()
+    end
+end
+
+function MS:SetupDateFrameScripts()
+    if MSDB.DateFrame.Toggle then
+        DateFrame:SetScript("OnUpdate", function()
+            if not DateLastUpdate or DateLastUpdate < GetTime() - MSDB.DateFrame.UpdateRate then
+                DateLastUpdate = GetTime()
+                DateFrameText:SetText(MS:GetCurrentDate())
+                if DEBUG_MODE then
+                    print(AddOnName .. ": Date Frame Updated")
+                end
+            end
+        end)
+        DateFrame:SetScript("OnMouseDown", function(_, button) if button == "LeftButton" then ToggleCalendar() end end)
+        DateFrame:Show()
+    else
+        DateFrame:SetScript("OnUpdate", nil)
+        DateFrame:SetScript("OnMouseDown", nil)
+        DateFrame:Hide()
+    end
+end
+
+function MS:SetupSystemStatsFrameScripts()
+    if MSDB.SystemStatsFrame.Toggle then
+        SystemStatsFrame:SetScript("OnUpdate", function()
+            if not SystemStatsLastUpdate or SystemStatsLastUpdate < GetTime() - MSDB.SystemStatsFrame.UpdateRate then
+                SystemStatsLastUpdate = GetTime()
+                SystemStatsFrameText:SetText(MS:GetSystemStats())
+                if DEBUG_MODE then
+                    print(AddOnName .. ": System Stats Frame Updated")
+                end
+            end
+        end)
+        SystemStatsFrame:Show()
+    else
+        SystemStatsFrame:SetScript("OnUpdate", nil)
+        SystemStatsFrame:Hide()
+    end
+end
+
+function MS:SetupLocationFrameScripts()
+    if MSDB.LocationFrame.Toggle then
+        LocationFrame:RegisterEvent("ZONE_CHANGED")
+        LocationFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
+        LocationFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+        LocationFrame:SetScript("OnEvent", function(_, event)
+            if event == "ZONE_CHANGED" or 
+            event == "ZONE_CHANGED_INDOORS" or 
+            event == "ZONE_CHANGED_NEW_AREA" then
+                LocationFrameText:SetText(MS:GetLocation())
+                if DEBUG_MODE then
+                    print(AddOnName .. ": Location Frame Updated")
+                end
+            end
+        end)
+        LocationFrame:Show()
+    else
+        LocationFrame:UnregisterEvent("ZONE_CHANGED")
+        LocationFrame:UnregisterEvent("ZONE_CHANGED_INDOORS")
+        LocationFrame:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
+        LocationFrame:Hide();
+    end
+end
+
+function MS:SetupInstanceDifficultyFrameScripts()
+    if MSDB.InstanceDifficultyFrame.Toggle then
+        InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED")
+        InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
+        InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+        InstanceDifficultyFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+        InstanceDifficultyFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+        InstanceDifficultyFrame:SetScript("OnEvent", function(_, event)
+            if event == "ZONE_CHANGED" or 
+            event == "ZONE_CHANGED_INDOORS" or 
+            event == "ZONE_CHANGED_NEW_AREA" or 
+            event == "PLAYER_ENTERING_WORLD" or 
+            event == "GROUP_ROSTER_UPDATE" then
+                InstanceDifficultyFrameText:SetText(MS:GetInstanceDifficulty())
+                if DEBUG_MODE then
+                    print(AddOnName .. ": Instance Difficulty Frame Updated")
+                end
+            end
+        end)
+        InstanceDifficultyFrame:Show()
+    else
+        InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED")
+        InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED_INDOORS")
+        InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
+        InstanceDifficultyFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+        InstanceDifficultyFrame:UnregisterEvent("GROUP_ROSTER_UPDATE")
+        InstanceDifficultyFrame:Hide()
+    end
+end
+
+
+function MS:SetupScripts()
+    MS:SetupTimeFrameScripts()
+    MS:SetupDateFrameScripts()
+    MS:SetupSystemStatsFrameScripts()
+    MS:SetupLocationFrameScripts()
+    MS:SetupInstanceDifficultyFrameScripts()
 end
