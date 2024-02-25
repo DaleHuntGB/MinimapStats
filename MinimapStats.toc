@@ -1,10 +1,9 @@
-## Title: |cFF8080FFMinimapStats|r
+## Title: |cFF00ADB5MinimapStats|r
 ## Interface: 100205
-## Version: 4.2.0
-## Author: Unhalted
-## SavedVariables: MSDB
-## OptionalDeps: SharedMedia-3.0, LibSharedMedia-3.0
-## IconTexture: Interface\AddOns\MinimapStats\Libraries\MinimapStatsLogo
+## Author: |cFF00ADB5Unhalted|r - Twisting Nether [EU]
+## Version: 1.0.0
 ## DefaultState: Enabled
-Libraries\Embeds.xml
+## IconTexture: Interface\AddOns\QualityOfLife\Libraries\QOL.tga
+## SavedVariables: MSDB
+
 MinimapStats.lua
