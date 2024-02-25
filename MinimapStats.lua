@@ -1049,16 +1049,47 @@ end
 function MS:SetupSlashCommands()
     SLASH_MINIMAPSTATS1 = "/minimapstats"
     SLASH_MINIMAPSTATS2 = "/ms"
-    SlashCmdList["MINIMAPSTATS"] = function() InterfaceOptionsFrame_OpenToCategory("MinimapStats") end
+    SlashCmdList["MINIMAPSTATS"] = function(msg) 
+        if msg == "reset" then
+            MS:ResetDefaults()
+        elseif msg == "debug" then
+            MS:PrintDebugInfo()
+        elseif msg == "time" then
+            ACD:Open("MinimapStats")
+            ACD:SelectGroup("MinimapStats", "TimeFrame")
+        elseif msg == "date" then
+            ACD:Open("MinimapStats")
+            ACD:SelectGroup("MinimapStats", "DateFrame")
+        elseif msg == "system" then
+            ACD:Open("MinimapStats")
+            ACD:SelectGroup("MinimapStats", "SystemStatsFrame")
+        elseif msg == "location" then
+            ACD:Open("MinimapStats")
+            ACD:SelectGroup("MinimapStats", "LocationFrame")
+        elseif msg == "instance" then
+            ACD:Open("MinimapStats")
+            ACD:SelectGroup("MinimapStats", "InstanceDifficultyFrame")
+        elseif msg == "coordinates" then
+            ACD:Open("MinimapStats")
+            ACD:SelectGroup("MinimapStats", "Coordinates")
+        elseif msg == "config" or msg == "" then
+            ACD:Open("MinimapStats")
+        else 
+            print("|cFF00ADB5MinimapStats|r: " .. "Available Commands")
+            print("|cFF00ADB5/ms|r: " .. "reset")
+            print("|cFF00ADB5/ms|r: " .. "debug")
+            print("|cFF00ADB5/ms|r: " .. "time")
+            print("|cFF00ADB5/ms|r: " .. "date")
+            print("|cFF00ADB5/ms|r: " .. "system")
+            print("|cFF00ADB5/ms|r: " .. "location")
+            print("|cFF00ADB5/ms|r: " .. "instance")
+            print("|cFF00ADB5/ms|r: " .. "coordinates")
+            print("|cFF00ADB5/ms|r: " .. "config")
+        end
+    end
 
     SLASH_RELOADUI1 = "/rl"
     SlashCmdList["RELOADUI"] = function() ReloadUI() end
-
-    SLASH_RESET1 = "/msreset"
-    SlashCmdList["RESET"] = function() MS:ResetDefaults() end
-
-    SLASH_DEBUG1 = "/msdebug"
-    SlashCmdList["DEBUG"] = function() MS:PrintDebugInfo() end
 end
 
 function MS:UpdateColourSelection()
@@ -1193,6 +1224,7 @@ end
 
 function MS:SetupTimeFrameScripts()
     if MSDB.TimeFrame.Toggle then
+        MS.TimeFrameText:SetText(MS:GetCurrentTime())
         MS.TimeFrame:SetScript("OnUpdate", function()
             if not TimeLastUpdate or TimeLastUpdate < GetTime() - MSDB.TimeFrame.UpdateRate then
                 TimeLastUpdate = GetTime()
@@ -1303,24 +1335,33 @@ end
 
 function MS:SetupCoordinatesFrameScripts()
     if MSDB.CoordinatesFrame.Toggle then
+        MS.CoordinatesFrameText:SetText(MS:GetCoordinates())
         MS.CoordinatesFrame:RegisterEvent("PLAYER_STARTED_MOVING")
         MS.CoordinatesFrame:RegisterEvent("PLAYER_STOPPED_MOVING")
+        MS.CoordinatesFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         MS.CoordinatesFrame:SetScript("OnEvent", function(_, event)
-            if event == "PLAYER_STARTED_MOVING" then
-                MS.CoordinatesFrame:SetScript("OnUpdate", function()
-                    if not CoordinatesLastUpdate or CoordinatesLastUpdate < GetTime() - MSDB.CoordinatesFrame.UpdateRate then
-                        CoordinatesLastUpdate = GetTime()
-                        MS.CoordinatesFrameText:SetText(MS:GetCoordinates())
-                        if DEBUG_MODE then
-                            print(AddOnName .. ": Coordinates Frame Updated")
-                        end
-                    end
-                end)
-            elseif event == "PLAYER_STOPPED_MOVING" then
+            -- This feels incredibly hacky, but it works :)
+            local inInstance = IsInInstance()
+            if inInstance then 
                 MS.CoordinatesFrame:SetScript("OnUpdate", nil)
+                MS.CoordinatesFrame:Hide()
+            else
+                if event == "PLAYER_STARTED_MOVING" then
+                    MS.CoordinatesFrame:SetScript("OnUpdate", function()
+                        if not CoordinatesLastUpdate or CoordinatesLastUpdate < GetTime() - MSDB.CoordinatesFrame.UpdateRate then
+                            CoordinatesLastUpdate = GetTime()
+                            MS.CoordinatesFrameText:SetText(MS:GetCoordinates())
+                            if DEBUG_MODE then
+                                print(AddOnName .. ": Coordinates Frame Updated")
+                            end
+                        end
+                    end)
+                elseif event == "PLAYER_STOPPED_MOVING" then
+                    MS.CoordinatesFrame:SetScript("OnUpdate", nil)
+                end
+                MS.CoordinatesFrame:Show()
             end
         end)
-        MS.CoordinatesFrame:Show()
     else
         MS.CoordinatesFrame:UnregisterEvent("PLAYER_STARTED_MOVING")
         MS.CoordinatesFrame:UnregisterEvent("PLAYER_STOPPED_MOVING")
