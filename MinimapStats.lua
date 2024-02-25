@@ -78,6 +78,17 @@ function MS:SetupDB()
             ["OffsetX"] = 3,
             ["OffsetY"] = -3,
             ["FontSize"] = 12
+        },
+        ["CoordinatesFrame"] = 
+        {
+            ["Toggle"] = true,
+            ["Point"] = "TOP",
+            ["RelativePoint"] = "TOP",
+            ["OffsetX"] = 0,
+            ["OffsetY"] = -35,
+            ["FontSize"] = 12,
+            ["Format"] = "OneDecimal",
+            ["UpdateRate"] = 1,
         }
     }
 
@@ -655,6 +666,123 @@ function MS:CreateOptions()
                         func = function() MS:PrintDebugInfo() end
                     }
                 }
+            },
+            Coordinates = {
+                type = "group",
+                name = "Coordinates",
+                order = 7,
+                args = {
+                    Point = {
+                        type = "select",
+                        name = "Point",
+                        desc = "Change Anchor Point of the Frame",
+                        width = "full",
+                        order = 2,
+                        values = {
+                            ["TOPLEFT"] = "Top Left",
+                            ["TOP"] = "Top",
+                            ["TOPRIGHT"] = "Top Right",
+                            ["LEFT"] = "Left",
+                            ["CENTER"] = "Center",
+                            ["RIGHT"] = "Right",
+                            ["BOTTOMLEFT"] = "Bottom Left",
+                            ["BOTTOM"] = "Bottom",
+                            ["BOTTOMRIGHT"] = "Bottom Right"
+                        },
+                        get = function() return MSDB.CoordinatesFrame.Point end,
+                        set = function(_, value) MSDB.CoordinatesFrame.Point = value MS:UpdateCoordinatesFrame() end
+                    },
+                    RelativePoint = {
+                        type = "select",
+                        name = "Relative Point",
+                        desc = "Change Relative Point of the Frame",
+                        order = 3,
+                        width = "full",
+                        values = {
+                            ["TOPLEFT"] = "Top Left",
+                            ["TOP"] = "Top",
+                            ["TOPRIGHT"] = "Top Right",
+                            ["LEFT"] = "Left",
+                            ["CENTER"] = "Center",
+                            ["RIGHT"] = "Right",
+                            ["BOTTOMLEFT"] = "Bottom Left",
+                            ["BOTTOM"] = "Bottom",
+                            ["BOTTOMRIGHT"] = "Bottom Right"
+                        },
+                        get = function() return MSDB.CoordinatesFrame.RelativePoint end,
+                        set = function(_, value) MSDB.CoordinatesFrame.RelativePoint = value MS:UpdateCoordinatesFrame() end
+                    },
+                    OffsetX = {
+                        type = "range",
+                        name = "Offset X",
+                        desc = "X Offset of the Frame",
+                        order = 4,
+                        min = MS.MIN_X,
+                        max = MS.MAX_X,
+                        step = 1,
+                        width = "full",
+                        get = function() return MSDB.CoordinatesFrame.OffsetX end,
+                        set = function(_, value) MSDB.CoordinatesFrame.OffsetX = value MS:UpdateCoordinatesFrame() end
+                    },
+                    OffsetY = {
+                        type = "range",
+                        name = "Offset Y",
+                        desc = "Y Offset of the Frame",
+                        order = 5,
+                        min = MS.MIN_Y,
+                        max = MS.MAX_Y,
+                        step = 1,
+                        width = "full",
+                        get = function() return MSDB.CoordinatesFrame.OffsetY end,
+                        set = function(_, value) MSDB.CoordinatesFrame.OffsetY = value MS:UpdateCoordinatesFrame() end
+                    },
+                    FontSize = {
+                        type = "range",
+                        name = "Font Size",
+                        desc = "Text Font Size",
+                        order = 6,
+                        min = 8,
+                        max = 32,
+                        step = 1,
+                        width = "full",
+                        get = function() return MSDB.CoordinatesFrame.FontSize end,
+                        set = function(_, value) MSDB.CoordinatesFrame.FontSize = value MS:UpdateCoordinatesFrame() end
+                    },
+                    Toggle = {
+                        type = "toggle",
+                        name = "Toggle",
+                        desc = "Show/Hide Coordinates Frame",
+                        order = 1,
+                        get = function() return MSDB.CoordinatesFrame.Toggle end,
+                        set = function(_, value) MSDB.CoordinatesFrame.Toggle = value MS:UpdateCoordinatesFrame() end
+                    },
+                    Format = {
+                        type = "select",
+                        name = "Format",
+                        desc = "Coordinates Format",
+                        order = 7,
+                        width = "full",
+                        values = {
+                            ["NoDecimal"] = "00, 00",
+                            ["OneDecimal"] = "00.0, 00.0",
+                            ["TwoDecimal"] = "00.00, 00.00"
+                        },
+                        get = function() return MSDB.CoordinatesFrame.Format end,
+                        set = function(_, value) MSDB.CoordinatesFrame.Format = value MS:UpdateCoordinatesFrame() end
+                    },
+                    UpdateRate = {
+                        type = "range",
+                        name = "Update Rate",
+                        desc = "Update Frequency in Seconds",
+                        order = 8,
+                        min = 1,
+                        max = 60,
+                        step = 1,
+                        width = "full",
+                        get = function() return MSDB.CoordinatesFrame.UpdateRate end,
+                        set = function(_, value) MSDB.CoordinatesFrame.UpdateRate = value end
+                    }
+                }
             }
         }
     }
@@ -673,6 +801,7 @@ function MS:CreateFrames()
     MS:CreateSystemsStatsFrame()
     MS:CreateLocationFrame()
     MS:CreateInstanceDifficultyFrame()
+    MS:CreateCoordinatesFrame()
     MS:SetupScripts()
 end
 
@@ -795,6 +924,31 @@ function MS:GetInstanceDifficulty()
     end
 end
 
+function MS:GetCoordinates()
+    local PlayerMap = C_Map.GetBestMapForUnit("player")
+    local InstanceType = select(2, IsInInstance())
+    if InstanceType == "none" and PlayerMap then
+        local PlayerPosition = C_Map.GetPlayerMapPosition(PlayerMap, "player")
+        if PlayerPosition then
+            local PositionX, PositionY = PlayerPosition:GetXY()
+            PositionXActual = PositionX * 100
+            PositionYActual = PositionY * 100
+            local NoDecimals = string.format("%.0f, %.0f", PositionXActual, PositionYActual)
+            local OneDecimal = string.format("%.1f, %.1f", PositionXActual, PositionYActual)
+            local TwoDecimals = string.format("%.2f, %.2f", PositionXActual, PositionYActual)
+            if MSDB.CoordinatesFrame.Format == "NoDecimal" then
+                return NoDecimals
+            elseif MSDB.CoordinatesFrame.Format == "OneDecimal" then
+                return OneDecimal
+            elseif MSDB.CoordinatesFrame.Format == "TwoDecimal" then
+                return TwoDecimals
+            end
+        else
+            return " "
+        end
+    end
+end
+
 function MS:CreateTimeFrame()
         MS.TimeFrame = CreateFrame("Frame", "TimeFrame", Minimap)
         MS.TimeFrame:SetFrameStrata("MEDIUM")
@@ -868,6 +1022,19 @@ function MS:CreateInstanceDifficultyFrame()
     MS.InstanceDifficultyFrame:SetSize(MS.InstanceDifficultyFrameText:GetStringWidth() or 220, MS.InstanceDifficultyFrameText:GetStringHeight() or 12)
 end
 
+function MS:CreateCoordinatesFrame()
+    MS.CoordinatesFrame = CreateFrame("Frame", "CoordinatesFrame", Minimap)
+    MS.CoordinatesFrame:SetPoint(MSDB.CoordinatesFrame.Point, Minimap, MSDB.CoordinatesFrame.RelativePoint, MSDB.CoordinatesFrame.OffsetX, MSDB.CoordinatesFrame.OffsetY)
+    MS.CoordinatesFrameText = MS.CoordinatesFrame:CreateFontString("CoordinatesFrameText", "OVERLAY")
+    MS.CoordinatesFrameText:SetPoint(MSDB.CoordinatesFrame.Point, MS.CoordinatesFrame, MSDB.CoordinatesFrame.RelativePoint, 0, 0)
+    MS.CoordinatesFrameText:SetFont(MSDB.General.Font, MSDB.CoordinatesFrame.FontSize, MSDB.General.FontOutline)
+    MS.CoordinatesFrameText:SetText(MS:GetCoordinates())
+    MS.CoordinatesFrameText:SetShadowOffset(0, 0)
+
+    MS.CoordinatesFrame:SetSize(MS.CoordinatesFrameText:GetStringWidth() or 220, MS.CoordinatesFrameText:GetStringHeight() or 12)
+end
+
+
 function MS:UpdateFrames()
     MS:UpdateColourSelection()
     MS:UpdateTimeFrame()
@@ -875,6 +1042,7 @@ function MS:UpdateFrames()
     MS:UpdateSystemStatsFrame()
     MS:UpdateLocationFrame()
     MS:UpdateInstanceDifficultyFrame()
+    MS:UpdateCoordinatesFrame()
     MS:SetupScripts()
 end
 
@@ -1015,6 +1183,14 @@ function MS:UpdateInstanceDifficultyFrame()
     MS:SetupInstanceDifficultyFrameScripts()
 end
 
+function MS:UpdateCoordinatesFrame()
+    MS.CoordinatesFrame:SetSize(MS.CoordinatesFrameText:GetStringWidth() or 220, MS.CoordinatesFrameText:GetStringHeight() or 12)
+    MS.CoordinatesFrame:ClearAllPoints()
+    MS.CoordinatesFrame:SetPoint(MSDB.CoordinatesFrame.Point, Minimap, MSDB.CoordinatesFrame.RelativePoint, MSDB.CoordinatesFrame.OffsetX, MSDB.CoordinatesFrame.OffsetY)
+    MS.CoordinatesFrameText:SetFont(MSDB.General.Font, MSDB.CoordinatesFrame.FontSize, MSDB.General.FontOutline)
+    MS:SetupCoordinatesFrameScripts()
+end
+
 function MS:SetupTimeFrameScripts()
     if MSDB.TimeFrame.Toggle then
         MS.TimeFrame:SetScript("OnUpdate", function()
@@ -1125,11 +1301,39 @@ function MS:SetupInstanceDifficultyFrameScripts()
     end
 end
 
+function MS:SetupCoordinatesFrameScripts()
+    if MSDB.CoordinatesFrame.Toggle then
+        MS.CoordinatesFrame:RegisterEvent("PLAYER_STARTED_MOVING")
+        MS.CoordinatesFrame:RegisterEvent("PLAYER_STOPPED_MOVING")
+        MS.CoordinatesFrame:SetScript("OnEvent", function(_, event)
+            if event == "PLAYER_STARTED_MOVING" then
+                MS.CoordinatesFrame:SetScript("OnUpdate", function()
+                    if not CoordinatesLastUpdate or CoordinatesLastUpdate < GetTime() - MSDB.CoordinatesFrame.UpdateRate then
+                        CoordinatesLastUpdate = GetTime()
+                        MS.CoordinatesFrameText:SetText(MS:GetCoordinates())
+                        if DEBUG_MODE then
+                            print(AddOnName .. ": Coordinates Frame Updated")
+                        end
+                    end
+                end)
+            elseif event == "PLAYER_STOPPED_MOVING" then
+                MS.CoordinatesFrame:SetScript("OnUpdate", nil)
+            end
+        end)
+        MS.CoordinatesFrame:Show()
+    else
+        MS.CoordinatesFrame:UnregisterEvent("PLAYER_STARTED_MOVING")
+        MS.CoordinatesFrame:UnregisterEvent("PLAYER_STOPPED_MOVING")
+        MS.CoordinatesFrame:Hide()
+    end
+
+end
 
 function MS:SetupScripts()
     MS:SetupTimeFrameScripts()
     MS:SetupDateFrameScripts()
     MS:SetupSystemStatsFrameScripts()
     MS:SetupLocationFrameScripts()
+    MS:SetupCoordinatesFrameScripts()
     MS:SetupInstanceDifficultyFrameScripts()
 end
