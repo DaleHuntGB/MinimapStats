@@ -2,6 +2,8 @@ local MS = {}
 local AddOnName = C_AddOns.GetAddOnMetadata("MinimapStats", "Title")
 local AddOnVersion = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
 local LSM = LibStub("LibSharedMedia-3.0")
+local ACC = LibStub("AceConfig-3.0")
+local ACD = LibStub("AceConfigDialog-3.0")
 local LSMFonts = {}
 
 MS.MAX_X = 1000
@@ -611,8 +613,8 @@ function MS:CreateOptions()
         }
     }
 
-    LibStub("AceConfig-3.0"):RegisterOptionsTable("MinimapStats", Options)
-    LibStub("AceConfigDialog-3.0"):AddToBlizOptions("MinimapStats", "MinimapStats")
+    ACC:RegisterOptionsTable("MinimapStats", Options)
+    ACD:AddToBlizOptions("MinimapStats", "MinimapStats")
 end
 
 function MS:ConvertAccentColor(r, g, b)
