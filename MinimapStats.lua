@@ -1028,7 +1028,6 @@ function MS:CreateCoordinatesFrame()
     MS.CoordinatesFrameText = MS.CoordinatesFrame:CreateFontString("CoordinatesFrameText", "OVERLAY")
     MS.CoordinatesFrameText:SetPoint(MSDB.CoordinatesFrame.Point, MS.CoordinatesFrame, MSDB.CoordinatesFrame.RelativePoint, 0, 0)
     MS.CoordinatesFrameText:SetFont(MSDB.General.Font, MSDB.CoordinatesFrame.FontSize, MSDB.General.FontOutline)
-    MS.CoordinatesFrameText:SetText(MS:GetCoordinates())
     MS.CoordinatesFrameText:SetShadowOffset(0, 0)
 
     MS.CoordinatesFrame:SetSize(MS.CoordinatesFrameText:GetStringWidth() or 220, MS.CoordinatesFrameText:GetStringHeight() or 12)
