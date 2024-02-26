@@ -6,5 +6,4 @@
 ## IconTexture: Interface\AddOns\QualityOfLife\Libraries\QOL.tga
 ## SavedVariables: MSDB
 
-MinimapStatsConfig.lua
 MinimapStats.lua
