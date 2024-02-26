@@ -2,8 +2,9 @@ local MS = {}
 local AddOnName = C_AddOns.GetAddOnMetadata("MinimapStats", "Title")
 local AddOnVersion = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
 local LSM = LibStub("LibSharedMedia-3.0")
-local ACC = LibStub("AceConfig-3.0")
-local ACD = LibStub("AceConfigDialog-3.0")
+local AC = LibStub("AceConfig-3.0")
+local AD = LibStub("AceConfigDialog-3.0")
+local AG = LibStub("AceGUI-3.0")
 local LSMFonts = {}
 local DEBUG_MODE = false
 
@@ -19,7 +20,8 @@ MinimapStatsFrame:SetScript("OnEvent", function(_, event, addon)
     if event == "ADDON_LOADED" and addon == "MinimapStats" then 
         MS:SetupDB() 
         MS:CreateOptions() 
-        MS:CreateFrames() 
+        MS:CreateFrames()
+        MS:UpdateColourSelection()
         MS:SetupSlashCommands() 
     end 
 end)
@@ -787,8 +789,8 @@ function MS:CreateOptions()
         }
     }
 
-    ACC:RegisterOptionsTable("MinimapStats", Options)
-    ACD:AddToBlizOptions("MinimapStats", "MinimapStats")
+    AC:RegisterOptionsTable("MinimapStats", Options)
+    AD:AddToBlizOptions("MinimapStats", "MinimapStats")
 end
 
 function MS:ConvertAccentColor(r, g, b)
@@ -1054,25 +1056,25 @@ function MS:SetupSlashCommands()
         elseif msg == "debug" then
             MS:PrintDebugInfo()
         elseif msg == "time" then
-            ACD:Open("MinimapStats")
-            ACD:SelectGroup("MinimapStats", "TimeFrame")
+            AD:Open("MinimapStats")
+            AD:SelectGroup("MinimapStats", "TimeFrame")
         elseif msg == "date" then
-            ACD:Open("MinimapStats")
-            ACD:SelectGroup("MinimapStats", "DateFrame")
+            AD:Open("MinimapStats")
+            AD:SelectGroup("MinimapStats", "DateFrame")
         elseif msg == "system" then
-            ACD:Open("MinimapStats")
-            ACD:SelectGroup("MinimapStats", "SystemStatsFrame")
+            AD:Open("MinimapStats")
+            AD:SelectGroup("MinimapStats", "SystemStatsFrame")
         elseif msg == "location" then
-            ACD:Open("MinimapStats")
-            ACD:SelectGroup("MinimapStats", "LocationFrame")
+            AD:Open("MinimapStats")
+            AD:SelectGroup("MinimapStats", "LocationFrame")
         elseif msg == "instance" then
-            ACD:Open("MinimapStats")
-            ACD:SelectGroup("MinimapStats", "InstanceDifficultyFrame")
+            AD:Open("MinimapStats")
+            AD:SelectGroup("MinimapStats", "InstanceDifficultyFrame")
         elseif msg == "coordinates" then
-            ACD:Open("MinimapStats")
-            ACD:SelectGroup("MinimapStats", "Coordinates")
+            AD:Open("MinimapStats")
+            AD:SelectGroup("MinimapStats", "Coordinates")
         elseif msg == "config" or msg == "" then
-            ACD:Open("MinimapStats")
+            AD:Open("MinimapStats")
         else 
             print("|cFF00ADB5MinimapStats|r: " .. "Available Commands")
             print("|cFF00ADB5/ms|r: " .. "reset")
@@ -1332,10 +1334,11 @@ function MS:SetupInstanceDifficultyFrameScripts()
                 MS.InstanceDifficultyFrameText:SetText(MS:GetInstanceDifficulty())
                 if DEBUG_MODE then
                     print(AddOnName .. ": Instance Difficulty Frame Updated")
+                    
                 end
+                MS.InstanceDifficultyFrame:Show()
             end
         end)
-        MS.InstanceDifficultyFrame:Show()
     else
         MS.InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED")
         MS.InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED_INDOORS")
