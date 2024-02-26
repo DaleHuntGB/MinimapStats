@@ -1014,27 +1014,24 @@ function MS:CreateInstanceDifficultyFrame()
     MS.InstanceDifficultyFrame = CreateFrame("Frame", "InstanceDifficultyFrame", Minimap)
     MS.InstanceDifficultyFrame:SetFrameStrata("MEDIUM")
     MS.InstanceDifficultyFrame:SetPoint(MSDB.InstanceDifficultyFrame.Point, Minimap, MSDB.InstanceDifficultyFrame.RelativePoint, MSDB.InstanceDifficultyFrame.OffsetX, MSDB.InstanceDifficultyFrame.OffsetY)
-
     MS.InstanceDifficultyFrameText = MS.InstanceDifficultyFrame:CreateFontString("InstanceDifficultyFrameText", "OVERLAY")
     MS.InstanceDifficultyFrameText:SetPoint(MSDB.InstanceDifficultyFrame.Point, MS.InstanceDifficultyFrame, MSDB.InstanceDifficultyFrame.RelativePoint, 0, 0)
     MS.InstanceDifficultyFrameText:SetFont(MSDB.General.Font, MSDB.InstanceDifficultyFrame.FontSize, MSDB.General.FontOutline)
     MS.InstanceDifficultyFrameText:SetText(MS:GetInstanceDifficulty())
     MS.InstanceDifficultyFrameText:SetShadowOffset(0, 0)
-
     MS.InstanceDifficultyFrame:SetSize(MS.InstanceDifficultyFrameText:GetStringWidth() or 220, MS.InstanceDifficultyFrameText:GetStringHeight() or 12)
 end
 
 function MS:CreateCoordinatesFrame()
     MS.CoordinatesFrame = CreateFrame("Frame", "CoordinatesFrame", Minimap)
+    MS.CoordinatesFrame:SetFrameStrata("MEDIUM")
     MS.CoordinatesFrame:SetPoint(MSDB.CoordinatesFrame.Point, Minimap, MSDB.CoordinatesFrame.RelativePoint, MSDB.CoordinatesFrame.OffsetX, MSDB.CoordinatesFrame.OffsetY)
     MS.CoordinatesFrameText = MS.CoordinatesFrame:CreateFontString("CoordinatesFrameText", "OVERLAY")
     MS.CoordinatesFrameText:SetPoint(MSDB.CoordinatesFrame.Point, MS.CoordinatesFrame, MSDB.CoordinatesFrame.RelativePoint, 0, 0)
     MS.CoordinatesFrameText:SetFont(MSDB.General.Font, MSDB.CoordinatesFrame.FontSize, MSDB.General.FontOutline)
     MS.CoordinatesFrameText:SetShadowOffset(0, 0)
-
     MS.CoordinatesFrame:SetSize(MS.CoordinatesFrameText:GetStringWidth() or 220, MS.CoordinatesFrameText:GetStringHeight() or 12)
 end
-
 
 function MS:UpdateFrames()
     MS:UpdateColourSelection()
@@ -1307,7 +1304,7 @@ function MS:SetupLocationFrameScripts()
         MS.LocationFrame:RegisterEvent("ZONE_CHANGED")
         MS.LocationFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
         MS.LocationFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-        MS.LocationFrame:SetScript("OnEvent", function(_, event)
+        MS.LocationFrame:SetScript("OnEvent", function(LocationFrame, event)
             if event == "ZONE_CHANGED" or 
             event == "ZONE_CHANGED_INDOORS" or 
             event == "ZONE_CHANGED_NEW_AREA" then
@@ -1333,7 +1330,7 @@ function MS:SetupInstanceDifficultyFrameScripts()
         MS.InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
         MS.InstanceDifficultyFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         MS.InstanceDifficultyFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-        MS.InstanceDifficultyFrame:SetScript("OnEvent", function(_, event)
+        MS.InstanceDifficultyFrame:SetScript("OnEvent", function(InstanceDifficultyFrame, event)
             if event == "ZONE_CHANGED" or 
             event == "ZONE_CHANGED_INDOORS" or 
             event == "ZONE_CHANGED_NEW_AREA" or 
@@ -1342,9 +1339,7 @@ function MS:SetupInstanceDifficultyFrameScripts()
                 MS.InstanceDifficultyFrameText:SetText(MS:GetInstanceDifficulty())
                 if DEBUG_MODE then
                     print(AddOnName .. ": Instance Difficulty Frame Updated")
-                    
                 end
-                MS.InstanceDifficultyFrame:Show()
             end
         end)
     else
@@ -1353,7 +1348,6 @@ function MS:SetupInstanceDifficultyFrameScripts()
         MS.InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
         MS.InstanceDifficultyFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
         MS.InstanceDifficultyFrame:UnregisterEvent("GROUP_ROSTER_UPDATE")
-        MS.InstanceDifficultyFrame:Hide()
     end
 end
 
@@ -1362,7 +1356,7 @@ function MS:SetupCoordinatesFrameScripts()
         MS.CoordinatesFrame:RegisterEvent("PLAYER_STARTED_MOVING")
         MS.CoordinatesFrame:RegisterEvent("PLAYER_STOPPED_MOVING")
         MS.CoordinatesFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-        MS.CoordinatesFrame:SetScript("OnEvent", function(_, event)
+        MS.CoordinatesFrame:SetScript("OnEvent", function(CoordinatesFrame, event)
             -- This feels incredibly hacky, but it works :)
             local inInstance = IsInInstance()
             if inInstance then 
