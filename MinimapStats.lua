@@ -6,7 +6,7 @@ local AC = LibStub("AceConfig-3.0")
 local AD = LibStub("AceConfigDialog-3.0")
 local AG = LibStub("AceGUI-3.0")
 local LSMFonts = {}
-local DEBUG_MODE = false
+local DEBUG_MODE = true
 
 MS.MAX_X = 1000
 MS.MAX_Y = 1000
@@ -21,6 +21,7 @@ MinimapStatsFrame:SetScript("OnEvent", function(_, event, addon)
         MS:SetupDB() 
         MS:CreateOptions() 
         MS:CreateFrames()
+        MS:UpdateFrames()
         MS:SetupSlashCommands() 
     end 
 end)
@@ -803,8 +804,6 @@ function MS:CreateFrames()
     MS:CreateLocationFrame()
     MS:CreateInstanceDifficultyFrame()
     MS:CreateCoordinatesFrame()
-    MS:UpdateColourSelection()
-    MS:SetupScripts()
 end
 
 function MS:FetchSharedMediaFonts()
@@ -999,13 +998,11 @@ function MS:CreateLocationFrame()
     MS.LocationFrame = CreateFrame("Frame", "LocationFrame", Minimap)
     MS.LocationFrame:SetFrameStrata("MEDIUM")
     MS.LocationFrame:SetPoint(MSDB.LocationFrame.Point, Minimap, MSDB.LocationFrame.RelativePoint, MSDB.LocationFrame.OffsetX, MSDB.LocationFrame.OffsetY)
-
     MS.LocationFrameText = MS.LocationFrame:CreateFontString("LocationFrameText", "OVERLAY")
     MS.LocationFrameText:SetPoint(MSDB.LocationFrame.Point, MS.LocationFrame, MSDB.LocationFrame.RelativePoint, 0, 0)
     MS.LocationFrameText:SetFont(MSDB.General.Font, MSDB.LocationFrame.FontSize, MSDB.General.FontOutline)
     MS.LocationFrameText:SetText(MS:GetLocation())
     MS.LocationFrameText:SetShadowOffset(0, 0)
-
     MS.LocationFrame:SetSize(MS.LocationFrameText:GetStringWidth() or 220, MS.LocationFrameText:GetStringHeight() or 12)
 
 end
@@ -1222,7 +1219,7 @@ function MS:UpdateLocationFrame()
 end
 
 function MS:UpdateInstanceDifficultyFrame()
-    MS.InstanceDifficultyFrame:SetSize(MS.InstanceDifficultyFrameText:GetStringWidth() or 220, MS.InstanceDifficultyFrameText:GetStringHeight() or 12)
+    MS.InstanceDifficultyFrame:SetSize(24, 24)
     MS.InstanceDifficultyFrame:ClearAllPoints()
     MS.InstanceDifficultyFrame:SetPoint(MSDB.InstanceDifficultyFrame.Point, Minimap, MSDB.InstanceDifficultyFrame.RelativePoint, MSDB.InstanceDifficultyFrame.OffsetX, MSDB.InstanceDifficultyFrame.OffsetY)
     MS.InstanceDifficultyFrameText:SetFont(MSDB.General.Font, MSDB.InstanceDifficultyFrame.FontSize, MSDB.General.FontOutline)
@@ -1340,6 +1337,7 @@ function MS:SetupInstanceDifficultyFrameScripts()
                 if DEBUG_MODE then
                     print(AddOnName .. ": Instance Difficulty Frame Updated")
                 end
+                MS.InstanceDifficultyFrame:Show()
             end
         end)
     else
@@ -1348,6 +1346,7 @@ function MS:SetupInstanceDifficultyFrameScripts()
         MS.InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
         MS.InstanceDifficultyFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
         MS.InstanceDifficultyFrame:UnregisterEvent("GROUP_ROSTER_UPDATE")
+        MS.InstanceDifficultyFrame:Hide()
     end
 end
 
