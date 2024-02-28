@@ -6,7 +6,7 @@ local AC = LibStub("AceConfig-3.0")
 local AD = LibStub("AceConfigDialog-3.0")
 local AG = LibStub("AceGUI-3.0")
 local LSMFonts = {}
-local DEBUG_MODE = true
+local DEBUG_MODE = false
 
 MS.MAX_X = 1000
 MS.MAX_Y = 1000
