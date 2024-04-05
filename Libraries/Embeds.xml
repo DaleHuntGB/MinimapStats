@@ -5,5 +5,4 @@
 	<Include file="AceDB-3.0\AceDB-3.0.xml"/>
 	<Include file="AceDBOptions-3.0\AceDBOptions-3.0.xml"/>
     <Script file="LibStub\LibStub.lua"/>
-	<Include file="LibOpenRaid\lib.xml"/>
 </Ui>

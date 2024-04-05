@@ -18,6 +18,8 @@ local DefaultSettings = {
         TimeFormat = "TwentyFourHourTime",
         DisplayLocation = true,
         DisplayReactionColor = false,
+        UsePrimaryFontColor = false,
+        LocationFontColor = "Secondary",
         DisplayInformation = true,
         UpdateInRealTime = false,
         CoordinatesFormat = "NoDecimal",
@@ -36,6 +38,9 @@ local DefaultSettings = {
         SecondaryFontColorR = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].r,
         SecondaryFontColorG = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].g,
         SecondaryFontColorB = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].b,
+        LocationCustomColorR = 1.0,
+        LocationCustomColorG = 1.0,
+        LocationCustomColorB = 1.0,
         ElementFrameStrata = "MEDIUM",
         -- Font Sizes
         TimeFrameFontSize = 16,
@@ -147,10 +152,17 @@ function MinimapStats:OnInitialize()
             LocationColor = CalculateHexValue(0.9, 0.85, 0.05)
         end
         if MS.db.global.DisplayLocation then
-            if MS.db.global.DisplayReactionColor then
+            if MS.db.global.LocationFontColor == "Primary" then
+                local PrimaryFontColor = string.format("%02x%02x%02x", MS.db.global.PrimaryFontColorR * 255, MS.db.global.PrimaryFontColorG * 255, MS.db.global.PrimaryFontColorB * 255)
+                return "|cFF" .. PrimaryFontColor .. GetMinimapZoneText() .. "|r"
+            elseif MS.db.global.LocationFontColor == "Secondary" then
+                return "|cFF" .. SecondaryFontColor .. GetMinimapZoneText() .. "|r"
+            elseif MS.db.global.LocationFontColor == "Custom" then
+                local CustomFontColor = string.format("%02x%02x%02x", MS.db.global.LocationCustomColorR * 255, MS.db.global.LocationCustomColorG * 255, MS.db.global.LocationCustomColorB * 255)
+                return "|cFF" .. CustomFontColor .. GetMinimapZoneText() .. "|r"
+            elseif MS.db.global.LocationFontColor == "Reaction" then
                 return "|cFF" .. LocationColor .. GetMinimapZoneText() .. "|r"
             end
-            return "|cFF" .. SecondaryFontColor .. GetMinimapZoneText() .. "|r"
         end
     end
     function MS:FetchInformation()
@@ -257,6 +269,10 @@ function MinimapStats:OnInitialize()
         end
     end
     local function GetPlayerKeystone()
+        if not OR then 
+            print(AddOnName.. ": OpenRaid was not found. This comes pre-installed with Details/Echo Raid Tools.")
+            return 
+        end
         local ORLibrary = OR.GetKeystoneInfo("player")
         local playerKeystoneLevel = ORLibrary.level
         local playerKeystone, _, _, keystoneIcon = C_ChallengeMode.GetMapUIInfo(ORLibrary.mythicPlusMapID)
@@ -877,11 +893,26 @@ function MinimapStats:OnEnable()
             DisplayLocationCheckBox:SetValue(MS.db.global.DisplayLocation)
             DisplayLocationCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.DisplayLocation = value MS:RefreshLocationElement() end)
             LocationToggleContainer:AddChild(DisplayLocationCheckBox)
-            local DisplayReactionColorCheckBox = MSGUI:Create("CheckBox")
-            DisplayReactionColorCheckBox:SetLabel("Display Reaction Color")
-            DisplayReactionColorCheckBox:SetValue(MS.db.global.DisplayReactionColor)
-            DisplayReactionColorCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.DisplayReactionColor = value MS:RefreshLocationElement() end)
-            LocationToggleContainer:AddChild(DisplayReactionColorCheckBox)
+            local LocationFontColorSelectionDropdown = MSGUI:Create("Dropdown")
+            LocationFontColorSelectionDropdown:SetLabel("Font Color")
+            local LocationFontColorSelectionDropdownData = { ["Primary"] = "Primary", ["Secondary"] = "Secondary", ["Custom"] = "Custom", ["Reaction"] = "Reaction"}
+            local LocationFontColorSelectionDropdownOrder = { "Primary", "Secondary", "Custom", "Reaction" }
+            LocationFontColorSelectionDropdown:SetList(LocationFontColorSelectionDropdownData, LocationFontColorSelectionDropdownOrder)
+            LocationFontColorSelectionDropdown:SetValue(MS.db.global.LocationFontColor)
+            LocationFontColorSelectionDropdown:SetFullWidth(true)
+            LocationFontColorSelectionDropdown:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.LocationFontColor = value MS:RefreshLocationElement() MSGUIContainer:ReleaseChildren() DrawLocationContainer(MSGUIContainer) end)
+            LocationToggleContainer:AddChild(LocationFontColorSelectionDropdown)
+            local LocationCustomColourPicker = MSGUI:Create("ColorPicker")
+            LocationCustomColourPicker:SetLabel("Font Color Choice")
+            LocationCustomColourPicker:SetColor(MS.db.global.LocationCustomColorR, MS.db.global.LocationCustomColorG, MS.db.global.LocationCustomColorB)
+            LocationCustomColourPicker:SetCallback("OnValueChanged", function(widget, event, r, g, b, a) MS.db.global.LocationCustomColorR = r MS.db.global.LocationCustomColorG = g MS.db.global.LocationCustomColorB = b MS:RefreshLocationElement() end)
+            if MS.db.global.LocationFontColor == "Custom" then
+                LocationFontColorSelectionDropdown:SetValue("Custom")
+                LocationCustomColourPicker:SetDisabled(false)
+            else
+                LocationCustomColourPicker:SetDisabled(true)
+            end
+            LocationToggleContainer:AddChild(LocationCustomColourPicker)
             local LocationFontSize = MSGUI:Create("Slider")
             LocationFontSize:SetLabel("Font Size")
             LocationFontSize:SetSliderValues(1, 100, 1)
@@ -1176,7 +1207,7 @@ function MinimapStats:OnEnable()
             local ResetDefaultsButton = MSGUI:Create("Button")
             ResetDefaultsButton:SetText("Reset Defaults")
             ResetDefaultsButton:SetFullWidth(true)
-            ResetDefaultsButton:SetCallback("OnClick", function() MS:ResetDefaults() end)
+            ResetDefaultsButton:SetCallback("OnClick", function() MS:ResetDefaults() MSGUIContainer:ReleaseChildren() DrawLocationContainer(MSGUIContainer) end)
             MiscContainer:AddChild(ResetDefaultsButton)
             ColourContainer:AddChild(ClassColorCheckBox)
             ColourContainer:AddChild(PrimaryFontColor)
