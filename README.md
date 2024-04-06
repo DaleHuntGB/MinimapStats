@@ -1,4 +1,4 @@
-# MinimapStats V4.2.0 [Updated 07 - 01 - 2024]
+# MinimapStats V4.2.2 [Updated 06 - 04 - 2024]
 
 **Clean**. **Functional**. **Minimal**.
 
