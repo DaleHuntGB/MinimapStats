@@ -82,7 +82,7 @@ local DefaultSettings = {
         CoordinatesFrameAnchorFrom = "TOP",
         CoordinatesFrameAnchorTo = "TOP",
         TooltipAnchorFrom = "TOPRIGHT",
-        TooltipAnchorTo = "TOPLEFT",
+        TooltipAnchorTo = "BOTTOMRIGHT",
         -- Positions
         TimeFrameXOffset = 0,
         TimeFrameYOffset = 17,
@@ -98,7 +98,7 @@ local DefaultSettings = {
         InformationFrame_UpdateFrequency = 5,
         CoordinatesFrame_UpdateFrequency = 5,
         TooltipXOffset = 0,
-        TooltipYOffset = 0,
+        TooltipYOffset = -2,
     }
 }
 function MinimapStats:OnInitialize()
@@ -209,31 +209,6 @@ function MinimapStats:OnInitialize()
                 FormatString = FormatString:gsub(KeyCode, value)
             end
             return FormatString
-            --[[if MSDBG.InformationFormat == "FPS [HomeMS]" then -- FPS [HomeMS]
-                return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " [" .. HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. "]"
-            elseif MSDBG.InformationFormat == "FPS [WorldMS]" then -- FPS [WorldMS]
-                return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " [" .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. "]"
-            elseif MSDBG.InformationFormat == "FPS | HomeMS" then -- FPS | HomeMS
-                return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " | " .. HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
-            elseif MSDBG.InformationFormat == "FPS | WorldMS" then -- FPS | WorldMS
-                return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " | " .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
-            elseif MSDBG.InformationFormat == "FPS (HomeMS)" then -- FPS (HomeMS)
-                return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " (" .. HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. ")"
-            elseif MSDBG.InformationFormat == "FPS (WorldMS)" then -- FPS (WorldMS)
-                return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " (" .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. ")"
-            elseif MSDBG.InformationFormat == "FPS" then -- FPS
-                return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r"
-            elseif MSDBG.InformationFormat == "HomeMS" then -- HomeMS
-                return HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
-            elseif MSDBG.InformationFormat == "WorldMS" then -- WorldMS
-                return WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
-            elseif MSDBG.InformationFormat == "HomeMS [WorldMS]" then -- HomeMS [WorldMS]
-                return HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. " [" .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. "]"
-            elseif MSDBG.InformationFormat == "HomeMS | WorldMS" then -- HomeMS | WorldMS
-                return HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. " | " .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
-            elseif MSDBG.InformationFormat == "HomeMS (WorldMS)" then -- HomeMS (WorldMS)
-                return HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. " (" .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. ")"               
-            end]]
         end
     end
     local function GetDungeonandRaidLockouts()
@@ -319,7 +294,7 @@ function MinimapStats:OnInitialize()
         local playerKeystoneLevel = ORLibrary.level
         local playerKeystone, _, _, keystoneIcon = C_ChallengeMode.GetMapUIInfo(ORLibrary.mythicPlusMapID)
         if playerKeystone and keystoneIcon then
-            local texturedIcon = "|T" .. keystoneIcon .. ":18:18:0|t "
+            local texturedIcon = "|T" .. keystoneIcon .. ":16:16:0|t "
             GameTooltip:AddLine(texturedIcon .. playerKeystone .. " [" .. playerKeystoneLevel .. "]", 1, 1, 1)
         else
             GameTooltip:AddLine("No Keystone", 1, 1, 1)
@@ -337,7 +312,7 @@ function MinimapStats:OnInitialize()
     
         local partyMembers = {}
     
-        if IsInGroup() then
+        if IsInGroup() and not IsInRaid() then
             GameTooltip:AddLine("Party Keystones", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
             for i = 1, GetNumGroupMembers() - 1 do
                 local unit = "party" .. i
@@ -348,6 +323,7 @@ function MinimapStats:OnInitialize()
             end
             for _, unit in ipairs(partyMembers) do
                 local name = GetUnitName(unit, true)
+                local nameServerless = name:gsub("-%w+", "")
                 local _, class = UnitClass(unit)
                 local classColor = RAID_CLASS_COLORS[class]
                 local keystoneInfo = OR.GetKeystoneInfo(name)
@@ -355,10 +331,10 @@ function MinimapStats:OnInitialize()
                 if keystoneInfo and keystoneInfo.level then
                     local keystoneName, _, _, keystoneIcon = C_ChallengeMode.GetMapUIInfo(keystoneInfo.mythicPlusMapID)
                     local keystoneLevel = keystoneInfo.level
-                    local texturedIcon = "|T" .. keystoneIcon .. ":18:18:0|t "
-                    GameTooltip:AddLine(name .. ": " .. "|cFFFFFFFF" .. texturedIcon .. keystoneName .. " [" .. keystoneLevel .. "]|r" , classColor.r, classColor.g, classColor.b)
+                    local texturedIcon = "|T" .. keystoneIcon .. ":16:16:0|t "
+                    GameTooltip:AddLine(nameServerless .. ": " .. "|cFFFFFFFF".. texturedIcon.. keystoneName .. " [" .. keystoneLevel .. "]|r" , classColor.r, classColor.g, classColor.b)
                 else
-                    GameTooltip:AddLine(name .. ": " .. "|cFFFFFFFFNo Keystone|r" , classColor.r, classColor.g, classColor.b)
+                    GameTooltip:AddLine(nameServerless .. ": " .. "|cFFFFFFFFNo Keystone|r" , classColor.r, classColor.g, classColor.b)
                 end
             end
             if MSDBG.DisplayAffixes or MSDBG.DisplayFriendList then
@@ -373,19 +349,19 @@ function MinimapStats:OnInitialize()
         for i = 1, 3 do
             local affixID = C_MythicPlus.GetCurrentAffixes()[i].id
             local affixName, affixDesc, affixIconID = C_ChallengeMode.GetAffixInfo(affixID)
-            local affixIcon = "|T" .. affixIconID .. ":18:18:0|t "
+            local affixIcon = "|T" .. affixIconID .. ":16:16:0|t "
             if i == 1 then
-                GameTooltip:AddLine(affixIcon .. affixName, 1, 1, 1)
+                GameTooltip:AddLine(affixIcon ..affixName, 1, 1, 1)
                 if MSDBG.DisplayAffixDescriptions then
                     GameTooltip:AddLine(affixDesc, 1, 1, 1)
                 end
             elseif i == 2 then
-                GameTooltip:AddLine(affixIcon .. affixName, 1, 1, 1)
+                GameTooltip:AddLine(affixIcon ..affixName, 1, 1, 1)
                 if MSDBG.DisplayAffixDescriptions then
                     GameTooltip:AddLine(affixDesc, 1, 1, 1)
                 end
             elseif i == 3 then
-                GameTooltip:AddLine(affixIcon .. affixName, 1, 1, 1)
+                GameTooltip:AddLine(affixIcon ..affixName, 1, 1, 1)
                 if MSDBG.DisplayAffixDescriptions then
                     GameTooltip:AddLine(affixDesc, 1, 1, 1)
                 end
@@ -429,7 +405,7 @@ function MinimapStats:OnInitialize()
                     if isDND then
                         statusColor = dndColor
                     end
-                    GameTooltip:AddLine("|cFF"..statusColor..friendBnet .. "|r: " .. classColor .. characterName .. "|r [L|cFFFFCC40" .. characterLevel .. "|r]", 1, 1, 1)
+                    GameTooltip:AddLine("|cFF"..statusColor.." • " .."|r|cFFFFFFFF"..friendBnet .. "|r: " .. classColor .. characterName .. "|r [L|cFFFFCC40" .. characterLevel .. "|r]", 1, 1, 1)
                 end
             end
         end
@@ -1240,17 +1216,11 @@ function MinimapStats:OnEnable()
                 DisplayAffixesCheckBox:SetDisabled(true)
                 DisplayAffixDescriptionsCheckBox:SetDisabled(true)
                 DisplayFriendListCheckBox:SetDisabled(true)
+                TooltipInformationAnchorFromDropdown:SetDisabled(true)
+                TooltipInformationAnchorToDropdown:SetDisabled(true)
+                TooltipInformationXOffset:SetDisabled(true)
+                TooltipInformationYOffset:SetDisabled(true)
             end
-
-            --[[local InformationFormatDropdown = MSGUI:Create("Dropdown")
-            InformationFormatDropdown:SetLabel("Format")
-            local InformationFormatDropdownData = {["FPS [HomeMS]"] = "FPS [HomeMS]", ["FPS [WorldMS]"] = "FPS [WorldMS]", ["FPS | HomeMS"] = "FPS | HomeMS", ["FPS | WorldMS"] = "FPS | WorldMS", ["FPS (HomeMS)"] = "FPS (HomeMS)", ["FPS (WorldMS)"] = "FPS (WorldMS)", ["FPS"] = "FPS", ["HomeMS"] = "HomeMS", ["WorldMS"] = "WorldMS", ["HomeMS [WorldMS]"] = "HomeMS [WorldMS]", ["HomeMS | WorldMS"] = "HomeMS | WorldMS", ["HomeMS (WorldMS)"] = "HomeMS (WorldMS)"}
-            local InformationFormatDropdownOrder = { "FPS [HomeMS]", "FPS [WorldMS]", "FPS | HomeMS", "FPS | WorldMS", "FPS (HomeMS)", "FPS (WorldMS)", "FPS", "HomeMS", "WorldMS", "HomeMS [WorldMS]", "HomeMS | WorldMS", "HomeMS (WorldMS)" }
-            InformationFormatDropdown:SetList(InformationFormatDropdownData, InformationFormatDropdownOrder)
-            InformationFormatDropdown:SetValue(MSDBG.InformationFormat)
-            InformationFormatDropdown:SetFullWidth(true)
-            InformationFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.InformationFormat = value RefreshInformationElement() end)
-            InformationFormatContainer:AddChild(InformationFormatDropdown)]]
             local InformationFormatEditBox = MSGUI:Create("EditBox")
             InformationFormatEditBox:SetLabel("Format")
             InformationFormatEditBox:SetFullWidth(true)
@@ -1259,7 +1229,7 @@ function MinimapStats:OnEnable()
             InformationFormatContainer:AddChild(InformationFormatEditBox)
             local InformationFormatEditBoxHelp = MSGUI:Create("Label")
             InformationFormatEditBoxHelp:SetFullWidth(true)
-            InformationFormatEditBoxHelp:SetText("\n|cFFFFCC00Available Tags|r\n\n|cFF00FF00FPS|r = FPS\n|cFF00FF00HomeMS|r = Home Latency\n|cFF00FF00WorldMS|r = World Latency\n|cFF00FF00DualMS|r = Home & World MS\n\nAny seperators can be used. Some common ones are: |cFF40FF40[ ]|r or |cFF40FF40( )|r or |cFF40FF40< >|r or |cFF40FF40 | |r")
+            InformationFormatEditBoxHelp:SetText("\n|cFFFFCC00Available Tags|r\n\n|cFF8080FFFPS|r = FPS\n|cFF8080FFHomeMS|r = Home Latency\n|cFF8080FFWorldMS|r = World Latency\n|cFF8080FFDualMS|r = Home & World MS\n\nAny seperators can be used. Some common ones are: |cFF8080FF[ ]|r or |cFF8080FF( )|r or |cFF8080FF< >|r or |cFF8080FF | |r")
             InformationFormatContainer:AddChild(InformationFormatEditBoxHelp)
             local InformationFontSize = MSGUI:Create("Slider")
             InformationFontSize:SetLabel("Font Size")
