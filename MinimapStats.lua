@@ -8,6 +8,21 @@ local MSGUIShown = false
 local DebugMode = false
 local TestingInstanceDifficulty = false
 local MS = {}
+local characterClassTable = {
+    ["Death Knight"] = "|cFFC41E3A",
+    ["Demon Hunter"] = "|cFFA330C9",
+    ["Druid"] = "|cFFFF7C0A",
+    ["Evoker"] = "|cFF33937F",
+    ["Hunter"] = "|cFFAAD372",
+    ["Mage"] = "|cFF3FC7EB",
+    ["Monk"] = "|cFF00FF98",
+    ["Paladin"] = "|cFFF48CBA",
+    ["Priest"] = "|cFFFFFFFF",
+    ["Rogue"] = "|cFFFFF468",
+    ["Shaman"] = "|cFF0070DD",
+    ["Warlock"] = "|cFF8788EE",
+    ["Warrior"] = "|cFFC69B6D",
+}
 local DefaultSettings = {
     global = {
         -- Toggles
@@ -29,6 +44,13 @@ local DefaultSettings = {
         UseClassColours = true,
         DisplayCoordinates = true,
         DisplayTooltipInformation = true,
+        DisplayRaidDungeonLockouts = true,
+        DisplayMythicPlusRuns = true,
+        DisplayPlayerKeystone = true,
+        DisplayPartyKeystones = true,
+        DisplayAffixes = true,
+        DisplayAffixDescriptions = true,
+        DisplayFriendList = true,
         -- Fonts & Colors
         Font = "Fonts\\FRIZQT__.ttf",
         FontOutline = "THINOUTLINE",
@@ -59,6 +81,8 @@ local DefaultSettings = {
         InstanceDifficultyFrameAnchorTo = "TOPLEFT",
         CoordinatesFrameAnchorFrom = "TOP",
         CoordinatesFrameAnchorTo = "TOP",
+        TooltipAnchorFrom = "TOPRIGHT",
+        TooltipAnchorTo = "TOPLEFT",
         -- Positions
         TimeFrameXOffset = 0,
         TimeFrameYOffset = 17,
@@ -73,17 +97,24 @@ local DefaultSettings = {
         TimeFrame_UpdateFrequency = 3,
         InformationFrame_UpdateFrequency = 5,
         CoordinatesFrame_UpdateFrequency = 5,
+        TooltipXOffset = 0,
+        TooltipYOffset = 0,
     }
 }
 function MinimapStats:OnInitialize()
     MS.db = LibStub("AceDB-3.0"):New("MSDB", DefaultSettings)
-    if MS.db.global.UseClassColours then
-        MS.db.global.SecondaryFontColorR = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].r
-        MS.db.global.SecondaryFontColorG = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].g
-        MS.db.global.SecondaryFontColorB = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].b
+    MSDBG = MS.db.global
+    if MSDBG.UseClassColours then
+        MSDBG.SecondaryFontColorR = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].r
+        MSDBG.SecondaryFontColorG = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].g
+        MSDBG.SecondaryFontColorB = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].b
     end
-    local SecondaryFontColorRGB = { r = MS.db.global.SecondaryFontColorR, g = MS.db.global.SecondaryFontColorG, b = MS.db.global.SecondaryFontColorB }
+    local SecondaryFontColorRGB = { r = MSDBG.SecondaryFontColorR, g = MSDBG.SecondaryFontColorG, b = MSDBG.SecondaryFontColorB }
     local SecondaryFontColor = string.format("%02x%02x%02x", SecondaryFontColorRGB.r * 255, SecondaryFontColorRGB.g * 255, SecondaryFontColorRGB.b * 255)
+
+    function MS:PrettyPrint(msg)
+        print(AddOnName .. " V" .. AddOnVersion.. ": " .. msg)
+    end
     function MS:FetchTime()
         local CurrentHour, CurrentMins = date("%H"), date("%M")
         local CurrentHourTwelve, CurrentAMPM = date("%I"), date("%p")
@@ -100,14 +131,14 @@ function MinimapStats:OnInitialize()
             ServerTimeTwelveHour = ServerTime .. " PM"
         end
     
-        if MS.db.global.DisplayTime then
-            if MS.db.global.TimeFormat == "TwentyFourHourTime" then
+        if MSDBG.DisplayTime then
+            if MSDBG.TimeFormat == "TwentyFourHourTime" then
                 return TwentyFourHourTime
-            elseif MS.db.global.TimeFormat == "TwelveHourTime" then
+            elseif MSDBG.TimeFormat == "TwelveHourTime" then
                 return TwelveHourTime
-            elseif MS.db.global.TimeFormat == "ServerTime" then
+            elseif MSDBG.TimeFormat == "ServerTime" then
                 return ServerTime
-            elseif MS.db.global.TimeFormat == "TwelverHourServerTime" then
+            elseif MSDBG.TimeFormat == "TwelverHourServerTime" then
                 return ServerTimeTwelveHour
             end
         end
@@ -118,14 +149,14 @@ function MinimapStats:OnInitialize()
         local CurrentYear = date("%y")
         local FullYear = date("%Y")
         local CurrentMonthName = date("%B")
-        if MS.db.global.DisplayDate then
-            if MS.db.global.DateFormat == "DD/MM/YY" and MS.db.global.AlternativeFormatting == false then
+        if MSDBG.DisplayDate then
+            if MSDBG.DateFormat == "DD/MM/YY" and MSDBG.AlternativeFormatting == false then
                 return string.format("%s/%s/%s", CurrentDate, CurrentMonth, CurrentYear)
-            elseif MS.db.global.DateFormat == "DD/MM/YY" and MS.db.global.AlternativeFormatting == true then
+            elseif MSDBG.DateFormat == "DD/MM/YY" and MSDBG.AlternativeFormatting == true then
                 return string.format("%s/%s/%s", CurrentMonth, CurrentDate, CurrentYear)
-            elseif MS.db.global.DateFormat == "FullDate" and MS.db.global.AlternativeFormatting == false then
+            elseif MSDBG.DateFormat == "FullDate" and MSDBG.AlternativeFormatting == false then
                 return string.format("%s %s %s", CurrentDate, CurrentMonthName, FullYear)
-            elseif MS.db.global.DateFormat == "FullDate" and MS.db.global.AlternativeFormatting == true then
+            elseif MSDBG.DateFormat == "FullDate" and MSDBG.AlternativeFormatting == true then
                 return string.format("%s %s %s", CurrentMonthName, CurrentDate, FullYear)
             end
         end
@@ -151,25 +182,25 @@ function MinimapStats:OnInitialize()
         else
             LocationColor = CalculateHexValue(0.9, 0.85, 0.05)
         end
-        if MS.db.global.DisplayLocation then
-            if MS.db.global.LocationFontColor == "Primary" then
-                local PrimaryFontColor = string.format("%02x%02x%02x", MS.db.global.PrimaryFontColorR * 255, MS.db.global.PrimaryFontColorG * 255, MS.db.global.PrimaryFontColorB * 255)
+        if MSDBG.DisplayLocation then
+            if MSDBG.LocationFontColor == "Primary" then
+                local PrimaryFontColor = string.format("%02x%02x%02x", MSDBG.PrimaryFontColorR * 255, MSDBG.PrimaryFontColorG * 255, MSDBG.PrimaryFontColorB * 255)
                 return "|cFF" .. PrimaryFontColor .. GetMinimapZoneText() .. "|r"
-            elseif MS.db.global.LocationFontColor == "Secondary" then
+            elseif MSDBG.LocationFontColor == "Secondary" then
                 return "|cFF" .. SecondaryFontColor .. GetMinimapZoneText() .. "|r"
-            elseif MS.db.global.LocationFontColor == "Custom" then
-                local CustomFontColor = string.format("%02x%02x%02x", MS.db.global.LocationCustomColorR * 255, MS.db.global.LocationCustomColorG * 255, MS.db.global.LocationCustomColorB * 255)
+            elseif MSDBG.LocationFontColor == "Custom" then
+                local CustomFontColor = string.format("%02x%02x%02x", MSDBG.LocationCustomColorR * 255, MSDBG.LocationCustomColorG * 255, MSDBG.LocationCustomColorB * 255)
                 return "|cFF" .. CustomFontColor .. GetMinimapZoneText() .. "|r"
-            elseif MS.db.global.LocationFontColor == "Reaction" then
+            elseif MSDBG.LocationFontColor == "Reaction" then
                 return "|cFF" .. LocationColor .. GetMinimapZoneText() .. "|r"
             end
         end
     end
     function MS:FetchInformation()
-        if MS.db.global.DisplayInformation then
+        if MSDBG.DisplayInformation then
             local FPS = ceil(GetFramerate())
             local _, _, HomeMS, WorldMS = GetNetStats()
-            local FormatString = MS.db.global.InformationFormatString;
+            local FormatString = MSDBG.InformationFormatString;
             local FPSText = FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r"
             local HomeMSText = HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
             local WorldMSText = WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
@@ -178,36 +209,38 @@ function MinimapStats:OnInitialize()
                 FormatString = FormatString:gsub(KeyCode, value)
             end
             return FormatString
-            --[[if MS.db.global.InformationFormat == "FPS [HomeMS]" then -- FPS [HomeMS]
+            --[[if MSDBG.InformationFormat == "FPS [HomeMS]" then -- FPS [HomeMS]
                 return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " [" .. HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. "]"
-            elseif MS.db.global.InformationFormat == "FPS [WorldMS]" then -- FPS [WorldMS]
+            elseif MSDBG.InformationFormat == "FPS [WorldMS]" then -- FPS [WorldMS]
                 return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " [" .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. "]"
-            elseif MS.db.global.InformationFormat == "FPS | HomeMS" then -- FPS | HomeMS
+            elseif MSDBG.InformationFormat == "FPS | HomeMS" then -- FPS | HomeMS
                 return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " | " .. HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
-            elseif MS.db.global.InformationFormat == "FPS | WorldMS" then -- FPS | WorldMS
+            elseif MSDBG.InformationFormat == "FPS | WorldMS" then -- FPS | WorldMS
                 return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " | " .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
-            elseif MS.db.global.InformationFormat == "FPS (HomeMS)" then -- FPS (HomeMS)
+            elseif MSDBG.InformationFormat == "FPS (HomeMS)" then -- FPS (HomeMS)
                 return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " (" .. HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. ")"
-            elseif MS.db.global.InformationFormat == "FPS (WorldMS)" then -- FPS (WorldMS)
+            elseif MSDBG.InformationFormat == "FPS (WorldMS)" then -- FPS (WorldMS)
                 return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r" .. " (" .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. ")"
-            elseif MS.db.global.InformationFormat == "FPS" then -- FPS
+            elseif MSDBG.InformationFormat == "FPS" then -- FPS
                 return FPS .. "|cFF" .. SecondaryFontColor .. " FPS" .. "|r"
-            elseif MS.db.global.InformationFormat == "HomeMS" then -- HomeMS
+            elseif MSDBG.InformationFormat == "HomeMS" then -- HomeMS
                 return HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
-            elseif MS.db.global.InformationFormat == "WorldMS" then -- WorldMS
+            elseif MSDBG.InformationFormat == "WorldMS" then -- WorldMS
                 return WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
-            elseif MS.db.global.InformationFormat == "HomeMS [WorldMS]" then -- HomeMS [WorldMS]
+            elseif MSDBG.InformationFormat == "HomeMS [WorldMS]" then -- HomeMS [WorldMS]
                 return HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. " [" .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. "]"
-            elseif MS.db.global.InformationFormat == "HomeMS | WorldMS" then -- HomeMS | WorldMS
+            elseif MSDBG.InformationFormat == "HomeMS | WorldMS" then -- HomeMS | WorldMS
                 return HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. " | " .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r"
-            elseif MS.db.global.InformationFormat == "HomeMS (WorldMS)" then -- HomeMS (WorldMS)
+            elseif MSDBG.InformationFormat == "HomeMS (WorldMS)" then -- HomeMS (WorldMS)
                 return HomeMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. " (" .. WorldMS .. "|cFF" .. SecondaryFontColor .. " MS" .. "|r" .. ")"               
             end]]
         end
     end
     local function GetDungeonandRaidLockouts()
+        RequestRaidInfo()
         local dungeons = {}
         local raids = {}
+        if not MSDBG.DisplayRaidDungeonLockouts then return end
         for i = 1, GetNumSavedInstances() do
             local name, _, _, _, isLocked, _, _, isRaid, _, difficultyName, numEncounters, encounterProgress, _, _ = GetSavedInstanceInfo(i)
             local formattedInstanceInformation = string.format("%s: %d/%d %s", name, encounterProgress, numEncounters, difficultyName)
@@ -220,23 +253,28 @@ function MinimapStats:OnInitialize()
             end
         end
         if #dungeons > 0 then
-            GameTooltip:AddLine("Dungeons", MS.db.global.SecondaryFontColorR, MS.db.global.SecondaryFontColorG, MS.db.global.SecondaryFontColorB)
+            GameTooltip:AddLine("Dungeons", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
             for _, line in ipairs(dungeons) do
                 GameTooltip:AddLine(line, 1, 1, 1)
             end
-            GameTooltip:AddLine(" ")
+            if MSDBG.DisplayMythicPlusRuns or MSDBG.DisplayPlayerKeystone or MSDBG.DisplayPartyKeystones or MSDBG.DisplayAffixes or MSDBG.DisplayFriendList or #raids > 0 then
+                GameTooltip:AddLine(" ")
+            end
         end
         if #raids > 0 then
-            GameTooltip:AddLine("Raids", MS.db.global.SecondaryFontColorR, MS.db.global.SecondaryFontColorG, MS.db.global.SecondaryFontColorB)
+            GameTooltip:AddLine("Raids", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
             for _, line in ipairs(raids) do
                 GameTooltip:AddLine(line, 1, 1, 1)
             end
-            GameTooltip:AddLine(" ")
+            if MSDBG.DisplayMythicPlusRuns or MSDBG.DisplayPlayerKeystone or MSDBG.DisplayPartyKeystones or MSDBG.DisplayAffixes or MSDBG.DisplayFriendList then
+                GameTooltip:AddLine(" ")
+            end
         end
     end
     local function GetMythicPlusInformation()
+        if not MSDBG.DisplayMythicPlusRuns then return end
         local mythicRuns = C_MythicPlus.GetRunHistory(false, true)
-        local PrimaryFontColor = string.format("%02x%02x%02x", MS.db.global.PrimaryFontColorR * 255, MS.db.global.PrimaryFontColorG * 255, MS.db.global.PrimaryFontColorB * 255)
+        local PrimaryFontColor = string.format("%02x%02x%02x", MSDBG.PrimaryFontColorR * 255, MSDBG.PrimaryFontColorG * 255, MSDBG.PrimaryFontColorB * 255)
         local formattedRuns = {}
         local MythicPlusAbbr =
         {
@@ -256,7 +294,7 @@ function MinimapStats:OnInitialize()
             formattedRuns[i] = nil
         end
         if #formattedRuns > 0 then
-            local r, g, b = MS.db.global.SecondaryFontColorR, MS.db.global.SecondaryFontColorG, MS.db.global.SecondaryFontColorB
+            local r, g, b = MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB
             GameTooltip:AddLine("Mythic+ Runs", r, g, b)
             for number, line in ipairs(formattedRuns) do
                 if number == 1 or number == 4 or number == 8 then
@@ -265,31 +303,151 @@ function MinimapStats:OnInitialize()
                     GameTooltip:AddLine(line, 1, 1, 1)
                 end
             end
-            GameTooltip:AddLine(" ")
+            if MSDBG.DisplayPlayerKeystone or MSDBG.DisplayPartyKeystones or MSDBG.DisplayAffixes or MSDBG.DisplayFriendList then
+                GameTooltip:AddLine(" ")
+            end
         end
     end
     local function GetPlayerKeystone()
+        if not MSDBG.DisplayPlayerKeystone then return end
         if not OR then 
-            print(AddOnName.. ": OpenRaid was not found. This comes pre-installed with Details/Echo Raid Tools.")
+            MS:PrettyPrint("OpenRaid was not found. This comes pre-installed with Details/Echo Raid Tools.")
             return 
         end
+        GameTooltip:AddLine("Your Keystone", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
         local ORLibrary = OR.GetKeystoneInfo("player")
         local playerKeystoneLevel = ORLibrary.level
         local playerKeystone, _, _, keystoneIcon = C_ChallengeMode.GetMapUIInfo(ORLibrary.mythicPlusMapID)
-        if playerKeystone ~= nil then
+        if playerKeystone and keystoneIcon then
             local texturedIcon = "|T" .. keystoneIcon .. ":18:18:0|t "
-            GameTooltip:AddDoubleLine("Your Keystone", texturedIcon .. playerKeystone .. " [" .. playerKeystoneLevel .. "]", MS.db.global.SecondaryFontColorR, MS.db.global.SecondaryFontColorG, MS.db.global.SecondaryFontColorB, 1, 1, 1)
+            GameTooltip:AddLine(texturedIcon .. playerKeystone .. " [" .. playerKeystoneLevel .. "]", 1, 1, 1)
+        else
+            GameTooltip:AddLine("No Keystone", 1, 1, 1)
+        end
+        if (MSDBG.DisplayPartyKeystones and IsInGroup()) or MSDBG.DisplayAffixes or MSDBG.DisplayFriendList then
+            GameTooltip:AddLine(" ")
+        end
+    end
+    local function GetPartyKeystones()
+        if not MSDBG.DisplayPartyKeystones then return end
+        if not OR then
+            MS:PrettyPrint("OpenRaid was not found. This comes pre-installed with Details/Echo Raid Tools.")
+            return
+        end
+    
+        local partyMembers = {}
+    
+        if IsInGroup() then
+            GameTooltip:AddLine("Party Keystones", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
+            for i = 1, GetNumGroupMembers() - 1 do
+                local unit = "party" .. i
+                local name = GetUnitName(unit, true)
+                if name then
+                    table.insert(partyMembers, unit)
+                end
+            end
+            for _, unit in ipairs(partyMembers) do
+                local name = GetUnitName(unit, true)
+                local _, class = UnitClass(unit)
+                local classColor = RAID_CLASS_COLORS[class]
+                local keystoneInfo = OR.GetKeystoneInfo(name)
+        
+                if keystoneInfo and keystoneInfo.level then
+                    local keystoneName, _, _, keystoneIcon = C_ChallengeMode.GetMapUIInfo(keystoneInfo.mythicPlusMapID)
+                    local keystoneLevel = keystoneInfo.level
+                    local texturedIcon = "|T" .. keystoneIcon .. ":18:18:0|t "
+                    GameTooltip:AddLine(name .. ": " .. "|cFFFFFFFF" .. texturedIcon .. keystoneName .. " [" .. keystoneLevel .. "]|r" , classColor.r, classColor.g, classColor.b)
+                else
+                    GameTooltip:AddLine(name .. ": " .. "|cFFFFFFFFNo Keystone|r" , classColor.r, classColor.g, classColor.b)
+                end
+            end
+            if MSDBG.DisplayAffixes or MSDBG.DisplayFriendList then
+                GameTooltip:AddLine(" ")
+            end
+        end
+    end
+    
+    local function GetAffixInfo()
+        if not MSDBG.DisplayAffixes then return end
+        GameTooltip:AddLine("Current Affixes", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
+        for i = 1, 3 do
+            local affixID = C_MythicPlus.GetCurrentAffixes()[i].id
+            local affixName, affixDesc, affixIconID = C_ChallengeMode.GetAffixInfo(affixID)
+            local affixIcon = "|T" .. affixIconID .. ":18:18:0|t "
+            if i == 1 then
+                GameTooltip:AddLine(affixIcon .. affixName, 1, 1, 1)
+                if MSDBG.DisplayAffixDescriptions then
+                    GameTooltip:AddLine(affixDesc, 1, 1, 1)
+                end
+            elseif i == 2 then
+                GameTooltip:AddLine(affixIcon .. affixName, 1, 1, 1)
+                if MSDBG.DisplayAffixDescriptions then
+                    GameTooltip:AddLine(affixDesc, 1, 1, 1)
+                end
+            elseif i == 3 then
+                GameTooltip:AddLine(affixIcon .. affixName, 1, 1, 1)
+                if MSDBG.DisplayAffixDescriptions then
+                    GameTooltip:AddLine(affixDesc, 1, 1, 1)
+                end
+            end
+        end
+        if MSDBG.DisplayFriendList then
+            GameTooltip:AddLine(" ")
+        end
+    end
+
+    local function GetFriendListInfo()
+        if not MSDBG.DisplayFriendList then return end
+        GameTooltip:AddLine("Friends", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
+        local _, totalFriends= BNGetNumFriends()
+        for i = 1, totalFriends do
+            local accountInfo = C_BattleNet.GetFriendAccountInfo(i)
+            if accountInfo then
+                local friendInfo = accountInfo.gameAccountInfo
+                local inGame = friendInfo.clientProgram == "WoW"
+                local isOnline = friendInfo.isOnline
+                local isAFK = accountInfo.isAFK
+                local isDND = accountInfo.isDND
+                local friendBnet = accountInfo.accountName
+                local characterName = friendInfo.characterName
+                local characterClass = friendInfo.className
+                local characterLevel = friendInfo.characterLevel
+                local classColor = characterClassTable[characterClass]
+                local statusColor;
+
+                local onlineColor = string.format("%02x%02x%02x", 64, 255, 64)
+                local afkColor = string.format("%02x%02x%02x", 255, 128, 64)
+                local dndColor = string.format("%02x%02x%02x", 255, 64, 64)
+
+                if inGame and characterClass ~= nil then
+                    if isOnline then
+                        statusColor = onlineColor
+                    end
+                    if isAFK then
+                        statusColor = afkColor
+                    end
+                    if isDND then
+                        statusColor = dndColor
+                    end
+                    GameTooltip:AddLine("|cFF"..statusColor..friendBnet .. "|r: " .. classColor .. characterName .. "|r [L|cFFFFCC40" .. characterLevel .. "|r]", 1, 1, 1)
+                end
+            end
         end
     end
     function MS:FetchTooltipInformation()
-        GameTooltip:SetOwner(InformationFrame, "ANCHOR_BOTTOM", 0, 0)
+        if InCombatLockdown() then return end
+        GameTooltip:SetOwner(Minimap, "ANCHOR_NONE", 0, 0)
+        GameTooltip:SetPoint(MSDBG.TooltipAnchorFrom, Minimap, MSDBG.TooltipAnchorTo, MSDBG.TooltipXOffset, MSDBG.TooltipYOffset)
         GetDungeonandRaidLockouts()
         GetMythicPlusInformation()
         GetPlayerKeystone()
+        GetPartyKeystones()
+        GetAffixInfo()
+        GetFriendListInfo()
         GameTooltip:Show()
     end
     function MS:FetchInstanceDifficulty()
-        if MS.db.global.DisplayInstanceDifficulty then
+        if MSDBG.DisplayInstanceDifficulty then
             local _, _, InstanceDifficulty, _, _, _, _, InstanceID, InstanceSize = GetInstanceInfo()
             local KeystoneLevel = C_ChallengeMode.GetActiveKeystoneInfo()
             local InstanceDifficultyIndicator = MinimapCluster.InstanceDifficulty
@@ -366,7 +524,7 @@ function MinimapStats:OnInitialize()
         end
     end
     function MS:FetchCoordinates()
-        if MS.db.global.DisplayCoordinates then
+        if MSDBG.DisplayCoordinates then
             local PlayerMap = C_Map.GetBestMapForUnit("player")
             local InstanceType = select(2, IsInInstance())
             if InstanceType == "none" and PlayerMap then
@@ -378,11 +536,11 @@ function MinimapStats:OnInitialize()
                     local NoDecimals = string.format("%.0f, %.0f", PositionXActual, PositionYActual)
                     local OneDecimal = string.format("%.1f, %.1f", PositionXActual, PositionYActual)
                     local TwoDecimals = string.format("%.2f, %.2f", PositionXActual, PositionYActual)
-                    if MS.db.global.CoordinatesFormat == "NoDecimal" then
+                    if MSDBG.CoordinatesFormat == "NoDecimal" then
                         return NoDecimals
-                    elseif MS.db.global.CoordinatesFormat == "OneDecimal" then
+                    elseif MSDBG.CoordinatesFormat == "OneDecimal" then
                         return OneDecimal
-                    elseif MS.db.global.CoordinatesFormat == "TwoDecimal" then
+                    elseif MSDBG.CoordinatesFormat == "TwoDecimal" then
                         return TwoDecimals
                     end
                 else
@@ -392,9 +550,9 @@ function MinimapStats:OnInitialize()
         end
     end
     function MS:SetScripts()
-        if MS.db.global.DisplayTime then
+        if MSDBG.DisplayTime then
             TimeFrame:SetScript("OnUpdate", UpdateTimeFrame)
-            if MS.db.global.DisplayDate then
+            if MSDBG.DisplayDate then
                 TimeFrame:SetScript("OnEnter", function() TimeFrameText:SetText(MS:FetchDate()) TimeFrame:SetScript("OnUpdate", nil) end)
                 TimeFrame:SetScript("OnLeave", function() TimeFrameText:SetText(MS:FetchTime()) TimeFrame:SetScript("OnUpdate", UpdateTimeFrame) end)
             else
@@ -406,15 +564,15 @@ function MinimapStats:OnInitialize()
             TimeFrame:SetScript("OnUpdate", nil)
             TimeFrame:SetScript("OnMouseDown", nil)
         end
-        if MS.db.global.DisplayLocation then
+        if MSDBG.DisplayLocation then
             LocationFrame:SetScript("OnEvent", UpdateLocationFrame)
         else
             LocationFrame:SetScript("OnEvent", nil)
         end
-        if MS.db.global.DisplayInformation then
+        if MSDBG.DisplayInformation then
             InformationFrame:SetScript("OnUpdate", UpdateInformationFrame)
-            InformationFrame:SetScript("OnMouseDown", function(self, button) if button == "MiddleButton" then ReloadUI() elseif button == "RightButton" then if MSGUIShown == false then MS:RunMSGUI() else return end elseif button == "LeftButton" then collectgarbage("collect") print(AddOnName.. ": Garbage Collected!") end end)
-            if MS.db.global.DisplayTooltipInformation then
+            InformationFrame:SetScript("OnMouseDown", function(self, button) if button == "MiddleButton" then ReloadUI() elseif button == "RightButton" then if MSGUIShown == false then MS:RunMSGUI() else return end elseif button == "LeftButton" then collectgarbage("collect") MS:PrettyPrint("Garbage Collected") end end)
+            if MSDBG.DisplayTooltipInformation then
                 InformationFrame:SetScript("OnEnter", function() MS:FetchTooltipInformation() end)
                 InformationFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
             else
@@ -427,7 +585,7 @@ function MinimapStats:OnInitialize()
             InformationFrame:SetScript("OnEnter", nil)
             InformationFrame:SetScript("OnLeave", nil)
         end
-        if MS.db.global.DisplayInstanceDifficulty then
+        if MSDBG.DisplayInstanceDifficulty then
             InstanceDifficultyFrame:SetScript("OnEvent", UpdateInstanceDifficultyFrame)
             if TestingInstanceDifficulty == true then
                 InstanceDifficultyFrame:SetScript("OnUpdate", TestInstanceDifficultyFrame)
@@ -437,7 +595,7 @@ function MinimapStats:OnInitialize()
         else
             InstanceDifficultyFrame:SetScript("OnEvent", nil)
         end
-        if MS.db.global.DisplayCoordinates then
+        if MSDBG.DisplayCoordinates then
             CoordinatesFrame:SetScript("OnUpdate", UpdateCoordinatesFrame)
         else
             CoordinatesFrame:SetScript("OnUpdate", nil)
@@ -445,18 +603,18 @@ function MinimapStats:OnInitialize()
     end
     function MS:RefreshTimeElement()
         TimeFrameText:SetText(MS:FetchTime())
-        TimeFrameText:SetFont(MS.db.global.Font, MS.db.global.TimeFrameFontSize, MS.db.global.FontOutline)
-        TimeFrameText:SetTextColor(MS.db.global.PrimaryFontColorR, MS.db.global.PrimaryFontColorG, MS.db.global.PrimaryFontColorB)
+        TimeFrameText:SetFont(MSDBG.Font, MSDBG.TimeFrameFontSize, MSDBG.FontOutline)
+        TimeFrameText:SetTextColor(MSDBG.PrimaryFontColorR, MSDBG.PrimaryFontColorG, MSDBG.PrimaryFontColorB)
         TimeFrameText:ClearAllPoints()
-        TimeFrameText:SetPoint(MS.db.global.TimeFrameAnchorFrom, TimeFrame, MS.db.global.TimeFrameAnchorTo, 0, 0)
+        TimeFrameText:SetPoint(MSDBG.TimeFrameAnchorFrom, TimeFrame, MSDBG.TimeFrameAnchorTo, 0, 0)
         TimeFrame:SetHeight(TimeFrameText:GetStringHeight() or 24)
         TimeFrame:SetWidth(TimeFrameText:GetStringWidth() or 200)
         TimeFrame:ClearAllPoints()
-        TimeFrame:SetPoint(MS.db.global.TimeFrameAnchorFrom, Minimap, MS.db.global.TimeFrameAnchorTo, MS.db.global.TimeFrameXOffset, MS.db.global.TimeFrameYOffset)
-        TimeFrame:SetFrameStrata(MS.db.global.ElementFrameStrata)
-        if MS.db.global.DisplayTime then
+        TimeFrame:SetPoint(MSDBG.TimeFrameAnchorFrom, Minimap, MSDBG.TimeFrameAnchorTo, MSDBG.TimeFrameXOffset, MSDBG.TimeFrameYOffset)
+        TimeFrame:SetFrameStrata(MSDBG.ElementFrameStrata)
+        if MSDBG.DisplayTime then
             TimeFrame:SetScript("OnUpdate", UpdateTimeFrame)
-            if MS.db.global.DisplayDate then
+            if MSDBG.DisplayDate then
                 TimeFrame:SetScript("OnEnter", function() TimeFrameText:SetText(MS:FetchDate()) TimeFrame:SetScript("OnUpdate", nil) end)
                 TimeFrame:SetScript("OnLeave", function() TimeFrameText:SetText(MS:FetchTime()) TimeFrame:SetScript("OnUpdate", UpdateTimeFrame) end)
             else
@@ -471,15 +629,15 @@ function MinimapStats:OnInitialize()
     end
     function MS:RefreshLocationElement()
         LocationFrameText:SetText(MS:FetchLocation())
-        LocationFrameText:SetFont(MS.db.global.Font, MS.db.global.LocationFrameFontSize, MS.db.global.FontOutline)
+        LocationFrameText:SetFont(MSDBG.Font, MSDBG.LocationFrameFontSize, MSDBG.FontOutline)
         LocationFrameText:ClearAllPoints()
-        LocationFrameText:SetPoint(MS.db.global.LocationFrameAnchorFrom, LocationFrame, MS.db.global.LocationFrameAnchorTo, 0, 0)
+        LocationFrameText:SetPoint(MSDBG.LocationFrameAnchorFrom, LocationFrame, MSDBG.LocationFrameAnchorTo, 0, 0)
         LocationFrame:SetHeight(LocationFrameText:GetStringHeight() or 24)
         LocationFrame:SetWidth(LocationFrameText:GetStringWidth() or 200)
         LocationFrame:ClearAllPoints()
-        LocationFrame:SetPoint(MS.db.global.LocationFrameAnchorFrom, Minimap, MS.db.global.LocationFrameAnchorTo, MS.db.global.LocationFrameXOffset, MS.db.global.LocationFrameYOffset)
-        LocationFrame:SetFrameStrata(MS.db.global.ElementFrameStrata)
-        if MS.db.global.DisplayLocation then
+        LocationFrame:SetPoint(MSDBG.LocationFrameAnchorFrom, Minimap, MSDBG.LocationFrameAnchorTo, MSDBG.LocationFrameXOffset, MSDBG.LocationFrameYOffset)
+        LocationFrame:SetFrameStrata(MSDBG.ElementFrameStrata)
+        if MSDBG.DisplayLocation then
             LocationFrame:SetScript("OnEvent", UpdateLocationFrame)
         else
             LocationFrame:SetScript("OnEvent", nil)
@@ -487,19 +645,19 @@ function MinimapStats:OnInitialize()
     end
     function MS:RefreshInformationElement()
         InformationFrameText:SetText(MS:FetchInformation())
-        InformationFrameText:SetFont(MS.db.global.Font, MS.db.global.InformationFrameFontSize, MS.db.global.FontOutline)
-        InformationFrameText:SetTextColor(MS.db.global.PrimaryFontColorR, MS.db.global.PrimaryFontColorG, MS.db.global.PrimaryFontColorB)
+        InformationFrameText:SetFont(MSDBG.Font, MSDBG.InformationFrameFontSize, MSDBG.FontOutline)
+        InformationFrameText:SetTextColor(MSDBG.PrimaryFontColorR, MSDBG.PrimaryFontColorG, MSDBG.PrimaryFontColorB)
         InformationFrameText:ClearAllPoints()
-        InformationFrameText:SetPoint(MS.db.global.InformationFrameAnchorFrom, InformationFrame, MS.db.global.InformationFrameAnchorTo, 0, 0)
+        InformationFrameText:SetPoint(MSDBG.InformationFrameAnchorFrom, InformationFrame, MSDBG.InformationFrameAnchorTo, 0, 0)
         InformationFrame:SetHeight(InformationFrameText:GetStringHeight() or 24)
         InformationFrame:SetWidth(InformationFrameText:GetStringWidth() or 200)
         InformationFrame:ClearAllPoints()
-        InformationFrame:SetPoint(MS.db.global.InformationFrameAnchorFrom, Minimap, MS.db.global.InformationFrameAnchorTo, MS.db.global.InformationFrameXOffset, MS.db.global.InformationFrameYOffset)
-        InformationFrame:SetFrameStrata(MS.db.global.ElementFrameStrata)
-        if MS.db.global.DisplayInformation then
+        InformationFrame:SetPoint(MSDBG.InformationFrameAnchorFrom, Minimap, MSDBG.InformationFrameAnchorTo, MSDBG.InformationFrameXOffset, MSDBG.InformationFrameYOffset)
+        InformationFrame:SetFrameStrata(MSDBG.ElementFrameStrata)
+        if MSDBG.DisplayInformation then
             InformationFrame:SetScript("OnUpdate", UpdateInformationFrame)
-            InformationFrame:SetScript("OnMouseDown", function(self, button) if button == "MiddleButton" then ReloadUI() elseif button == "RightButton" then if MSGUIShown == false then MS:RunMSGUI() else return end elseif button == "LeftButton" then collectgarbage("collect") print(AddOnName.. ": Garbage Collected!") end end)
-            if MS.db.global.DisplayTooltipInformation then
+            InformationFrame:SetScript("OnMouseDown", function(self, button) if button == "MiddleButton" then ReloadUI() elseif button == "RightButton" then if MSGUIShown == false then MS:RunMSGUI() else return end elseif button == "LeftButton" then collectgarbage("collect") MS:PrettyPrint("Garbage Collected") end end)
+            if MSDBG.DisplayTooltipInformation then
                 InformationFrame:SetScript("OnEnter", function() MS:FetchTooltipInformation() end)
                 InformationFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
             else
@@ -515,15 +673,15 @@ function MinimapStats:OnInitialize()
     end
     function MS:RefreshInstanceDifficultyElement()
         InstanceDifficultyFrameText:SetText(MS:FetchInstanceDifficulty())
-        InstanceDifficultyFrameText:SetFont(MS.db.global.Font, MS.db.global.InstanceDifficultyFrameFontSize, MS.db.global.FontOutline)
+        InstanceDifficultyFrameText:SetFont(MSDBG.Font, MSDBG.InstanceDifficultyFrameFontSize, MSDBG.FontOutline)
         InstanceDifficultyFrameText:ClearAllPoints()
-        InstanceDifficultyFrameText:SetPoint(MS.db.global.InstanceDifficultyFrameAnchorFrom, InstanceDifficultyFrame, MS.db.global.InstanceDifficultyFrameAnchorTo, 0, 0)
+        InstanceDifficultyFrameText:SetPoint(MSDBG.InstanceDifficultyFrameAnchorFrom, InstanceDifficultyFrame, MSDBG.InstanceDifficultyFrameAnchorTo, 0, 0)
         InstanceDifficultyFrame:SetHeight(InstanceDifficultyFrameText:GetStringHeight() or 24)
         InstanceDifficultyFrame:SetWidth(InstanceDifficultyFrameText:GetStringWidth() or 200)
         InstanceDifficultyFrame:ClearAllPoints()
-        InstanceDifficultyFrame:SetPoint(MS.db.global.InstanceDifficultyFrameAnchorFrom, Minimap, MS.db.global.InstanceDifficultyFrameAnchorTo, MS.db.global.InstanceDifficultyFrameXOffset, MS.db.global.InstanceDifficultyFrameYOffset)
-        InstanceDifficultyFrame:SetFrameStrata(MS.db.global.ElementFrameStrata)
-        if MS.db.global.DisplayInstanceDifficulty then
+        InstanceDifficultyFrame:SetPoint(MSDBG.InstanceDifficultyFrameAnchorFrom, Minimap, MSDBG.InstanceDifficultyFrameAnchorTo, MSDBG.InstanceDifficultyFrameXOffset, MSDBG.InstanceDifficultyFrameYOffset)
+        InstanceDifficultyFrame:SetFrameStrata(MSDBG.ElementFrameStrata)
+        if MSDBG.DisplayInstanceDifficulty then
             InstanceDifficultyFrame:SetScript("OnEvent", UpdateInstanceDifficultyFrame)
             if TestingInstanceDifficulty == true then
                 InstanceDifficultyFrame:SetScript("OnUpdate", TestInstanceDifficultyFrame)
@@ -536,42 +694,42 @@ function MinimapStats:OnInitialize()
     end
     function MS:RefreshCoordinatesElement()
         CoordinatesFrameText:SetText(MS:FetchCoordinates())
-        CoordinatesFrameText:SetFont(MS.db.global.Font, MS.db.global.CoordinatesFrameFontSize, MS.db.global.FontOutline)
-        CoordinatesFrameText:SetTextColor(MS.db.global.PrimaryFontColorR, MS.db.global.PrimaryFontColorG, MS.db.global.PrimaryFontColorB)
+        CoordinatesFrameText:SetFont(MSDBG.Font, MSDBG.CoordinatesFrameFontSize, MSDBG.FontOutline)
+        CoordinatesFrameText:SetTextColor(MSDBG.PrimaryFontColorR, MSDBG.PrimaryFontColorG, MSDBG.PrimaryFontColorB)
         CoordinatesFrameText:ClearAllPoints()
-        CoordinatesFrameText:SetPoint(MS.db.global.CoordinatesFrameAnchorFrom, CoordinatesFrame, MS.db.global.CoordinatesFrameAnchorTo, 0, 0)
+        CoordinatesFrameText:SetPoint(MSDBG.CoordinatesFrameAnchorFrom, CoordinatesFrame, MSDBG.CoordinatesFrameAnchorTo, 0, 0)
         CoordinatesFrame:SetHeight(CoordinatesFrameText:GetStringHeight() or 24)
         CoordinatesFrame:SetWidth(CoordinatesFrameText:GetStringWidth() or 200)
         CoordinatesFrame:ClearAllPoints()
-        CoordinatesFrame:SetPoint(MS.db.global.CoordinatesFrameAnchorFrom, Minimap, MS.db.global.CoordinatesFrameAnchorTo, MS.db.global.CoordinatesFrameXOffset, MS.db.global.CoordinatesFrameYOffset)
-        CoordinatesFrame:SetFrameStrata(MS.db.global.ElementFrameStrata)
-        if MS.db.global.DisplayCoordinates then
+        CoordinatesFrame:SetPoint(MSDBG.CoordinatesFrameAnchorFrom, Minimap, MSDBG.CoordinatesFrameAnchorTo, MSDBG.CoordinatesFrameXOffset, MSDBG.CoordinatesFrameYOffset)
+        CoordinatesFrame:SetFrameStrata(MSDBG.ElementFrameStrata)
+        if MSDBG.DisplayCoordinates then
             CoordinatesFrame:SetScript("OnUpdate", UpdateCoordinatesFrame)
         else
             CoordinatesFrame:SetScript("OnUpdate", nil)
         end
     end
     function MS:RefreshElements()
-        if MS.db.global.UseClassColours then
-            MS.db.global.SecondaryFontColorR = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].r
-            MS.db.global.SecondaryFontColorG = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].g
-            MS.db.global.SecondaryFontColorB = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].b
+        if MSDBG.UseClassColours then
+            MSDBG.SecondaryFontColorR = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].r
+            MSDBG.SecondaryFontColorG = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].g
+            MSDBG.SecondaryFontColorB = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].b
         end
-        SecondaryFontColorRGB = { r = MS.db.global.SecondaryFontColorR, g = MS.db.global.SecondaryFontColorG, b = MS.db.global.SecondaryFontColorB }
+        SecondaryFontColorRGB = { r = MSDBG.SecondaryFontColorR, g = MSDBG.SecondaryFontColorG, b = MSDBG.SecondaryFontColorB }
         SecondaryFontColor = string.format("%02x%02x%02x", SecondaryFontColorRGB.r * 255, SecondaryFontColorRGB.g * 255, SecondaryFontColorRGB.b * 255)
         TimeFrameText:SetText(MS:FetchTime())
         LocationFrameText:SetText(MS:FetchLocation())
         InformationFrameText:SetText(MS:FetchInformation())
         InstanceDifficultyFrameText:SetText(MS:FetchInstanceDifficulty())
         CoordinatesFrameText:SetText(MS:FetchCoordinates())
-        TimeFrameText:SetFont(MS.db.global.Font, MS.db.global.TimeFrameFontSize, MS.db.global.FontOutline)
-        LocationFrameText:SetFont(MS.db.global.Font, MS.db.global.LocationFrameFontSize, MS.db.global.FontOutline)
-        InformationFrameText:SetFont(MS.db.global.Font, MS.db.global.InformationFrameFontSize, MS.db.global.FontOutline)
-        InstanceDifficultyFrameText:SetFont(MS.db.global.Font, MS.db.global.InstanceDifficultyFrameFontSize, MS.db.global.FontOutline)
-        CoordinatesFrameText:SetFont(MS.db.global.Font, MS.db.global.CoordinatesFrameFontSize, MS.db.global.FontOutline)
-        TimeFrameText:SetTextColor(MS.db.global.PrimaryFontColorR, MS.db.global.PrimaryFontColorG, MS.db.global.PrimaryFontColorB)
-        InformationFrameText:SetTextColor(MS.db.global.PrimaryFontColorR, MS.db.global.PrimaryFontColorG, MS.db.global.PrimaryFontColorB)
-        CoordinatesFrameText:SetTextColor(MS.db.global.PrimaryFontColorR, MS.db.global.PrimaryFontColorG, MS.db.global.PrimaryFontColorB)
+        TimeFrameText:SetFont(MSDBG.Font, MSDBG.TimeFrameFontSize, MSDBG.FontOutline)
+        LocationFrameText:SetFont(MSDBG.Font, MSDBG.LocationFrameFontSize, MSDBG.FontOutline)
+        InformationFrameText:SetFont(MSDBG.Font, MSDBG.InformationFrameFontSize, MSDBG.FontOutline)
+        InstanceDifficultyFrameText:SetFont(MSDBG.Font, MSDBG.InstanceDifficultyFrameFontSize, MSDBG.FontOutline)
+        CoordinatesFrameText:SetFont(MSDBG.Font, MSDBG.CoordinatesFrameFontSize, MSDBG.FontOutline)
+        TimeFrameText:SetTextColor(MSDBG.PrimaryFontColorR, MSDBG.PrimaryFontColorG, MSDBG.PrimaryFontColorB)
+        InformationFrameText:SetTextColor(MSDBG.PrimaryFontColorR, MSDBG.PrimaryFontColorG, MSDBG.PrimaryFontColorB)
+        CoordinatesFrameText:SetTextColor(MSDBG.PrimaryFontColorR, MSDBG.PrimaryFontColorG, MSDBG.PrimaryFontColorB)
     end
     function MS:RefreshAllElements()
         MS:RefreshTimeElement()
@@ -585,31 +743,31 @@ function MinimapStats:OnInitialize()
     function MS:SetupTimeFrame()
         TimeFrame = CreateFrame("Frame", "TimeFrame", Minimap)
         TimeFrame:ClearAllPoints()
-        TimeFrame:SetPoint(MS.db.global.TimeFrameAnchorFrom, Minimap, MS.db.global.TimeFrameAnchorTo, MS.db.global.TimeFrameXOffset, MS.db.global.TimeFrameYOffset)
+        TimeFrame:SetPoint(MSDBG.TimeFrameAnchorFrom, Minimap, MSDBG.TimeFrameAnchorTo, MSDBG.TimeFrameXOffset, MSDBG.TimeFrameYOffset)
         TimeFrameText = TimeFrame:CreateFontString("TimeFrameText", "BACKGROUND")
         TimeFrameText:ClearAllPoints()
-        TimeFrameText:SetPoint(MS.db.global.TimeFrameAnchorFrom, TimeFrame, MS.db.global.TimeFrameAnchorTo, 0, 0)
-        TimeFrameText:SetFont(MS.db.global.Font, MS.db.global.TimeFrameFontSize, MS.db.global.FontOutline)
-        TimeFrameText:SetTextColor(MS.db.global.PrimaryFontColorR, MS.db.global.PrimaryFontColorG, MS.db.global.PrimaryFontColorB)
+        TimeFrameText:SetPoint(MSDBG.TimeFrameAnchorFrom, TimeFrame, MSDBG.TimeFrameAnchorTo, 0, 0)
+        TimeFrameText:SetFont(MSDBG.Font, MSDBG.TimeFrameFontSize, MSDBG.FontOutline)
+        TimeFrameText:SetTextColor(MSDBG.PrimaryFontColorR, MSDBG.PrimaryFontColorG, MSDBG.PrimaryFontColorB)
         TimeFrameText:SetText(MS:FetchTime())
         TimeFrame:SetHeight(TimeFrameText:GetStringHeight() or 24)
         TimeFrame:SetWidth(TimeFrameText:GetStringWidth() or 200)
-        TimeFrame:SetFrameStrata(MS.db.global.ElementFrameStrata)
+        TimeFrame:SetFrameStrata(MSDBG.ElementFrameStrata)
     end
     function MS:SetupLocationFrame()
         LocationFrame = CreateFrame("Frame", "LocationFrame", Minimap)
         LocationFrame:ClearAllPoints()
-        LocationFrame:SetPoint(MS.db.global.LocationFrameAnchorFrom, Minimap, MS.db.global.LocationFrameAnchorTo, MS.db.global.LocationFrameXOffset, MS.db.global.LocationFrameYOffset)
+        LocationFrame:SetPoint(MSDBG.LocationFrameAnchorFrom, Minimap, MSDBG.LocationFrameAnchorTo, MSDBG.LocationFrameXOffset, MSDBG.LocationFrameYOffset)
         LocationFrameText = LocationFrame:CreateFontString("LocationFrameText", "BACKGROUND")
         LocationFrameText:ClearAllPoints()
-        LocationFrameText:SetPoint(MS.db.global.LocationFrameAnchorFrom, LocationFrame, MS.db.global.LocationFrameAnchorTo, 0, 0)
-        LocationFrameText:SetFont(MS.db.global.Font, MS.db.global.LocationFrameFontSize, MS.db.global.FontOutline)
+        LocationFrameText:SetPoint(MSDBG.LocationFrameAnchorFrom, LocationFrame, MSDBG.LocationFrameAnchorTo, 0, 0)
+        LocationFrameText:SetFont(MSDBG.Font, MSDBG.LocationFrameFontSize, MSDBG.FontOutline)
         LocationFrameText:SetText(MS:FetchLocation())
         LocationFrameText:SetWidth(Minimap:GetWidth() * 80 / 100)
         LocationFrameText:CanWordWrap()
         LocationFrame:SetHeight(LocationFrameText:GetStringHeight() or 24)
         LocationFrame:SetWidth(LocationFrameText:GetStringWidth() or 200)
-        LocationFrame:SetFrameStrata(MS.db.global.ElementFrameStrata)
+        LocationFrame:SetFrameStrata(MSDBG.ElementFrameStrata)
         LocationFrame:RegisterEvent("ZONE_CHANGED")
         LocationFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
         LocationFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
@@ -618,29 +776,29 @@ function MinimapStats:OnInitialize()
     function MS:SetupInformationFrame()
         InformationFrame = CreateFrame("Frame", "InformationFrame", Minimap)
         InformationFrame:ClearAllPoints()
-        InformationFrame:SetPoint(MS.db.global.InformationFrameAnchorFrom, Minimap, MS.db.global .InformationFrameAnchorTo, MS.db.global.InformationFrameXOffset, MS.db.global.InformationFrameYOffset)
+        InformationFrame:SetPoint(MSDBG.InformationFrameAnchorFrom, Minimap, MSDBG .InformationFrameAnchorTo, MSDBG.InformationFrameXOffset, MSDBG.InformationFrameYOffset)
         InformationFrameText = InformationFrame:CreateFontString("InformationFrameText", "BACKGROUND")
         InformationFrameText:ClearAllPoints()
-        InformationFrameText:SetPoint(MS.db.global.InformationFrameAnchorFrom, InformationFrame, MS.db.global.InformationFrameAnchorTo, 0, 0)
-        InformationFrameText:SetFont(MS.db.global.Font, MS.db.global.InformationFrameFontSize, MS.db.global .FontOutline)
-        InformationFrameText:SetTextColor(MS.db.global.PrimaryFontColorR, MS.db.global.PrimaryFontColorG, MS.db.global.PrimaryFontColorB)
+        InformationFrameText:SetPoint(MSDBG.InformationFrameAnchorFrom, InformationFrame, MSDBG.InformationFrameAnchorTo, 0, 0)
+        InformationFrameText:SetFont(MSDBG.Font, MSDBG.InformationFrameFontSize, MSDBG .FontOutline)
+        InformationFrameText:SetTextColor(MSDBG.PrimaryFontColorR, MSDBG.PrimaryFontColorG, MSDBG.PrimaryFontColorB)
         InformationFrameText:SetText(MS:FetchInformation())
         InformationFrame:SetHeight(InformationFrameText:GetStringHeight() or 24)
         InformationFrame:SetWidth(InformationFrameText:GetStringWidth() or 200)
-        InformationFrame:SetFrameStrata(MS.db.global.ElementFrameStrata)
+        InformationFrame:SetFrameStrata(MSDBG.ElementFrameStrata)
     end
     function MS:SetupInstanceDifficultyFrame()
         InstanceDifficultyFrame = CreateFrame("Frame", "InstanceDifficultyFrame", Minimap)
         InstanceDifficultyFrame:ClearAllPoints()
-        InstanceDifficultyFrame:SetPoint(MS.db.global.InstanceDifficultyFrameAnchorFrom, Minimap, MS.db.global.InstanceDifficultyFrameAnchorTo, MS.db.global.InstanceDifficultyFrameXOffset, MS.db.global.InstanceDifficultyFrameYOffset)
+        InstanceDifficultyFrame:SetPoint(MSDBG.InstanceDifficultyFrameAnchorFrom, Minimap, MSDBG.InstanceDifficultyFrameAnchorTo, MSDBG.InstanceDifficultyFrameXOffset, MSDBG.InstanceDifficultyFrameYOffset)
         InstanceDifficultyFrameText = InstanceDifficultyFrame:CreateFontString("InstanceDifficultyFrameText", "BACKGROUND")
         InstanceDifficultyFrameText:ClearAllPoints()
-        InstanceDifficultyFrameText:SetPoint(MS.db.global.InstanceDifficultyFrameAnchorFrom, InstanceDifficultyFrame, MS.db.global.InstanceDifficultyFrameAnchorTo, 0, 0)
-        InstanceDifficultyFrameText:SetFont(MS.db.global.Font, MS.db.global.InstanceDifficultyFrameFontSize, MS.db.global.FontOutline)
+        InstanceDifficultyFrameText:SetPoint(MSDBG.InstanceDifficultyFrameAnchorFrom, InstanceDifficultyFrame, MSDBG.InstanceDifficultyFrameAnchorTo, 0, 0)
+        InstanceDifficultyFrameText:SetFont(MSDBG.Font, MSDBG.InstanceDifficultyFrameFontSize, MSDBG.FontOutline)
         InstanceDifficultyFrameText:SetText(MS:FetchInstanceDifficulty())
         InstanceDifficultyFrame:SetHeight(InstanceDifficultyFrameText:GetStringHeight() or 24)
         InstanceDifficultyFrame:SetWidth(InstanceDifficultyFrameText:GetStringWidth() or 200)
-        InstanceDifficultyFrame:SetFrameStrata(MS.db.global.ElementFrameStrata)
+        InstanceDifficultyFrame:SetFrameStrata(MSDBG.ElementFrameStrata)
         InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED")
         InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
         InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
@@ -651,16 +809,16 @@ function MinimapStats:OnInitialize()
     function MS:SetupCoordinatesFrame()
         CoordinatesFrame = CreateFrame("Frame", "CoordinatesFrame", Minimap)
         CoordinatesFrame:ClearAllPoints()
-        CoordinatesFrame:SetPoint(MS.db.global.CoordinatesFrameAnchorFrom, Minimap, MS.db.global .CoordinatesFrameAnchorTo, MS.db.global.CoordinatesFrameXOffset, MS.db.global.CoordinatesFrameYOffset)
+        CoordinatesFrame:SetPoint(MSDBG.CoordinatesFrameAnchorFrom, Minimap, MSDBG .CoordinatesFrameAnchorTo, MSDBG.CoordinatesFrameXOffset, MSDBG.CoordinatesFrameYOffset)
         CoordinatesFrameText = CoordinatesFrame:CreateFontString("CoordinatesFrameText", "BACKGROUND")
         CoordinatesFrameText:ClearAllPoints()
-        CoordinatesFrameText:SetPoint(MS.db.global.CoordinatesFrameAnchorFrom, CoordinatesFrame, MS.db.global.CoordinatesFrameAnchorTo, 0, 0)
-        CoordinatesFrameText:SetFont(MS.db.global.Font, MS.db.global.CoordinatesFrameFontSize, MS.db.global .FontOutline)
-        CoordinatesFrameText:SetTextColor(MS.db.global.PrimaryFontColorR, MS.db.global.PrimaryFontColorG, MS.db.global.PrimaryFontColorB)
+        CoordinatesFrameText:SetPoint(MSDBG.CoordinatesFrameAnchorFrom, CoordinatesFrame, MSDBG.CoordinatesFrameAnchorTo, 0, 0)
+        CoordinatesFrameText:SetFont(MSDBG.Font, MSDBG.CoordinatesFrameFontSize, MSDBG .FontOutline)
+        CoordinatesFrameText:SetTextColor(MSDBG.PrimaryFontColorR, MSDBG.PrimaryFontColorG, MSDBG.PrimaryFontColorB)
         CoordinatesFrameText:SetText(MS:FetchCoordinates())
         CoordinatesFrame:SetHeight(CoordinatesFrameText:GetStringHeight() or 24)
         CoordinatesFrame:SetWidth(CoordinatesFrameText:GetStringWidth() or 200)
-        CoordinatesFrame:SetFrameStrata(MS.db.global.ElementFrameStrata)
+        CoordinatesFrame:SetFrameStrata(MSDBG.ElementFrameStrata)
     end
 end
 function MinimapStats:OnEnable()
@@ -677,9 +835,9 @@ function MinimapStats:OnEnable()
     local InstanceDifficultyFrame_LastUpdate = 0
     function UpdateTimeFrame(TimeFrame, ElapsedTime)
         TimeFrame_LastUpdate = TimeFrame_LastUpdate + ElapsedTime
-        if TimeFrame_LastUpdate > MS.db.global.TimeFrame_UpdateFrequency then
+        if TimeFrame_LastUpdate > MSDBG.TimeFrame_UpdateFrequency then
             if DebugMode then
-                print(AddOnName .. ": Time Frame: Updated")
+                MS:PrettyPrint("Time Frame: Updated")
             end
             TimeFrame_LastUpdate = 0
             TimeFrameText:SetText(MS:FetchTime())
@@ -691,16 +849,16 @@ function MinimapStats:OnEnable()
         end
     end
     function UpdateInformationFrame(InformationFrame, ElapsedTime)
-        if MS.db.global.UpdateInRealTime then
+        if MSDBG.UpdateInRealTime then
             if DebugMode then
-                print(AddOnName .. ": Information Frame: Updated")
+                MS:PrettyPrint("Information Frame: Updated")
             end
             InformationFrameText:SetText(MS:FetchInformation())
         else
             InformationFrame_LastUpdate = InformationFrame_LastUpdate + ElapsedTime
-            if InformationFrame_LastUpdate > MS.db.global.InformationFrame_UpdateFrequency then
+            if InformationFrame_LastUpdate > MSDBG.InformationFrame_UpdateFrequency then
                 if DebugMode then
-                    print(AddOnName .. ": Information Frame: Updated")
+                    MS:PrettyPrint("Information Frame: Updated")
                 end
                 InformationFrame_LastUpdate = 0
                 InformationFrameText:SetText(MS:FetchInformation())
@@ -709,9 +867,9 @@ function MinimapStats:OnEnable()
     end
     function UpdateCoordinatesFrame(CoordinatesFrame, ElapsedTime)
         CoordinatesFrame_LastUpdate = CoordinatesFrame_LastUpdate + ElapsedTime
-        if CoordinatesFrame_LastUpdate > MS.db.global.CoordinatesFrame_UpdateFrequency then
+        if CoordinatesFrame_LastUpdate > MSDBG.CoordinatesFrame_UpdateFrequency then
             if DebugMode then
-                print(AddOnName .. ": Coordinates Frame: Updated")
+                MS:PrettyPrint("Coordinates Frame: Updated")
             end
             CoordinatesFrame_LastUpdate = 0
             CoordinatesFrameText:SetText(MS:FetchCoordinates())
@@ -726,7 +884,7 @@ function MinimapStats:OnEnable()
         InstanceDifficultyFrame_LastUpdate = InstanceDifficultyFrame_LastUpdate + ElapsedTime
         if InstanceDifficultyFrame_LastUpdate > 3 then
             if DebugMode then
-                print(AddOnName .. ": Instance Difficulty Frame: Updated")
+                MS:PrettyPrint("Instance Difficulty Frame: Updated")
             end
             InstanceDifficultyFrame_LastUpdate = 0
             InstanceDifficultyFrameText:SetText(MS:FetchInstanceDifficulty())
@@ -736,7 +894,7 @@ function MinimapStats:OnEnable()
     function MS:ResetDefaults()
         MS.db:ResetDB()
         MS:RefreshAllElements()
-        print(AddOnName .. ": Settings Reset.")
+        MS:PrettyPrint("Settings have been reset to default.")
     end
     function MS:DebugModeDetection()
         if DebugMode == false then
@@ -748,17 +906,17 @@ function MinimapStats:OnEnable()
     function MS:ToggleDebugMode()
         if DebugMode then
             DebugMode = false
-            print(AddOnName .. ": Debug Mode |cFFFF4040Disabled|r.")
+            MS:PrettyPrint("Debug Mode |cFFFF4040Disabled|r.")
         else
             DebugMode = true
-            print(AddOnName .. ": Debug Mode |cFF00FF00Enabled|r.")
+            MS:PrettyPrint("Debug Mode |cFF40FF40Enabled|r.")
         end
     end
     function MS:RunMSGUI()
         local AnchorPointData = { ["TOP"] = "Top", ["BOTTOM"] = "Bottom", ["LEFT"] = "Left", ["RIGHT"] = "Right", ["CENTER"] = "Center", ["TOPLEFT"] = "Top Left", ["TOPRIGHT"] = "Top Right", ["BOTTOMLEFT"] = "Bottom Left", ["BOTTOMRIGHT"] = "Bottom Right" }
         local AnchorPointOrder = { "TOP", "TOPLEFT", "TOPRIGHT", "LEFT", "CENTER", "RIGHT", "BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT" }
-        local GUI_WIDTH = 800
-        local GUI_HEIGHT = 800
+        local GUI_WIDTH = 900
+        local GUI_HEIGHT = 1000
         MSGUIShown = true
         local MSGUIContainer = MSGUI:Create("Window")
         MSGUIContainer:SetTitle(AddOnName .. " V|cFF8080FF" .. AddOnVersion .. "|r")
@@ -796,75 +954,75 @@ function MinimapStats:OnEnable()
             local DisplayDateOnHoverCheckBox = MSGUI:Create("CheckBox")
             DisplayDateOnHoverCheckBox:SetLabel("Display Date [Mouseover]")
             DisplayDateOnHoverCheckBox:SetFullWidth(true)
-            DisplayDateOnHoverCheckBox:SetValue(MS.db.global.DisplayDate)
-            DisplayDateOnHoverCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.DisplayDate = value if value == false then DateFormatDropdown:SetDisabled(true) AlternativeFormatCheckBox:SetDisabled(true) else DateFormatDropdown:SetDisabled(false) AlternativeFormatCheckBox:SetDisabled(false) end MS:RefreshElements() end)
+            DisplayDateOnHoverCheckBox:SetValue(MSDBG.DisplayDate)
+            DisplayDateOnHoverCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.DisplayDate = value if value == false then DateFormatDropdown:SetDisabled(true) AlternativeFormatCheckBox:SetDisabled(true) else DateFormatDropdown:SetDisabled(false) AlternativeFormatCheckBox:SetDisabled(false) end MS:RefreshElements() end)
             DateContainer:AddChild(DisplayDateOnHoverCheckBox)
             AlternativeFormatCheckBox = MSGUI:Create("CheckBox")
             AlternativeFormatCheckBox:SetLabel("Alternative Format (MM/DD/YY)")
-            AlternativeFormatCheckBox:SetValue(MS.db.global.AlternativeFormatting)
+            AlternativeFormatCheckBox:SetValue(MSDBG.AlternativeFormatting)
             AlternativeFormatCheckBox:SetFullWidth(true)
-            AlternativeFormatCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.AlternativeFormatting = value MS:RefreshTimeElement() end)
+            AlternativeFormatCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.AlternativeFormatting = value MS:RefreshTimeElement() end)
             DateContainer:AddChild(AlternativeFormatCheckBox)
             DateFormatDropdown = MSGUI:Create("Dropdown")
             DateFormatDropdown:SetLabel("Date Format")
             local DateFormatDropdownData = { ["DD/MM/YY"] = "DD/MM/YY", ["FullDate"] = "01 January 2000" }
             local DateFormatDropdownOrder = { "DD/MM/YY", "FullDate" }
             DateFormatDropdown:SetList(DateFormatDropdownData, DateFormatDropdownOrder)
-            DateFormatDropdown:SetValue(MS.db.global.DateFormat)
+            DateFormatDropdown:SetValue(MSDBG.DateFormat)
             DateFormatDropdown:SetFullWidth(true)
-            DateFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.DateFormat = value MS:RefreshTimeElement() end)
+            DateFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.DateFormat = value MS:RefreshTimeElement() end)
             DateContainer:AddChild(DateFormatDropdown)
             local DisplayTimeCheckBox = MSGUI:Create("CheckBox")
             DisplayTimeCheckBox:SetLabel("Show / Hide")
-            DisplayTimeCheckBox:SetValue(MS.db.global.DisplayTime)
-            DisplayTimeCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.DisplayTime = value MS:RefreshTimeElement() end)
+            DisplayTimeCheckBox:SetValue(MSDBG.DisplayTime)
+            DisplayTimeCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.DisplayTime = value MS:RefreshTimeElement() end)
             TimeToggleContainer:AddChild(DisplayTimeCheckBox)
             local TimeFormatDropdown = MSGUI:Create("Dropdown")
             TimeFormatDropdown:SetLabel("Format")
             local TimeFormatDropdownData = { ["TwentyFourHourTime"] = "24 Hour", ["TwelveHourTime"] = "12 Hour (AM/PM)", ["ServerTime"] = "24 Hour [Server Time]", ["TwelverHourServerTime"] = "12 Hour (AM/PM) [Server Time]" }
             local TimeFormatDropdownOrder = { "TwentyFourHourTime", "TwelveHourTime", "ServerTime", "TwelverHourServerTime" }
             TimeFormatDropdown:SetList(TimeFormatDropdownData, TimeFormatDropdownOrder)
-            TimeFormatDropdown:SetValue(MS.db.global.TimeFormat)
+            TimeFormatDropdown:SetValue(MSDBG.TimeFormat)
             TimeFormatDropdown:SetFullWidth(true)
-            TimeFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.TimeFormat = value MS:RefreshTimeElement() end)
+            TimeFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.TimeFormat = value MS:RefreshTimeElement() end)
             TimeFormatContainer:AddChild(TimeFormatDropdown)
             local TimeFontSize = MSGUI:Create("Slider")
             TimeFontSize:SetLabel("Font Size")
             TimeFontSize:SetSliderValues(1, 100, 1)
-            TimeFontSize:SetValue(MS.db.global.TimeFrameFontSize)
-            TimeFontSize:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.TimeFrameFontSize = value MS:RefreshTimeElement() end)
+            TimeFontSize:SetValue(MSDBG.TimeFrameFontSize)
+            TimeFontSize:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.TimeFrameFontSize = value MS:RefreshTimeElement() end)
             TimeFontSize:SetFullWidth(true)
             TimeFontSizeContainer:AddChild(TimeFontSize)
             local TimePositionAnchorFrom = MSGUI:Create("Dropdown")
             TimePositionAnchorFrom:SetLabel("Anchor From")
             TimePositionAnchorFrom:SetFullWidth(true)
             TimePositionAnchorFrom:SetList(AnchorPointData, AnchorPointOrder)
-            TimePositionAnchorFrom:SetValue(MS.db.global.TimeFrameAnchorFrom)
-            TimePositionAnchorFrom:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.TimeFrameAnchorFrom = value MS:RefreshTimeElement() end)
+            TimePositionAnchorFrom:SetValue(MSDBG.TimeFrameAnchorFrom)
+            TimePositionAnchorFrom:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.TimeFrameAnchorFrom = value MS:RefreshTimeElement() end)
             local TimePositionAnchorTo = MSGUI:Create("Dropdown")
             TimePositionAnchorTo:SetLabel("Anchor To")
             TimePositionAnchorTo:SetFullWidth(true)
             TimePositionAnchorTo:SetList(AnchorPointData, AnchorPointOrder)
-            TimePositionAnchorTo:SetValue(MS.db.global.TimeFrameAnchorFrom)
-            TimePositionAnchorTo:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.TimeFrameAnchorTo = value MS:RefreshTimeElement() end)
+            TimePositionAnchorTo:SetValue(MSDBG.TimeFrameAnchorFrom)
+            TimePositionAnchorTo:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.TimeFrameAnchorTo = value MS:RefreshTimeElement() end)
             local TimePositionXOffset = MSGUI:Create("Slider")
             TimePositionXOffset:SetLabel("X Offset")
             TimePositionXOffset:SetFullWidth(true)
             TimePositionXOffset:SetSliderValues(-1000, 1000, 1)
-            TimePositionXOffset:SetValue(MS.db.global.TimeFrameXOffset)
-            TimePositionXOffset:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.TimeFrameXOffset = value MS:RefreshTimeElement() end)
+            TimePositionXOffset:SetValue(MSDBG.TimeFrameXOffset)
+            TimePositionXOffset:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.TimeFrameXOffset = value MS:RefreshTimeElement() end)
             local TimePositionYOffset = MSGUI:Create("Slider")
             TimePositionYOffset:SetLabel("Y Offset")
             TimePositionYOffset:SetFullWidth(true)
             TimePositionYOffset:SetSliderValues(-1000, 1000, 1)
-            TimePositionYOffset:SetValue(MS.db.global.TimeFrameYOffset)
-            TimePositionYOffset:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.TimeFrameYOffset = value MS:RefreshTimeElement() end)
+            TimePositionYOffset:SetValue(MSDBG.TimeFrameYOffset)
+            TimePositionYOffset:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.TimeFrameYOffset = value MS:RefreshTimeElement() end)
             local TimeUpdateFrequency = MSGUI:Create("Slider")
             TimeUpdateFrequency:SetLabel("Update Frequency [Seconds]")
             TimeUpdateFrequency:SetFullWidth(true)
             TimeUpdateFrequency:SetSliderValues(1, 60, 1)
-            TimeUpdateFrequency:SetValue(MS.db.global.TimeFrame_UpdateFrequency)
-            TimeUpdateFrequency:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.TimeFrame_UpdateFrequency = value MS:RefreshTimeElement() end)
+            TimeUpdateFrequency:SetValue(MSDBG.TimeFrame_UpdateFrequency)
+            TimeUpdateFrequency:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.TimeFrame_UpdateFrequency = value MS:RefreshTimeElement() end)
             TimeMiscContainer:AddChild(TimeUpdateFrequency)
             TimePositionsContainer:AddChild(TimePositionAnchorFrom)
             TimePositionsContainer:AddChild(TimePositionAnchorTo)
@@ -896,21 +1054,21 @@ function MinimapStats:OnEnable()
             MSGUIContainer:AddChild(LocationFontSizeContainer)
             local DisplayLocationCheckBox = MSGUI:Create("CheckBox")
             DisplayLocationCheckBox:SetLabel("Show / Hide")
-            DisplayLocationCheckBox:SetValue(MS.db.global.DisplayLocation)
-            DisplayLocationCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.DisplayLocation = value MS:RefreshLocationElement() end)
+            DisplayLocationCheckBox:SetValue(MSDBG.DisplayLocation)
+            DisplayLocationCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.DisplayLocation = value MS:RefreshLocationElement() end)
             local LocationFontColorSelectionDropdown = MSGUI:Create("Dropdown")
             LocationFontColorSelectionDropdown:SetLabel("Color Font By")
             local LocationFontColorSelectionDropdownData = { ["Primary"] = "Primary Colour", ["Secondary"] = "Secondary Colour", ["Reaction"] = "Reaction Colour", ["Custom"] = "Custom Colour"}
             local LocationFontColorSelectionDropdownOrder = { "Primary", "Secondary", "Reaction", "Custom" }
             LocationFontColorSelectionDropdown:SetList(LocationFontColorSelectionDropdownData, LocationFontColorSelectionDropdownOrder)
-            LocationFontColorSelectionDropdown:SetValue(MS.db.global.LocationFontColor)
-            LocationFontColorSelectionDropdown:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.LocationFontColor = value MS:RefreshLocationElement() MSGUIContainer:ReleaseChildren() DrawLocationContainer(MSGUIContainer) end)
+            LocationFontColorSelectionDropdown:SetValue(MSDBG.LocationFontColor)
+            LocationFontColorSelectionDropdown:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.LocationFontColor = value MS:RefreshLocationElement() MSGUIContainer:ReleaseChildren() DrawLocationContainer(MSGUIContainer) end)
             LocationFontColorSelectionDropdown:SetWidth(GUI_WIDTH / 1.75)
             local LocationCustomColourPicker = MSGUI:Create("ColorPicker")
             LocationCustomColourPicker:SetLabel("Custom Font Color")
-            LocationCustomColourPicker:SetColor(MS.db.global.LocationCustomColorR, MS.db.global.LocationCustomColorG, MS.db.global.LocationCustomColorB)
-            LocationCustomColourPicker:SetCallback("OnValueChanged", function(widget, event, r, g, b, a) MS.db.global.LocationCustomColorR = r MS.db.global.LocationCustomColorG = g MS.db.global.LocationCustomColorB = b MS:RefreshLocationElement() end)
-            if MS.db.global.LocationFontColor == "Custom" then
+            LocationCustomColourPicker:SetColor(MSDBG.LocationCustomColorR, MSDBG.LocationCustomColorG, MSDBG.LocationCustomColorB)
+            LocationCustomColourPicker:SetCallback("OnValueChanged", function(widget, event, r, g, b, a) MSDBG.LocationCustomColorR = r MSDBG.LocationCustomColorG = g MSDBG.LocationCustomColorB = b MS:RefreshLocationElement() end)
+            if MSDBG.LocationFontColor == "Custom" then
                 LocationFontColorSelectionDropdown:SetValue("Custom")
                 LocationCustomColourPicker:SetDisabled(false)
             else
@@ -922,8 +1080,8 @@ function MinimapStats:OnEnable()
             local LocationFontSize = MSGUI:Create("Slider")
             LocationFontSize:SetLabel("Font Size")
             LocationFontSize:SetSliderValues(1, 100, 1)
-            LocationFontSize:SetValue(MS.db.global.LocationFrameFontSize)
-            LocationFontSize:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.LocationFrameFontSize = value MS:RefreshLocationElement() end)
+            LocationFontSize:SetValue(MSDBG.LocationFrameFontSize)
+            LocationFontSize:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.LocationFrameFontSize = value MS:RefreshLocationElement() end)
             LocationFontSize:SetFullWidth(true)
             LocationFontSizeContainer:AddChild(LocationFontSize)
             local LocationPositionsContainer = MSGUI:Create("InlineGroup")
@@ -935,26 +1093,26 @@ function MinimapStats:OnEnable()
             LocationPositionAnchorFrom:SetLabel("Anchor From")
             LocationPositionAnchorFrom:SetFullWidth(true)
             LocationPositionAnchorFrom:SetList(AnchorPointData, AnchorPointOrder)
-            LocationPositionAnchorFrom:SetValue(MS.db.global.LocationFrameAnchorFrom)
-            LocationPositionAnchorFrom:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.LocationFrameAnchorFrom = value MS:RefreshLocationElement() end)
+            LocationPositionAnchorFrom:SetValue(MSDBG.LocationFrameAnchorFrom)
+            LocationPositionAnchorFrom:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.LocationFrameAnchorFrom = value MS:RefreshLocationElement() end)
             local LocationPositionAnchorTo = MSGUI:Create("Dropdown")
             LocationPositionAnchorTo:SetLabel("Anchor To")
             LocationPositionAnchorTo:SetFullWidth(true)
             LocationPositionAnchorTo:SetList(AnchorPointData, AnchorPointOrder)
-            LocationPositionAnchorTo:SetValue(MS.db.global.LocationFrameAnchorTo)
-            LocationPositionAnchorTo:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.LocationFrameAnchorTo = value MS:RefreshLocationElement() end)
+            LocationPositionAnchorTo:SetValue(MSDBG.LocationFrameAnchorTo)
+            LocationPositionAnchorTo:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.LocationFrameAnchorTo = value MS:RefreshLocationElement() end)
             local LocationPositionXOffset = MSGUI:Create("Slider")
             LocationPositionXOffset:SetLabel("X Offset")
             LocationPositionXOffset:SetFullWidth(true)
             LocationPositionXOffset:SetSliderValues(-1000, 1000, 1)
-            LocationPositionXOffset:SetValue(MS.db.global.LocationFrameXOffset)
-            LocationPositionXOffset:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.LocationFrameXOffset = value MS:RefreshLocationElement() end)
+            LocationPositionXOffset:SetValue(MSDBG.LocationFrameXOffset)
+            LocationPositionXOffset:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.LocationFrameXOffset = value MS:RefreshLocationElement() end)
             local LocationPositionYOffset = MSGUI:Create("Slider")
             LocationPositionYOffset:SetLabel("Y Offset")
             LocationPositionYOffset:SetFullWidth(true)
             LocationPositionYOffset:SetSliderValues(-1000, 1000, 1)
-            LocationPositionYOffset:SetValue(MS.db.global.LocationFrameYOffset)
-            LocationPositionYOffset:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.LocationFrameYOffset = value MS:RefreshLocationElement() end)
+            LocationPositionYOffset:SetValue(MSDBG.LocationFrameYOffset)
+            LocationPositionYOffset:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.LocationFrameYOffset = value MS:RefreshLocationElement() end)
             LocationPositionsContainer:AddChild(LocationPositionAnchorFrom)
             LocationPositionsContainer:AddChild(LocationPositionAnchorTo)
             LocationPositionsContainer:AddChild(LocationPositionXOffset)
@@ -968,6 +1126,11 @@ function MinimapStats:OnEnable()
             InformationToggleContainer:SetTitle("Toggle Options")
             InformationToggleContainer:SetFullWidth(true)
             MSGUIContainer:AddChild(InformationToggleContainer)
+            local TooltipInformationContainer = MSGUI:Create("InlineGroup")
+            TooltipInformationContainer:SetTitle("Tooltip Options")
+            TooltipInformationContainer:SetFullWidth(true)
+            TooltipInformationContainer:SetLayout("Flow")
+            MSGUIContainer:AddChild(TooltipInformationContainer)
             local InformationFormatContainer = MSGUI:Create("InlineGroup")
             InformationFormatContainer:SetTitle("Format Options")
             InformationFormatContainer:SetFullWidth(true)
@@ -987,36 +1150,112 @@ function MinimapStats:OnEnable()
             MSGUIContainer:AddChild(InformationMiscContainer)
             local DisplayInformationCheckBox = MSGUI:Create("CheckBox")
             DisplayInformationCheckBox:SetLabel("Show / Hide")
-            DisplayInformationCheckBox:SetValue(MS.db.global.DisplayInformation)
-            DisplayInformationCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.DisplayInformation = value MS:RefreshInformationElement() end)
+            DisplayInformationCheckBox:SetValue(MSDBG.DisplayInformation)
+            DisplayInformationCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.DisplayInformation = value MS:RefreshInformationElement() end)
             InformationToggleContainer:AddChild(DisplayInformationCheckBox)
             local UpdateInformationInRealTimeCheckBox = MSGUI:Create("CheckBox")
             UpdateInformationInRealTimeCheckBox:SetLabel("Real Time Update")
             UpdateInformationInRealTimeCheckBox:SetFullWidth(true)
-            UpdateInformationInRealTimeCheckBox:SetValue(MS.db.global.UpdateInRealTime)
-            UpdateInformationInRealTimeCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.UpdateInRealTime = value MS:RefreshInformationElement() end)
+            UpdateInformationInRealTimeCheckBox:SetValue(MSDBG.UpdateInRealTime)
+            UpdateInformationInRealTimeCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.UpdateInRealTime = value MS:RefreshInformationElement() end)
             InformationToggleContainer:AddChild(UpdateInformationInRealTimeCheckBox)
             local TooltipInformationCheckBox = MSGUI:Create("CheckBox")
-            TooltipInformationCheckBox:SetLabel("Tooltip Information [Mouseover]")
+            TooltipInformationCheckBox:SetLabel("Display Tooltip Information [Mouseover]")
             TooltipInformationCheckBox:SetFullWidth(true)
             TooltipInformationCheckBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
-            TooltipInformationCheckBox:SetValue(MS.db.global.DisplayTooltipInformation)
-            TooltipInformationCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.DisplayTooltipInformation = value MS:RefreshInformationElement() end)
-            InformationToggleContainer:AddChild(TooltipInformationCheckBox)
+            TooltipInformationCheckBox:SetValue(MSDBG.DisplayTooltipInformation)
+            TooltipInformationCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.DisplayTooltipInformation = value MS:RefreshInformationElement() MSGUIContainer:ReleaseChildren() DrawInformationContainer(MSGUIContainer) end)
+            TooltipInformationContainer:AddChild(TooltipInformationCheckBox)
+            local DisplayRaidDungeonLockoutsCheckBox = MSGUI:Create("CheckBox")
+            DisplayRaidDungeonLockoutsCheckBox:SetLabel("Raid / Dungeon Lockouts")
+            DisplayRaidDungeonLockoutsCheckBox:SetValue(MSDBG.DisplayRaidDungeonLockouts)
+            DisplayRaidDungeonLockoutsCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.DisplayRaidDungeonLockouts = value MS:RefreshInformationElement() end)
+            TooltipInformationContainer:AddChild(DisplayRaidDungeonLockoutsCheckBox)
+            local DisplayMythicPlusRunsCheckBox = MSGUI:Create("CheckBox")
+            DisplayMythicPlusRunsCheckBox:SetLabel("Mythic+ Runs")
+            DisplayMythicPlusRunsCheckBox:SetValue(MSDBG.DisplayMythicPlusRuns)
+            DisplayMythicPlusRunsCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.DisplayMythicPlusRuns = value MS:RefreshInformationElement() end)
+            TooltipInformationContainer:AddChild(DisplayMythicPlusRunsCheckBox)
+            local DisplayPlayerKeystoneCheckBox = MSGUI:Create("CheckBox")
+            DisplayPlayerKeystoneCheckBox:SetLabel("Player Keystone")
+            DisplayPlayerKeystoneCheckBox:SetValue(MSDBG.DisplayPlayerKeystone)
+            DisplayPlayerKeystoneCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.DisplayPlayerKeystone = value MS:RefreshInformationElement() end)
+            TooltipInformationContainer:AddChild(DisplayPlayerKeystoneCheckBox)
+            local DisplayPartyKeystonesCheckBox = MSGUI:Create("CheckBox")
+            DisplayPartyKeystonesCheckBox:SetLabel("Party Keystones")
+            DisplayPartyKeystonesCheckBox:SetValue(MSDBG.DisplayPartyKeystones)
+            DisplayPartyKeystonesCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.DisplayPartyKeystones = value MS:RefreshInformationElement() end)
+            TooltipInformationContainer:AddChild(DisplayPartyKeystonesCheckBox)
+            local DisplayAffixDescriptionsCheckBox = MSGUI:Create("CheckBox")
+            DisplayAffixDescriptionsCheckBox:SetLabel("Affix Descriptions")
+            DisplayAffixDescriptionsCheckBox:SetValue(MSDBG.DisplayAffixDescriptions)
+            DisplayAffixDescriptionsCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.DisplayAffixDescriptions = value MS:RefreshInformationElement() end)
+            local DisplayAffixesCheckBox = MSGUI:Create("CheckBox")
+            DisplayAffixesCheckBox:SetLabel("Affixes")
+            DisplayAffixesCheckBox:SetValue(MSDBG.DisplayAffixes)
+            DisplayAffixesCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.DisplayAffixes = value MS:RefreshInformationElement() MSGUIContainer:ReleaseChildren() DrawInformationContainer(MSGUIContainer) end)
+            if not MSDBG.DisplayAffixes then 
+                DisplayAffixDescriptionsCheckBox:SetDisabled(true)
+            end
+            TooltipInformationContainer:AddChild(DisplayAffixesCheckBox)
+            TooltipInformationContainer:AddChild(DisplayAffixDescriptionsCheckBox)
+            local DisplayFriendListCheckBox = MSGUI:Create("CheckBox")
+            DisplayFriendListCheckBox:SetLabel("Friend List")
+            DisplayFriendListCheckBox:SetValue(MSDBG.DisplayFriendList)
+            DisplayFriendListCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.DisplayFriendList = value MS:RefreshInformationElement() end)
+            TooltipInformationContainer:AddChild(DisplayFriendListCheckBox)
+            local TooltipInformationSeparator = MSGUI:Create("Heading")
+            TooltipInformationSeparator:SetFullWidth(true)
+            TooltipInformationSeparator:SetText("Position Options")
+            TooltipInformationContainer:AddChild(TooltipInformationSeparator)
+            local TooltipInformationAnchorFromDropdown = MSGUI:Create("Dropdown")
+            TooltipInformationAnchorFromDropdown:SetLabel("Anchor From")
+            TooltipInformationAnchorFromDropdown:SetList(AnchorPointData, AnchorPointOrder)
+            TooltipInformationAnchorFromDropdown:SetValue(MSDBG.TooltipAnchorFrom)
+            TooltipInformationAnchorFromDropdown:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.TooltipAnchorFrom = value MS:RefreshInformationElement() end)
+            local TooltipInformationAnchorToDropdown = MSGUI:Create("Dropdown")
+            TooltipInformationAnchorToDropdown:SetLabel("Anchor To")
+            TooltipInformationAnchorToDropdown:SetList(AnchorPointData, AnchorPointOrder)
+            TooltipInformationAnchorToDropdown:SetValue(MSDBG.TooltipAnchorTo)
+            TooltipInformationAnchorToDropdown:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.TooltipAnchorTo = value MS:RefreshInformationElement() end)
+            local TooltipInformationXOffset = MSGUI:Create("Slider")
+            TooltipInformationXOffset:SetLabel("X Offset")
+            TooltipInformationXOffset:SetSliderValues(-1000, 1000, 1)
+            TooltipInformationXOffset:SetValue(MSDBG.TooltipXOffset)
+            TooltipInformationXOffset:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.TooltipXOffset = value MS:RefreshInformationElement() end)
+            local TooltipInformationYOffset = MSGUI:Create("Slider")
+            TooltipInformationYOffset:SetLabel("Y Offset")
+            TooltipInformationYOffset:SetSliderValues(-1000, 1000, 1)
+            TooltipInformationYOffset:SetValue(MSDBG.TooltipYOffset)
+            TooltipInformationYOffset:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.TooltipYOffset = value MS:RefreshInformationElement() end)
+            TooltipInformationContainer:AddChild(TooltipInformationAnchorFromDropdown)
+            TooltipInformationContainer:AddChild(TooltipInformationAnchorToDropdown)
+            TooltipInformationContainer:AddChild(TooltipInformationXOffset)
+            TooltipInformationContainer:AddChild(TooltipInformationYOffset)
+            if not MSDBG.DisplayTooltipInformation then
+                DisplayRaidDungeonLockoutsCheckBox:SetDisabled(true)
+                DisplayMythicPlusRunsCheckBox:SetDisabled(true)
+                DisplayPlayerKeystoneCheckBox:SetDisabled(true)
+                DisplayPartyKeystonesCheckBox:SetDisabled(true)
+                DisplayAffixesCheckBox:SetDisabled(true)
+                DisplayAffixDescriptionsCheckBox:SetDisabled(true)
+                DisplayFriendListCheckBox:SetDisabled(true)
+            end
+
             --[[local InformationFormatDropdown = MSGUI:Create("Dropdown")
             InformationFormatDropdown:SetLabel("Format")
             local InformationFormatDropdownData = {["FPS [HomeMS]"] = "FPS [HomeMS]", ["FPS [WorldMS]"] = "FPS [WorldMS]", ["FPS | HomeMS"] = "FPS | HomeMS", ["FPS | WorldMS"] = "FPS | WorldMS", ["FPS (HomeMS)"] = "FPS (HomeMS)", ["FPS (WorldMS)"] = "FPS (WorldMS)", ["FPS"] = "FPS", ["HomeMS"] = "HomeMS", ["WorldMS"] = "WorldMS", ["HomeMS [WorldMS]"] = "HomeMS [WorldMS]", ["HomeMS | WorldMS"] = "HomeMS | WorldMS", ["HomeMS (WorldMS)"] = "HomeMS (WorldMS)"}
             local InformationFormatDropdownOrder = { "FPS [HomeMS]", "FPS [WorldMS]", "FPS | HomeMS", "FPS | WorldMS", "FPS (HomeMS)", "FPS (WorldMS)", "FPS", "HomeMS", "WorldMS", "HomeMS [WorldMS]", "HomeMS | WorldMS", "HomeMS (WorldMS)" }
             InformationFormatDropdown:SetList(InformationFormatDropdownData, InformationFormatDropdownOrder)
-            InformationFormatDropdown:SetValue(MS.db.global.InformationFormat)
+            InformationFormatDropdown:SetValue(MSDBG.InformationFormat)
             InformationFormatDropdown:SetFullWidth(true)
-            InformationFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.InformationFormat = value RefreshInformationElement() end)
+            InformationFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.InformationFormat = value RefreshInformationElement() end)
             InformationFormatContainer:AddChild(InformationFormatDropdown)]]
             local InformationFormatEditBox = MSGUI:Create("EditBox")
             InformationFormatEditBox:SetLabel("Format")
             InformationFormatEditBox:SetFullWidth(true)
-            InformationFormatEditBox:SetText(MS.db.global.InformationFormatString)
-            InformationFormatEditBox:SetCallback("OnEnterPressed", function(widget, event, value) if value:match("^%s*$") then value = "FPS [HomeMS]" InformationFormatEditBox:SetText("FPS [HomeMS]") end MS.db.global.InformationFormatString = value  MS:RefreshInformationElement() InformationFormatEditBox:ClearFocus() end)
+            InformationFormatEditBox:SetText(MSDBG.InformationFormatString)
+            InformationFormatEditBox:SetCallback("OnEnterPressed", function(widget, event, value) if value:match("^%s*$") then value = "FPS [HomeMS]" InformationFormatEditBox:SetText("FPS [HomeMS]") end MSDBG.InformationFormatString = value  MS:RefreshInformationElement() InformationFormatEditBox:ClearFocus() end)
             InformationFormatContainer:AddChild(InformationFormatEditBox)
             local InformationFormatEditBoxHelp = MSGUI:Create("Label")
             InformationFormatEditBoxHelp:SetFullWidth(true)
@@ -1025,40 +1264,40 @@ function MinimapStats:OnEnable()
             local InformationFontSize = MSGUI:Create("Slider")
             InformationFontSize:SetLabel("Font Size")
             InformationFontSize:SetSliderValues(1, 100, 1)
-            InformationFontSize:SetValue(MS.db.global.InformationFrameFontSize)
-            InformationFontSize:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.InformationFrameFontSize = value MS:RefreshInformationElement() end)
+            InformationFontSize:SetValue(MSDBG.InformationFrameFontSize)
+            InformationFontSize:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.InformationFrameFontSize = value MS:RefreshInformationElement() end)
             InformationFontSize:SetFullWidth(true)
             InformationFontSizeContainer:AddChild(InformationFontSize)
             local InformationPositionAnchorFrom = MSGUI:Create("Dropdown")
             InformationPositionAnchorFrom:SetLabel("Anchor From")
             InformationPositionAnchorFrom:SetFullWidth(true)
             InformationPositionAnchorFrom:SetList(AnchorPointData, AnchorPointOrder)
-            InformationPositionAnchorFrom:SetValue(MS.db.global.InformationFrameAnchorFrom)
-            InformationPositionAnchorFrom:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.InformationFrameAnchorFrom = value MS:RefreshInformationElement() end)
+            InformationPositionAnchorFrom:SetValue(MSDBG.InformationFrameAnchorFrom)
+            InformationPositionAnchorFrom:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.InformationFrameAnchorFrom = value MS:RefreshInformationElement() end)
             local InformationPositionAnchorTo = MSGUI:Create("Dropdown")
             InformationPositionAnchorTo:SetLabel("Anchor To")
             InformationPositionAnchorTo:SetFullWidth(true)
             InformationPositionAnchorTo:SetList(AnchorPointData, AnchorPointOrder)
-            InformationPositionAnchorTo:SetValue(MS.db.global.InformationFrameAnchorTo)
-            InformationPositionAnchorTo:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.InformationFrameAnchorTo = value MS:RefreshInformationElement() end)
+            InformationPositionAnchorTo:SetValue(MSDBG.InformationFrameAnchorTo)
+            InformationPositionAnchorTo:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.InformationFrameAnchorTo = value MS:RefreshInformationElement() end)
             local InformationPositionXOffset = MSGUI:Create("Slider")
             InformationPositionXOffset:SetLabel("X Offset")
             InformationPositionXOffset:SetFullWidth(true)
             InformationPositionXOffset:SetSliderValues(-1000, 1000, 1)
-            InformationPositionXOffset:SetValue(MS.db.global.InformationFrameXOffset)
-            InformationPositionXOffset:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.InformationFrameXOffset = value MS:RefreshInformationElement() end)
+            InformationPositionXOffset:SetValue(MSDBG.InformationFrameXOffset)
+            InformationPositionXOffset:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.InformationFrameXOffset = value MS:RefreshInformationElement() end)
             local InformationPositionYOffset = MSGUI:Create("Slider")
             InformationPositionYOffset:SetLabel("Y Offset")
             InformationPositionYOffset:SetFullWidth(true)
             InformationPositionYOffset:SetSliderValues(-1000, 1000, 1)
-            InformationPositionYOffset:SetValue(MS.db.global.InformationFrameYOffset)
-            InformationPositionYOffset:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.InformationFrameYOffset = value MS:RefreshInformationElement() end)
+            InformationPositionYOffset:SetValue(MSDBG.InformationFrameYOffset)
+            InformationPositionYOffset:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.InformationFrameYOffset = value MS:RefreshInformationElement() end)
             local InformationUpdateFrequency = MSGUI:Create("Slider")
             InformationUpdateFrequency:SetLabel("Update Frequency [Seconds]")
             InformationUpdateFrequency:SetFullWidth(true)
             InformationUpdateFrequency:SetSliderValues(1, 60, 1)
-            InformationUpdateFrequency:SetValue(MS.db.global.InformationFrame_UpdateFrequency)
-            InformationUpdateFrequency:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.InformationFrame_UpdateFrequency = value MS:RefreshInformationElement() end)
+            InformationUpdateFrequency:SetValue(MSDBG.InformationFrame_UpdateFrequency)
+            InformationUpdateFrequency:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.InformationFrame_UpdateFrequency = value MS:RefreshInformationElement() end)
             InformationMiscContainer:AddChild(InformationUpdateFrequency)
             InformationPositionsContainer:AddChild(InformationPositionAnchorFrom)
             InformationPositionsContainer:AddChild(InformationPositionAnchorTo)
@@ -1081,8 +1320,8 @@ function MinimapStats:OnEnable()
             MSGUIContainer:AddChild(InstanceDifficultyFontSizeContainer)
             local DisplayInstanceDifficultyCheckBox = MSGUI:Create("CheckBox")
             DisplayInstanceDifficultyCheckBox:SetLabel("Show / Hide")
-            DisplayInstanceDifficultyCheckBox:SetValue(MS.db.global.DisplayInstanceDifficulty)
-            DisplayInstanceDifficultyCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.DisplayInstanceDifficulty = value MS:RefreshInstanceDifficultyElement() end)
+            DisplayInstanceDifficultyCheckBox:SetValue(MSDBG.DisplayInstanceDifficulty)
+            DisplayInstanceDifficultyCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.DisplayInstanceDifficulty = value MS:RefreshInstanceDifficultyElement() end)
             InstanceDifficultyToggleContainer:AddChild(DisplayInstanceDifficultyCheckBox)
             TestInstanceDifficultyCheckBox = MSGUI:Create("CheckBox")
             TestInstanceDifficultyCheckBox:SetLabel("Test Instance Difficulty")
@@ -1092,8 +1331,8 @@ function MinimapStats:OnEnable()
             local InstanceDifficultyFontSize = MSGUI:Create("Slider")
             InstanceDifficultyFontSize:SetLabel("Font Size")
             InstanceDifficultyFontSize:SetSliderValues(1, 100, 1)
-            InstanceDifficultyFontSize:SetValue(MS.db.global.InstanceDifficultyFrameFontSize)
-            InstanceDifficultyFontSize:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.InstanceDifficultyFrameFontSize = value MS:RefreshInstanceDifficultyElement() end)
+            InstanceDifficultyFontSize:SetValue(MSDBG.InstanceDifficultyFrameFontSize)
+            InstanceDifficultyFontSize:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.InstanceDifficultyFrameFontSize = value MS:RefreshInstanceDifficultyElement() end)
             InstanceDifficultyFontSize:SetFullWidth(true)
             InstanceDifficultyFontSizeContainer:AddChild(InstanceDifficultyFontSize)
             local InstanceDifficultyPositionsContainer = MSGUI:Create("InlineGroup")
@@ -1105,26 +1344,26 @@ function MinimapStats:OnEnable()
             InstanceDifficultyPositionAnchorFrom:SetLabel("Anchor From")
             InstanceDifficultyPositionAnchorFrom:SetFullWidth(true)
             InstanceDifficultyPositionAnchorFrom:SetList(AnchorPointData, AnchorPointOrder)
-            InstanceDifficultyPositionAnchorFrom:SetValue(MS.db.global.InstanceDifficultyFrameAnchorFrom)
-            InstanceDifficultyPositionAnchorFrom:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.InstanceDifficultyFrameAnchorFrom = value MS:RefreshInstanceDifficultyElement() end)
+            InstanceDifficultyPositionAnchorFrom:SetValue(MSDBG.InstanceDifficultyFrameAnchorFrom)
+            InstanceDifficultyPositionAnchorFrom:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.InstanceDifficultyFrameAnchorFrom = value MS:RefreshInstanceDifficultyElement() end)
             local InstanceDifficultyPositionAnchorTo = MSGUI:Create("Dropdown")
             InstanceDifficultyPositionAnchorTo:SetLabel("Anchor To")
             InstanceDifficultyPositionAnchorTo:SetFullWidth(true)
             InstanceDifficultyPositionAnchorTo:SetList(AnchorPointData, AnchorPointOrder)
-            InstanceDifficultyPositionAnchorTo:SetValue(MS.db.global.InstanceDifficultyFrameAnchorTo)
-            InstanceDifficultyPositionAnchorTo:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.InstanceDifficultyFrameAnchorTo = value MS:RefreshInstanceDifficultyElement() end)
+            InstanceDifficultyPositionAnchorTo:SetValue(MSDBG.InstanceDifficultyFrameAnchorTo)
+            InstanceDifficultyPositionAnchorTo:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.InstanceDifficultyFrameAnchorTo = value MS:RefreshInstanceDifficultyElement() end)
             local InstanceDifficultyPositionXOffset = MSGUI:Create("Slider")
             InstanceDifficultyPositionXOffset:SetLabel("X Offset")
             InstanceDifficultyPositionXOffset:SetFullWidth(true)
             InstanceDifficultyPositionXOffset:SetSliderValues(-1000, 1000, 1)
-            InstanceDifficultyPositionXOffset:SetValue(MS.db.global.InstanceDifficultyFrameXOffset)
-            InstanceDifficultyPositionXOffset:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.InstanceDifficultyFrameXOffset = value MS:RefreshInstanceDifficultyElement() end)
+            InstanceDifficultyPositionXOffset:SetValue(MSDBG.InstanceDifficultyFrameXOffset)
+            InstanceDifficultyPositionXOffset:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.InstanceDifficultyFrameXOffset = value MS:RefreshInstanceDifficultyElement() end)
             local InstanceDifficultyPositionYOffset = MSGUI:Create("Slider")
             InstanceDifficultyPositionYOffset:SetLabel("Y Offset")
             InstanceDifficultyPositionYOffset:SetFullWidth(true)
             InstanceDifficultyPositionYOffset:SetSliderValues(-1000, 1000, 1)
-            InstanceDifficultyPositionYOffset:SetValue(MS.db.global.InstanceDifficultyFrameYOffset)
-            InstanceDifficultyPositionYOffset:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.InstanceDifficultyFrameYOffset = value MS:RefreshInstanceDifficultyElement() end)
+            InstanceDifficultyPositionYOffset:SetValue(MSDBG.InstanceDifficultyFrameYOffset)
+            InstanceDifficultyPositionYOffset:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.InstanceDifficultyFrameYOffset = value MS:RefreshInstanceDifficultyElement() end)
             InstanceDifficultyPositionsContainer:AddChild(InstanceDifficultyPositionAnchorFrom)
             InstanceDifficultyPositionsContainer:AddChild(InstanceDifficultyPositionAnchorTo)
             InstanceDifficultyPositionsContainer:AddChild(InstanceDifficultyPositionXOffset)
@@ -1142,24 +1381,24 @@ function MinimapStats:OnEnable()
             local PrimaryFontColor = MSGUI:Create("ColorPicker")
             PrimaryFontColor:SetLabel("Primary Font Color")
             PrimaryFontColor:SetHasAlpha(false)
-            PrimaryFontColor:SetColor(MS.db.global.PrimaryFontColorR, MS.db.global.PrimaryFontColorG, MS.db.global.PrimaryFontColorB)
-            PrimaryFontColor:SetCallback("OnValueChanged", function(widget, event, r, g, b) MS.db.global.PrimaryFontColorR = r MS.db.global.PrimaryFontColorG = g MS.db.global.PrimaryFontColorB = b MS:RefreshElements() end)
-            PrimaryFontColor:SetCallback("OnValueConfirmed", function(widget, event, r, g, b) MS.db.global.PrimaryFontColorR = r MS.db.global.PrimaryFontColorG = g MS.db.global.PrimaryFontColorB = b MS:RefreshElements() end)
+            PrimaryFontColor:SetColor(MSDBG.PrimaryFontColorR, MSDBG.PrimaryFontColorG, MSDBG.PrimaryFontColorB)
+            PrimaryFontColor:SetCallback("OnValueChanged", function(widget, event, r, g, b) MSDBG.PrimaryFontColorR = r MSDBG.PrimaryFontColorG = g MSDBG.PrimaryFontColorB = b MS:RefreshElements() end)
+            PrimaryFontColor:SetCallback("OnValueConfirmed", function(widget, event, r, g, b) MSDBG.PrimaryFontColorR = r MSDBG.PrimaryFontColorG = g MSDBG.PrimaryFontColorB = b MS:RefreshElements() end)
             local SecondaryFontColor = MSGUI:Create("ColorPicker")
             SecondaryFontColor:SetLabel("Secondary Font Color")
             SecondaryFontColor:SetHasAlpha(false)
-            SecondaryFontColor:SetColor(MS.db.global.SecondaryFontColorR, MS.db.global.SecondaryFontColorG, MS.db.global.SecondaryFontColorB)
-            SecondaryFontColor:SetCallback("OnValueChanged", function(widget, event, r, g, b) MS.db.global.SecondaryFontColorR = r MS.db.global.SecondaryFontColorG = g MS.db.global.SecondaryFontColorB = b MS:RefreshElements() end)
-            SecondaryFontColor:SetCallback("OnValueConfirmed", function(widget, event, r, g, b) MS.db.global.SecondaryFontColorR = r MS.db.global.SecondaryFontColorG = g MS.db.global.SecondaryFontColorB = b MS:RefreshElements() end)
-            if MS.db.global.UseClassColours == true then
+            SecondaryFontColor:SetColor(MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
+            SecondaryFontColor:SetCallback("OnValueChanged", function(widget, event, r, g, b) MSDBG.SecondaryFontColorR = r MSDBG.SecondaryFontColorG = g MSDBG.SecondaryFontColorB = b MS:RefreshElements() end)
+            SecondaryFontColor:SetCallback("OnValueConfirmed", function(widget, event, r, g, b) MSDBG.SecondaryFontColorR = r MSDBG.SecondaryFontColorG = g MSDBG.SecondaryFontColorB = b MS:RefreshElements() end)
+            if MSDBG.UseClassColours == true then
                 SecondaryFontColor:SetDisabled(true)
             else
                 SecondaryFontColor:SetDisabled(false)
             end
             local ClassColorCheckBox = MSGUI:Create("CheckBox")
             ClassColorCheckBox:SetLabel("Use Class Color")
-            ClassColorCheckBox:SetValue(MS.db.global.UseClassColours)
-            ClassColorCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.UseClassColours = value if value == true then SecondaryFontColor:SetDisabled(true) else SecondaryFontColor:SetDisabled(false) end MS:RefreshElements() end)
+            ClassColorCheckBox:SetValue(MSDBG.UseClassColours)
+            ClassColorCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.UseClassColours = value if value == true then SecondaryFontColor:SetDisabled(true) else SecondaryFontColor:SetDisabled(false) end MS:RefreshElements() end)
             local FontContainer = MSGUI:Create("InlineGroup")
             FontContainer:SetTitle("Font Options")
             FontContainer:SetFullWidth(true)
@@ -1172,19 +1411,19 @@ function MinimapStats:OnEnable()
                 Font:AddItem(FontName, FontPath)
             end
             Font:SetFullWidth(true)
-            Font:SetValue(MS.db.global.Font)
+            Font:SetValue(MSDBG.Font)
             Font:SetCallback("OnValueChanged",
                 function(widget, event, FontPath)
-                    MS.db.global.Font = FontPath
+                    MSDBG.Font = FontPath
                     MS:RefreshElements()
                 end)
             FontContainer:AddChild(Font)
             local FontOutline = MSGUI:Create("Dropdown")
             FontOutline:SetLabel("Font Outline")
             FontOutline:SetList({ ["NONE"] = "None", ["OUTLINE"] = "Outline", ["THICKOUTLINE"] = "Thick Outline" })
-            FontOutline:SetValue(MS.db.global.FontOutline)
+            FontOutline:SetValue(MSDBG.FontOutline)
             FontOutline:SetFullWidth(true)
-            FontOutline:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.FontOutline = value MS:RefreshElements() end)
+            FontOutline:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.FontOutline = value MS:RefreshElements() end)
             FontContainer:AddChild(FontOutline)
             local FrameStrataContainer = MSGUI:Create("InlineGroup")
             FrameStrataContainer:SetTitle("Frame Strata Options")
@@ -1196,9 +1435,9 @@ function MinimapStats:OnEnable()
             ElementFrameStrataDropdownData = { ["LOW"] = "Low", ["MEDIUM"] = "Medium", ["HIGH"] = "High"}
             ElementFrameStrataDropdownOrder = { "LOW", "MEDIUM", "HIGH" }
             ElementFrameStrata:SetList(ElementFrameStrataDropdownData, ElementFrameStrataDropdownOrder)
-            ElementFrameStrata:SetValue(MS.db.global.ElementFrameStrata)
+            ElementFrameStrata:SetValue(MSDBG.ElementFrameStrata)
             ElementFrameStrata:SetFullWidth(true)
-            ElementFrameStrata:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.ElementFrameStrata = value MS:RefreshAllElements() end)
+            ElementFrameStrata:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.ElementFrameStrata = value MS:RefreshAllElements() end)
             FrameStrataContainer:AddChild(ElementFrameStrata)
             local MiscContainer = MSGUI:Create("InlineGroup")
             MiscContainer:SetTitle("Misc Options")
@@ -1249,57 +1488,57 @@ function MinimapStats:OnEnable()
             MSGUIContainer:AddChild(CoordinatesMiscContainer)
             local DisplayCoordinatesCheckBox = MSGUI:Create("CheckBox")
             DisplayCoordinatesCheckBox:SetLabel("Show / Hide")
-            DisplayCoordinatesCheckBox:SetValue(MS.db.global.DisplayCoordinates)
-            DisplayCoordinatesCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.DisplayCoordinates = value MS:RefreshCoordinatesElement() MSGUIContainer:DoLayout() end)
+            DisplayCoordinatesCheckBox:SetValue(MSDBG.DisplayCoordinates)
+            DisplayCoordinatesCheckBox:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.DisplayCoordinates = value MS:RefreshCoordinatesElement() MSGUIContainer:DoLayout() end)
             CoordinatesToggleContainer:AddChild(DisplayCoordinatesCheckBox)
             local CoordinatesFormatDropdown = MSGUI:Create("Dropdown")
             CoordinatesFormatDropdown:SetLabel("Format")
             CoordinatesFormatDropdown:SetList({ ["NoDecimal"] = "No Decimals [00, 00]", ["OneDecimal"] = "One Decimal [00.0, 00.0]", ["TwoDecimal"] = "Two Decimals [00.00, 00.00]" })
-            CoordinatesFormatDropdown:SetValue(MS.db.global.CoordinatesFormat)
+            CoordinatesFormatDropdown:SetValue(MSDBG.CoordinatesFormat)
             CoordinatesFormatDropdown:SetFullWidth(true)
-            CoordinatesFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.CoordinatesFormat = value MS:RefreshCoordinatesElement() end)
+            CoordinatesFormatDropdown:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.CoordinatesFormat = value MS:RefreshCoordinatesElement() end)
             CoordinatesFormatContainer:AddChild(CoordinatesFormatDropdown)
             local CoordinatesFontSize = MSGUI:Create("Slider")
             CoordinatesFontSize:SetLabel("Font Size")
             CoordinatesFontSize:SetSliderValues(1, 100, 1)
-            CoordinatesFontSize:SetValue(MS.db.global.CoordinatesFrameFontSize)
-            CoordinatesFontSize:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.CoordinatesFrameFontSize = value MS:RefreshCoordinatesElement() end)
+            CoordinatesFontSize:SetValue(MSDBG.CoordinatesFrameFontSize)
+            CoordinatesFontSize:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.CoordinatesFrameFontSize = value MS:RefreshCoordinatesElement() end)
             CoordinatesFontSize:SetFullWidth(true)
             CoordinatesFontSizeContainer:AddChild(CoordinatesFontSize)
             local CoordinatesPositionAnchorFrom = MSGUI:Create("Dropdown")
             CoordinatesPositionAnchorFrom:SetLabel("Anchor From")
             CoordinatesPositionAnchorFrom:SetFullWidth(true)
             CoordinatesPositionAnchorFrom:SetList(AnchorPointData, AnchorPointOrder)
-            CoordinatesPositionAnchorFrom:SetValue(MS.db.global.CoordinatesFrameAnchorFrom)
-            CoordinatesPositionAnchorFrom:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.CoordinatesFrameAnchorFrom = value MS:RefreshCoordinatesElement() end)
+            CoordinatesPositionAnchorFrom:SetValue(MSDBG.CoordinatesFrameAnchorFrom)
+            CoordinatesPositionAnchorFrom:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.CoordinatesFrameAnchorFrom = value MS:RefreshCoordinatesElement() end)
             CoordinatesPositionsContainer:AddChild(CoordinatesPositionAnchorFrom)
             local CoordinatesPositionAnchorTo = MSGUI:Create("Dropdown")
             CoordinatesPositionAnchorTo:SetLabel("Anchor To")
             CoordinatesPositionAnchorTo:SetFullWidth(true)
             CoordinatesPositionAnchorTo:SetList(AnchorPointData, AnchorPointOrder)
-            CoordinatesPositionAnchorTo:SetValue(MS.db.global.CoordinatesFrameAnchorTo)
-            CoordinatesPositionAnchorTo:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.CoordinatesFrameAnchorTo = value MS:RefreshCoordinatesElement() end)
+            CoordinatesPositionAnchorTo:SetValue(MSDBG.CoordinatesFrameAnchorTo)
+            CoordinatesPositionAnchorTo:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.CoordinatesFrameAnchorTo = value MS:RefreshCoordinatesElement() end)
             CoordinatesPositionsContainer:AddChild(CoordinatesPositionAnchorTo)
             local CoordinatesPositionXOffset = MSGUI:Create("Slider")
             CoordinatesPositionXOffset:SetLabel("X Offset")
             CoordinatesPositionXOffset:SetFullWidth(true)
             CoordinatesPositionXOffset:SetSliderValues(-1000, 1000, 1)
-            CoordinatesPositionXOffset:SetValue(MS.db.global.CoordinatesFrameXOffset)
-            CoordinatesPositionXOffset:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.CoordinatesFrameXOffset = value MS:RefreshCoordinatesElement() end)
+            CoordinatesPositionXOffset:SetValue(MSDBG.CoordinatesFrameXOffset)
+            CoordinatesPositionXOffset:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.CoordinatesFrameXOffset = value MS:RefreshCoordinatesElement() end)
             CoordinatesPositionsContainer:AddChild(CoordinatesPositionXOffset)
             local CoordinatesPositionYOffset = MSGUI:Create("Slider")
             CoordinatesPositionYOffset:SetLabel("Y Offset")
             CoordinatesPositionYOffset:SetFullWidth(true)
             CoordinatesPositionYOffset:SetSliderValues(-1000, 1000, 1)
-            CoordinatesPositionYOffset:SetValue(MS.db.global.CoordinatesFrameYOffset)
-            CoordinatesPositionYOffset:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.CoordinatesFrameYOffset = value MS:RefreshCoordinatesElement() end)
+            CoordinatesPositionYOffset:SetValue(MSDBG.CoordinatesFrameYOffset)
+            CoordinatesPositionYOffset:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.CoordinatesFrameYOffset = value MS:RefreshCoordinatesElement() end)
             CoordinatesPositionsContainer:AddChild(CoordinatesPositionYOffset)
             local CoordinatesUpdateFrequency = MSGUI:Create("Slider")
             CoordinatesUpdateFrequency:SetLabel("Update Frequency [Seconds]")
             CoordinatesUpdateFrequency:SetFullWidth(true)
             CoordinatesUpdateFrequency:SetSliderValues(1, 60, 1)
-            CoordinatesUpdateFrequency:SetValue(MS.db.global.CoordinatesFrame_UpdateFrequency)
-            CoordinatesUpdateFrequency:SetCallback("OnValueChanged", function(widget, event, value) MS.db.global.CoordinatesFrame_UpdateFrequency = value MS:RefreshCoordinatesElement() end)
+            CoordinatesUpdateFrequency:SetValue(MSDBG.CoordinatesFrame_UpdateFrequency)
+            CoordinatesUpdateFrequency:SetCallback("OnValueChanged", function(widget, event, value) MSDBG.CoordinatesFrame_UpdateFrequency = value MS:RefreshCoordinatesElement() end)
             CoordinatesMiscContainer:AddChild(CoordinatesUpdateFrequency)
         end
         local function GroupSelect(MSGUIContainer, Event, SelectedGroup)
