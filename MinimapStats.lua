@@ -2,10 +2,12 @@ local MinimapStats = LibStub("AceAddon-3.0"):NewAddon("MinimapStats")
 local MSGUI = LibStub("AceGUI-3.0")
 local AddOnName = C_AddOns.GetAddOnMetadata("MinimapStats", "Title")
 local AddOnVersion = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
+local AddOnAuthor = C_AddOns.GetAddOnMetadata("MinimapStats", "Author")
+local AddOnNameVersion = AddOnName .. " [V" .. AddOnVersion .. "]"
 local LSM = LibStub("LibSharedMedia-3.0")
 local OR = LibStub:GetLibrary("LibOpenRaid-1.0")
 local MSGUIShown = false
-local DebugMode = false
+local PrintFrameUpdates = false
 local TestingInstanceDifficulty = false
 local MS = {}
 local characterClassTable = {
@@ -113,7 +115,7 @@ function MinimapStats:OnInitialize()
     local SecondaryFontColor = string.format("%02x%02x%02x", SecondaryFontColorRGB.r * 255, SecondaryFontColorRGB.g * 255, SecondaryFontColorRGB.b * 255)
 
     function MS:PrettyPrint(msg)
-        print(AddOnName .. " V" .. AddOnVersion.. ": " .. msg)
+        print(AddOnNameVersion..": " .. msg)
     end
     function MS:FetchTime()
         local CurrentHour, CurrentMins = date("%H"), date("%M")
@@ -405,7 +407,7 @@ function MinimapStats:OnInitialize()
                     if isDND then
                         statusColor = dndColor
                     end
-                    GameTooltip:AddLine("|cFF"..statusColor.." • " .."|r|cFFFFFFFF"..friendBnet .. "|r: " .. classColor .. characterName .. "|r [L|cFFFFCC40" .. characterLevel .. "|r]", 1, 1, 1)
+                    GameTooltip:AddLine("|cFF"..statusColor.."• " .."|r|cFFFFFFFF"..friendBnet .. "|r: " .. classColor .. characterName .. "|r [L|cFFFFCC40" .. characterLevel .. "|r]", 1, 1, 1)
                 end
             end
         end
@@ -812,7 +814,7 @@ function MinimapStats:OnEnable()
     function UpdateTimeFrame(TimeFrame, ElapsedTime)
         TimeFrame_LastUpdate = TimeFrame_LastUpdate + ElapsedTime
         if TimeFrame_LastUpdate > MSDBG.TimeFrame_UpdateFrequency then
-            if DebugMode then
+            if PrintFrameUpdates then
                 MS:PrettyPrint("Time Frame: Updated")
             end
             TimeFrame_LastUpdate = 0
@@ -826,14 +828,14 @@ function MinimapStats:OnEnable()
     end
     function UpdateInformationFrame(InformationFrame, ElapsedTime)
         if MSDBG.UpdateInRealTime then
-            if DebugMode then
+            if PrintFrameUpdates then
                 MS:PrettyPrint("Information Frame: Updated")
             end
             InformationFrameText:SetText(MS:FetchInformation())
         else
             InformationFrame_LastUpdate = InformationFrame_LastUpdate + ElapsedTime
             if InformationFrame_LastUpdate > MSDBG.InformationFrame_UpdateFrequency then
-                if DebugMode then
+                if PrintFrameUpdates then
                     MS:PrettyPrint("Information Frame: Updated")
                 end
                 InformationFrame_LastUpdate = 0
@@ -844,7 +846,7 @@ function MinimapStats:OnEnable()
     function UpdateCoordinatesFrame(CoordinatesFrame, ElapsedTime)
         CoordinatesFrame_LastUpdate = CoordinatesFrame_LastUpdate + ElapsedTime
         if CoordinatesFrame_LastUpdate > MSDBG.CoordinatesFrame_UpdateFrequency then
-            if DebugMode then
+            if PrintFrameUpdates then
                 MS:PrettyPrint("Coordinates Frame: Updated")
             end
             CoordinatesFrame_LastUpdate = 0
@@ -859,7 +861,7 @@ function MinimapStats:OnEnable()
     function TestInstanceDifficultyFrame(InstanceDifficultyFrame, ElapsedTime)
         InstanceDifficultyFrame_LastUpdate = InstanceDifficultyFrame_LastUpdate + ElapsedTime
         if InstanceDifficultyFrame_LastUpdate > 3 then
-            if DebugMode then
+            if PrintFrameUpdates then
                 MS:PrettyPrint("Instance Difficulty Frame: Updated")
             end
             InstanceDifficultyFrame_LastUpdate = 0
@@ -872,30 +874,112 @@ function MinimapStats:OnEnable()
         MS:RefreshAllElements()
         MS:PrettyPrint("Settings have been reset to default.")
     end
-    function MS:DebugModeDetection()
-        if DebugMode == false then
-            ToggleDebugModeButton:SetText("Debug Mode: |cFFFF4040Disabled|r")
+    function MS:PrintFrameUpdateDetection()
+        if PrintFrameUpdates == false then
+            ToggleDebugModeButton:SetText("Print Frame Updates: |cFFFF4040Disabled|r")
         else
-            ToggleDebugModeButton:SetText("Debug Mode: |cFF40FF40Enabled|r")
+            ToggleDebugModeButton:SetText("Print Frame Updates: |cFF40FF40Enabled|r")
         end
     end
-    function MS:ToggleDebugMode()
-        if DebugMode then
-            DebugMode = false
-            MS:PrettyPrint("Debug Mode |cFFFF4040Disabled|r.")
+    function MS:TogglePrintFrameUpdates()
+        if PrintFrameUpdates then
+            PrintFrameUpdates = false
+            MS:PrettyPrint("Print Frame Updates |cFFFF4040Disabled|r.")
         else
-            DebugMode = true
-            MS:PrettyPrint("Debug Mode |cFF40FF40Enabled|r.")
+            PrintFrameUpdates = true
+            MS:PrettyPrint("Print Frame Updates |cFF40FF40Enabled|r.")
         end
     end
+
+    local function GenerateInformation(FrameName, FrameNameText)
+        local InformationList = {}
+        local AnchorFrom, ParentAnchor, AnchorTo, XOffset, YOffset = FrameName:GetPoint()
+        local Font, FontSize, _ = FrameNameText:GetFont()
+        table.insert(InformationList, "|cFFFFCC40Anchor From|r: " .. AnchorFrom)
+        table.insert(InformationList, "|cFFFFCC40Parent Anchor|r: " .. ParentAnchor:GetName())
+        table.insert(InformationList, "|cFFFFCC40Anchor To|r: " .. AnchorTo)
+        table.insert(InformationList, "|cFFFFCC40X Offset|r: " .. XOffset)
+        table.insert(InformationList, "|cFFFFCC40Y Offset|r: " .. YOffset)
+        table.insert(InformationList, "|cFFFFCC40Font|r: " .. Font)
+        if FrameNameText:GetText() ~= nil then table.insert(InformationList, "|cFFFFCC40Text|r: ".. FrameNameText:GetText()) else table.insert(InformationList, "|cFFFFCC40Text|r: Empty") end
+        table.insert(InformationList, "|cFFFFCC40Font Size|r: " .. math.ceil(FontSize))
+        table.insert(InformationList, "|cFFFFCC40Frame Strata|r: " .. FrameName:GetFrameStrata())
+        return table.concat(InformationList, "\n")
+    end
+
+    function MS:DebugInformation()
+        local DebugFrame = MSGUI:Create("Window")
+        DebugFrame:SetTitle(AddOnNameVersion .. ": Debug Information")
+        DebugFrame:SetWidth(400)
+        DebugFrame:SetHeight(700)
+        DebugFrame:SetLayout("Flow")
+        DebugFrame:SetCallback("OnClose", function(widget) MSGUI:Release(widget) end)
+        DebugFrame:EnableResize(false)
+        local TimeDateLabel = MSGUI:Create("Heading")
+        TimeDateLabel:SetFullWidth(true)
+        TimeDateLabel:SetText("|cFF8080FFTime & Date|r")
+        local TimeDateText = MSGUI:Create("Label")
+        TimeDateText:SetFullWidth(true)
+        TimeDateText:SetText(string.format("|cFF8080FFTime|r: %s:%s\n|cFF8080FFDate|r: %s/%s/%s", date("%H"), date("%M"), date("%d"), date("%m"), date("%Y")))
+        DebugFrame:AddChild(TimeDateLabel)
+        DebugFrame:AddChild(TimeDateText)
+        -- Add Time Frame Information
+        local TimeFrameLabel = MSGUI:Create("Heading")
+        TimeFrameLabel:SetFullWidth(true)
+        TimeFrameLabel:SetText(MSDBG.DisplayTime and "|cFF8080FFTime Frame|r: |cFF40FF40Enabled|r" or "|cFF8080FFTime Frame|r: |cFFFF4040Disabled|r")
+        local TimeFrameList = MSGUI:Create("Label")
+        TimeFrameList:SetFullWidth(true)
+        TimeFrameList:SetText(GenerateInformation(TimeFrame, TimeFrameText))
+        DebugFrame:AddChild(TimeFrameLabel)
+        DebugFrame:AddChild(TimeFrameList)
+        -- Add Location Frame Information
+        local LocationFrameLabel = MSGUI:Create("Heading")
+        LocationFrameLabel:SetFullWidth(true)
+        LocationFrameLabel:SetText(MSDBG.DisplayLocation and "|cFF8080FFLocation Frame|r: |cFF40FF40Enabled|r" or "|cFF8080FFLocation Frame|r: |cFFFF4040Disabled|r")
+        local LocationFrameList = MSGUI:Create("Label")
+        LocationFrameList:SetFullWidth(true)
+        LocationFrameList:SetText(GenerateInformation(LocationFrame, LocationFrameText))
+        DebugFrame:AddChild(LocationFrameLabel)
+        DebugFrame:AddChild(LocationFrameList)
+        -- Add Information Frame Information
+        local InformationFrameLabel = MSGUI:Create("Heading")
+        InformationFrameLabel:SetFullWidth(true)
+        InformationFrameLabel:SetText(MSDBG.DisplayInformation and "|cFF8080FFInformation Frame|r: |cFF40FF40Enabled|r" or "|cFF8080FFInformation Frame|r: |cFFFF4040Disabled|r")
+        local InformationFrameList = MSGUI:Create("Label")
+        InformationFrameList:SetFullWidth(true)
+        InformationFrameList:SetText(GenerateInformation(InformationFrame, InformationFrameText))
+        DebugFrame:AddChild(InformationFrameLabel)
+        DebugFrame:AddChild(InformationFrameList)
+        -- Add Instance Difficulty Frame Information
+        local InstanceDifficultyFrameLabel = MSGUI:Create("Heading")
+        InstanceDifficultyFrameLabel:SetFullWidth(true)
+        InstanceDifficultyFrameLabel:SetText(MSDBG.DisplayInstanceDifficulty and "|cFF8080FFInstance Difficulty Frame|r: |cFF40FF40Enabled|r" or "|cFF8080FFInstance Difficulty Frame|r: |cFFFF4040Disabled|r")
+        local InstanceDifficultyFrameList = MSGUI:Create("Label")
+        InstanceDifficultyFrameList:SetFullWidth(true)
+        InstanceDifficultyFrameList:SetText(GenerateInformation(InstanceDifficultyFrame, InstanceDifficultyFrameText))
+        DebugFrame:AddChild(InstanceDifficultyFrameLabel)
+        DebugFrame:AddChild(InstanceDifficultyFrameList)
+        -- Add Coordinates Frame Information
+        local CoordinatesFrameLabel = MSGUI:Create("Heading")
+        CoordinatesFrameLabel:SetFullWidth(true)
+        CoordinatesFrameLabel:SetText(MSDBG.DisplayCoordinates and "|cFF8080FFCoordinates Frame|r: |cFF40FF40Enabled|r" or "|cFF8080FFCoordinates Frame|r: |cFFFF4040Disabled|r")
+        local CoordinatesFrameList = MSGUI:Create("Label")
+        CoordinatesFrameList:SetFullWidth(true)
+        CoordinatesFrameList:SetText(GenerateInformation(CoordinatesFrame, CoordinatesFrameText))
+        DebugFrame:AddChild(CoordinatesFrameLabel)
+        DebugFrame:AddChild(CoordinatesFrameList)
+
+    end
+
     function MS:RunMSGUI()
         local AnchorPointData = { ["TOP"] = "Top", ["BOTTOM"] = "Bottom", ["LEFT"] = "Left", ["RIGHT"] = "Right", ["CENTER"] = "Center", ["TOPLEFT"] = "Top Left", ["TOPRIGHT"] = "Top Right", ["BOTTOMLEFT"] = "Bottom Left", ["BOTTOMRIGHT"] = "Bottom Right" }
         local AnchorPointOrder = { "TOP", "TOPLEFT", "TOPRIGHT", "LEFT", "CENTER", "RIGHT", "BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT" }
         local GUI_WIDTH = 900
         local GUI_HEIGHT = 1000
         MSGUIShown = true
-        local MSGUIContainer = MSGUI:Create("Window")
-        MSGUIContainer:SetTitle(AddOnName .. " V|cFF8080FF" .. AddOnVersion .. "|r")
+        local MSGUIContainer = MSGUI:Create("Frame")
+        MSGUIContainer:SetTitle(AddOnName)
+        MSGUIContainer:SetStatusText("Version " .. AddOnVersion .. " by " .. AddOnAuthor)
         MSGUIContainer:SetCallback("OnClose", function(widget)
             MSGUI:Release(widget)
             MSGUIShown = false
@@ -1415,15 +1499,20 @@ function MinimapStats:OnEnable()
             MiscContainer:SetLayout("Flow")
             MSGUIContainer:AddChild(MiscContainer)
             ToggleDebugModeButton = MSGUI:Create("Button")
-            ToggleDebugModeButton:SetText(MS:DebugModeDetection())
+            ToggleDebugModeButton:SetText(MS:PrintFrameUpdateDetection())
             ToggleDebugModeButton:SetFullWidth(true)
-            ToggleDebugModeButton:SetCallback("OnClick", function() MS:ToggleDebugMode() MS:DebugModeDetection() MSGUIContainer:DoLayout() end)
+            ToggleDebugModeButton:SetCallback("OnClick", function() MS:TogglePrintFrameUpdates() MS:PrintFrameUpdateDetection() MSGUIContainer:DoLayout() end)
             MiscContainer:AddChild(ToggleDebugModeButton)
             local ResetDefaultsButton = MSGUI:Create("Button")
             ResetDefaultsButton:SetText("Reset Defaults")
             ResetDefaultsButton:SetFullWidth(true)
             ResetDefaultsButton:SetCallback("OnClick", function() MS:ResetDefaults() MSGUIContainer:ReleaseChildren() DrawMiscellaneousContainer(MSGUIContainer) end)
+            local DebugPrintButton = MSGUI:Create("Button")
+            DebugPrintButton:SetText("Debug Information")
+            DebugPrintButton:SetFullWidth(true)
+            DebugPrintButton:SetCallback("OnClick", function() MS:DebugInformation() end)
             MiscContainer:AddChild(ResetDefaultsButton)
+            MiscContainer:AddChild(DebugPrintButton)
             ColourContainer:AddChild(ClassColorCheckBox)
             ColourContainer:AddChild(PrimaryFontColor)
             ColourContainer:AddChild(SecondaryFontColor)
@@ -1525,7 +1614,7 @@ function MinimapStats:OnEnable()
                 DrawCoordinatesContainer(MSGUIContainer)
             elseif SelectedGroup == "tab6" then
                 DrawMiscellaneousContainer(MSGUIContainer)
-                MS:DebugModeDetection()
+                MS:PrintFrameUpdateDetection()
             end
         end
         local SelectedTab = MSGUI:Create("TabGroup")
