@@ -5,7 +5,6 @@ local AddOnVersion = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
 local AddOnAuthor = C_AddOns.GetAddOnMetadata("MinimapStats", "Author")
 local AddOnNameVersion = AddOnName .. " [V" .. AddOnVersion .. "]"
 local LSM = LibStub("LibSharedMedia-3.0")
-local OR = LibStub:GetLibrary("LibOpenRaid-1.0")
 local MSGUIShown = false
 local PrintFrameUpdates = false
 local TestingInstanceDifficulty = false
@@ -24,6 +23,17 @@ local characterClassTable = {
     ["Shaman"] = "|cFF0070DD",
     ["Warlock"] = "|cFF8788EE",
     ["Warrior"] = "|cFFC69B6D",
+}
+local GreatVaultVaules = {
+    [2] = "509",
+    [3] = "509",
+    [4] = "512",
+    [5] = "512",
+    [6] = "515",
+    [7] = "515",
+    [8] = "519",
+    [9] = "519",
+    [10] = "522"
 }
 local DefaultSettings = {
     global = {
@@ -262,7 +272,8 @@ function MinimapStats:OnInitialize()
         for _, run in ipairs(mythicRuns) do
             local name = C_ChallengeMode.GetMapUIInfo(run.mapChallengeModeID)
             local abbrName = MythicPlusAbbr[name] or name
-            table.insert(formattedRuns, string.format("%s [%d]", abbrName, run.level))
+            local greatVaultiLvl = GreatVaultVaules[run.level]
+            table.insert(formattedRuns, string.format("Level: %d [%d]", run.level, greatVaultiLvl))
         end
         table.sort(formattedRuns, function(a, b)
             return tonumber(a:match("%d+")) > tonumber(b:match("%d+"))
@@ -275,9 +286,10 @@ function MinimapStats:OnInitialize()
             GameTooltip:AddLine("Mythic+ Runs", r, g, b)
             for number, line in ipairs(formattedRuns) do
                 if number == 1 or number == 4 or number == 8 then
-                    GameTooltip:AddLine(line, 255/255, 204/255, 0/255)
-                else
-                    GameTooltip:AddLine(line, 1, 1, 1)
+                    local vaultSlot = number == 1 and "1" or number == 4 and "2" or "3"
+                    GameTooltip:AddLine("|cFFFFCC00Vault Slot #" .. vaultSlot .. "|r - " .. line, 1, 1, 1)
+                --else
+                    --GameTooltip:AddLine(line, 1, 1, 1)
                 end
             end
             if MSDBG.DisplayPlayerKeystone or MSDBG.DisplayPartyKeystones or MSDBG.DisplayAffixes or MSDBG.DisplayFriendList then
@@ -286,11 +298,9 @@ function MinimapStats:OnInitialize()
         end
     end
     local function GetPlayerKeystone()
+        local OR = LibStub:GetLibrary("LibOpenRaid-1.0")
         if not MSDBG.DisplayPlayerKeystone then return end
-        if not OR then 
-            MS:PrettyPrint("OpenRaid was not found. This comes pre-installed with Details/Echo Raid Tools.")
-            return 
-        end
+        if not OR then MS:PrettyPrint("OpenRaid was not found. This comes pre-installed with Details/Echo Raid Tools.") return end
         GameTooltip:AddLine("Your Keystone", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
         local ORLibrary = OR.GetKeystoneInfo("player")
         local playerKeystoneLevel = ORLibrary.level
@@ -306,11 +316,9 @@ function MinimapStats:OnInitialize()
         end
     end
     local function GetPartyKeystones()
+        local OR = LibStub:GetLibrary("LibOpenRaid-1.0")
         if not MSDBG.DisplayPartyKeystones then return end
-        if not OR then
-            MS:PrettyPrint("OpenRaid was not found. This comes pre-installed with Details/Echo Raid Tools.")
-            return
-        end
+        if not OR then MS:PrettyPrint("OpenRaid was not found. This comes pre-installed with Details/Echo Raid Tools.") return end
     
         local partyMembers = {}
     
@@ -333,8 +341,10 @@ function MinimapStats:OnInitialize()
                 if keystoneInfo and keystoneInfo.level then
                     local keystoneName, _, _, keystoneIcon = C_ChallengeMode.GetMapUIInfo(keystoneInfo.mythicPlusMapID)
                     local keystoneLevel = keystoneInfo.level
-                    local texturedIcon = "|T" .. keystoneIcon .. ":16:16:0|t "
-                    GameTooltip:AddLine(nameServerless .. ": " .. "|cFFFFFFFF".. texturedIcon.. keystoneName .. " [" .. keystoneLevel .. "]|r" , classColor.r, classColor.g, classColor.b)
+                    if keystoneIcon then
+                        local texturedIcon = "|T" .. keystoneIcon .. ":16:16:0|t "
+                        GameTooltip:AddLine(nameServerless .. ": " .. "|cFFFFFFFF".. texturedIcon.. keystoneName .. " [" .. keystoneLevel .. "]|r" , classColor.r, classColor.g, classColor.b)
+                    end
                 else
                     GameTooltip:AddLine(nameServerless .. ": " .. "|cFFFFFFFFNo Keystone|r" , classColor.r, classColor.g, classColor.b)
                 end
