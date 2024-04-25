@@ -379,49 +379,59 @@ function MinimapStats:OnInitialize()
                 end
             end
         end
-        if MSDBG.DisplayFriendList then
+        if MSDBG.DisplayFriendList and MS.HasOnlineFriends then
             GameTooltip:AddLine(" ")
         end
     end
-
     local function GetFriendListInfo()
         if not MSDBG.DisplayFriendList then return end
-        GameTooltip:AddLine("Friends", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
-        local _, totalFriends= BNGetNumFriends()
+    
+        local _, totalFriends = BNGetNumFriends()
+        MS.HasOnlineFriends = false
         for i = 1, totalFriends do
             local accountInfo = C_BattleNet.GetFriendAccountInfo(i)
-            if accountInfo then
-                local friendInfo = accountInfo.gameAccountInfo
-                local inGame = friendInfo.clientProgram == "WoW"
-                local isOnline = friendInfo.isOnline
-                local isAFK = accountInfo.isAFK
-                local isDND = accountInfo.isDND
-                local friendBnet = accountInfo.accountName
-                local characterName = friendInfo.characterName
-                local characterClass = friendInfo.className
-                local characterLevel = friendInfo.characterLevel
-                local classColor = characterClassTable[characterClass]
-                local statusColor;
+            if accountInfo and accountInfo.gameAccountInfo and accountInfo.gameAccountInfo.clientProgram == "WoW" and accountInfo.gameAccountInfo.className ~= nil then
+                MS.HasOnlineFriends = true
+                break
+            end
+        end
 
-                local onlineColor = string.format("%02x%02x%02x", 64, 255, 64)
-                local afkColor = string.format("%02x%02x%02x", 255, 128, 64)
-                local dndColor = string.format("%02x%02x%02x", 255, 64, 64)
-
-                if inGame and characterClass ~= nil then
-                    if isOnline then
-                        statusColor = onlineColor
+        if MS.HasOnlineFriends then
+            GameTooltip:AddLine("Friends", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
+            for i = 1, totalFriends do
+                local accountInfo = C_BattleNet.GetFriendAccountInfo(i)
+                if accountInfo then
+                    local friendInfo = accountInfo.gameAccountInfo
+                    local inGame = friendInfo.clientProgram == "WoW"
+                    local isOnline = friendInfo.isOnline
+                    local isAFK = accountInfo.isAFK
+                    local isDND = accountInfo.isDND
+                    local friendBnet = accountInfo.accountName
+                    local characterName = friendInfo.characterName
+                    local characterClass = friendInfo.className
+                    local characterLevel = friendInfo.characterLevel
+                    local classColor = characterClassTable[characterClass]
+                    local statusColor;
+    
+                    local onlineColor = string.format("%02x%02x%02x", 64, 255, 64)
+                    local afkColor = string.format("%02x%02x%02x", 255, 128, 64)
+                    local dndColor = string.format("%02x%02x%02x", 255, 64, 64)
+    
+                    if inGame and characterClass ~= nil then
+                        if isOnline then
+                            statusColor = onlineColor
+                        elseif isAFK then
+                            statusColor = afkColor
+                        elseif isDND then
+                            statusColor = dndColor
+                        end
+                        GameTooltip:AddLine("|cFF"..statusColor.."• " .."|r|cFFFFFFFF"..friendBnet .. "|r: " .. classColor .. characterName .. "|r [L|cFFFFCC40" .. characterLevel .. "|r]", 1, 1, 1)
                     end
-                    if isAFK then
-                        statusColor = afkColor
-                    end
-                    if isDND then
-                        statusColor = dndColor
-                    end
-                    GameTooltip:AddLine("|cFF"..statusColor.."• " .."|r|cFFFFFFFF"..friendBnet .. "|r: " .. classColor .. characterName .. "|r [L|cFFFFCC40" .. characterLevel .. "|r]", 1, 1, 1)
                 end
             end
         end
     end
+    
     function MS:FetchTooltipInformation()
         if InCombatLockdown() then return end
         GameTooltip:SetOwner(Minimap, "ANCHOR_NONE", 0, 0)
