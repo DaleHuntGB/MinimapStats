@@ -24,7 +24,7 @@ local characterClassTable = {
     ["Warlock"] = "|cFF8788EE",
     ["Warrior"] = "|cFFC69B6D",
 }
-local GreatVaultVaules = {
+local GVValues = {
     [2] = "509",
     [3] = "509",
     [4] = "512",
@@ -261,7 +261,6 @@ function MinimapStats:OnInitialize()
     local function GetMythicPlusInformation()
         if not MSDBG.DisplayMythicPlusRuns then return end
         local mythicRuns = C_MythicPlus.GetRunHistory(false, true)
-        local PrimaryFontColor = string.format("%02x%02x%02x", MSDBG.PrimaryFontColorR * 255, MSDBG.PrimaryFontColorG * 255, MSDBG.PrimaryFontColorB * 255)
         local formattedRuns = {}
         local MythicPlusAbbr =
         {
@@ -272,7 +271,7 @@ function MinimapStats:OnInitialize()
         for _, run in ipairs(mythicRuns) do
             local name = C_ChallengeMode.GetMapUIInfo(run.mapChallengeModeID)
             local abbrName = MythicPlusAbbr[name] or name
-            local greatVaultiLvl = GreatVaultVaules[run.level]
+            local greatVaultiLvl = GVValues[run.level]
             table.insert(formattedRuns, string.format("Level: %d [%d]", run.level, greatVaultiLvl))
         end
         table.sort(formattedRuns, function(a, b)
@@ -331,9 +330,10 @@ function MinimapStats:OnInitialize()
                     table.insert(partyMembers, unit)
                 end
             end
+            
             for _, unit in ipairs(partyMembers) do
                 local name = GetUnitName(unit, true)
-                local nameServerless = name:gsub("-%w+", "")
+                local nameServerless = name:match("([^-]+)")
                 local _, class = UnitClass(unit)
                 local classColor = RAID_CLASS_COLORS[class]
                 local keystoneInfo = OR.GetKeystoneInfo(name)
@@ -379,7 +379,7 @@ function MinimapStats:OnInitialize()
                 end
             end
         end
-        if MSDBG.DisplayFriendList and MS.HasOnlineFriends then
+        if MSDBG.DisplayFriendList then
             GameTooltip:AddLine(" ")
         end
     end
