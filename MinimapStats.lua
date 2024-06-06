@@ -178,7 +178,7 @@ function MinimapStats:OnInitialize()
     end
     function MS:FetchLocation()
         local LocationColor = "FFFFFF";
-        local PVPZone = GetZonePVPInfo()
+        local PVPZone = C_PvP.GetZonePVPInfo()
         if PVPZone == 'arena' then
             LocationColor = CalculateHexValue(0.84, 0.03, 0.03)
         elseif PVPZone == 'friendly' then
@@ -258,131 +258,131 @@ function MinimapStats:OnInitialize()
             end
         end
     end
-    local function GetMythicPlusInformation()
-        if not MSDBG.DisplayMythicPlusRuns then return end
-        local mythicRuns = C_MythicPlus.GetRunHistory(false, true)
-        local formattedRuns = {}
-        local MythicPlusAbbr =
-        {
-            -- Season 3 Dungeons
-            ["Dawn of the Infinite: Galakrond's Fall"] = "DOTI: Galakrond's Fall",
-            ["Dawn of the Infinite: Murozond's Rise"] = "DOTI: Murozond's Rise",
-        }
-        for _, run in ipairs(mythicRuns) do
-            local name = C_ChallengeMode.GetMapUIInfo(run.mapChallengeModeID)
-            local abbrName = MythicPlusAbbr[name] or name
-            local greatVaultiLvl = GVValues[run.level]
-            table.insert(formattedRuns, string.format("Level: %d [%d]", run.level, greatVaultiLvl))
-        end
-        table.sort(formattedRuns, function(a, b)
-            return tonumber(a:match("%d+")) > tonumber(b:match("%d+"))
-        end)
-        for i = 9, #formattedRuns do
-            formattedRuns[i] = nil
-        end
-        if #formattedRuns > 0 then
-            local r, g, b = MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB
-            GameTooltip:AddLine("Mythic+ Runs", r, g, b)
-            for number, line in ipairs(formattedRuns) do
-                if number == 1 or number == 4 or number == 8 then
-                    local vaultSlot = number == 1 and "1" or number == 4 and "2" or "3"
-                    GameTooltip:AddLine("|cFFFFCC00Vault Slot #" .. vaultSlot .. "|r - " .. line, 1, 1, 1)
-                --else
-                    --GameTooltip:AddLine(line, 1, 1, 1)
-                end
-            end
-            if MSDBG.DisplayPlayerKeystone or MSDBG.DisplayPartyKeystones or MSDBG.DisplayAffixes or MSDBG.DisplayFriendList then
-                GameTooltip:AddLine(" ")
-            end
-        end
-    end
-    local function GetPlayerKeystone()
-        local OR = LibStub:GetLibrary("LibOpenRaid-1.0")
-        if not MSDBG.DisplayPlayerKeystone then return end
-        if not OR then MS:PrettyPrint("OpenRaid was not found. This comes pre-installed with Details/Echo Raid Tools.") return end
-        GameTooltip:AddLine("Your Keystone", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
-        local ORLibrary = OR.GetKeystoneInfo("player")
-        local playerKeystoneLevel = ORLibrary.level
-        local playerKeystone, _, _, keystoneIcon = C_ChallengeMode.GetMapUIInfo(ORLibrary.mythicPlusMapID)
-        if playerKeystone and keystoneIcon then
-            local texturedIcon = "|T" .. keystoneIcon .. ":16:16:0|t "
-            GameTooltip:AddLine(texturedIcon .. playerKeystone .. " [" .. playerKeystoneLevel .. "]", 1, 1, 1)
-        else
-            GameTooltip:AddLine("No Keystone", 1, 1, 1)
-        end
-        if (MSDBG.DisplayPartyKeystones and IsInGroup()) or MSDBG.DisplayAffixes or MSDBG.DisplayFriendList then
-            GameTooltip:AddLine(" ")
-        end
-    end
-    local function GetPartyKeystones()
-        local OR = LibStub:GetLibrary("LibOpenRaid-1.0")
-        if not MSDBG.DisplayPartyKeystones then return end
-        if not OR then MS:PrettyPrint("OpenRaid was not found. This comes pre-installed with Details/Echo Raid Tools.") return end
+    -- local function GetMythicPlusInformation()
+    --     if not MSDBG.DisplayMythicPlusRuns then return end
+    --     local mythicRuns = C_MythicPlus.GetRunHistory(false, true)
+    --     local formattedRuns = {}
+    --     local MythicPlusAbbr =
+    --     {
+    --         -- Season 3 Dungeons
+    --         ["Dawn of the Infinite: Galakrond's Fall"] = "DOTI: Galakrond's Fall",
+    --         ["Dawn of the Infinite: Murozond's Rise"] = "DOTI: Murozond's Rise",
+    --     }
+    --     for _, run in ipairs(mythicRuns) do
+    --         local name = C_ChallengeMode.GetMapUIInfo(run.mapChallengeModeID)
+    --         local abbrName = MythicPlusAbbr[name] or name
+    --         local greatVaultiLvl = GVValues[run.level]
+    --         table.insert(formattedRuns, string.format("Level: %d [%d]", run.level, greatVaultiLvl))
+    --     end
+    --     table.sort(formattedRuns, function(a, b)
+    --         return tonumber(a:match("%d+")) > tonumber(b:match("%d+"))
+    --     end)
+    --     for i = 9, #formattedRuns do
+    --         formattedRuns[i] = nil
+    --     end
+    --     if #formattedRuns > 0 then
+    --         local r, g, b = MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB
+    --         GameTooltip:AddLine("Mythic+ Runs", r, g, b)
+    --         for number, line in ipairs(formattedRuns) do
+    --             if number == 1 or number == 4 or number == 8 then
+    --                 local vaultSlot = number == 1 and "1" or number == 4 and "2" or "3"
+    --                 GameTooltip:AddLine("|cFFFFCC00Vault Slot #" .. vaultSlot .. "|r - " .. line, 1, 1, 1)
+    --             --else
+    --                 --GameTooltip:AddLine(line, 1, 1, 1)
+    --             end
+    --         end
+    --         if MSDBG.DisplayPlayerKeystone or MSDBG.DisplayPartyKeystones or MSDBG.DisplayAffixes or MSDBG.DisplayFriendList then
+    --             GameTooltip:AddLine(" ")
+    --         end
+    --     end
+    -- end
+    -- local function GetPlayerKeystone()
+    --     local OR = LibStub:GetLibrary("LibOpenRaid-1.0")
+    --     if not MSDBG.DisplayPlayerKeystone then return end
+    --     if not OR then MS:PrettyPrint("OpenRaid was not found. This comes pre-installed with Details/Echo Raid Tools.") return end
+    --     GameTooltip:AddLine("Your Keystone", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
+    --     local ORLibrary = OR.GetKeystoneInfo("player")
+    --     local playerKeystoneLevel = ORLibrary.level
+    --     local playerKeystone, _, _, keystoneIcon = C_ChallengeMode.GetMapUIInfo(ORLibrary.mythicPlusMapID)
+    --     if playerKeystone and keystoneIcon then
+    --         local texturedIcon = "|T" .. keystoneIcon .. ":16:16:0|t "
+    --         GameTooltip:AddLine(texturedIcon .. playerKeystone .. " [" .. playerKeystoneLevel .. "]", 1, 1, 1)
+    --     else
+    --         GameTooltip:AddLine("No Keystone", 1, 1, 1)
+    --     end
+    --     if (MSDBG.DisplayPartyKeystones and IsInGroup()) or MSDBG.DisplayAffixes or MSDBG.DisplayFriendList then
+    --         GameTooltip:AddLine(" ")
+    --     end
+    -- end
+    -- local function GetPartyKeystones()
+    --     local OR = LibStub:GetLibrary("LibOpenRaid-1.0")
+    --     if not MSDBG.DisplayPartyKeystones then return end
+    --     if not OR then MS:PrettyPrint("OpenRaid was not found. This comes pre-installed with Details/Echo Raid Tools.") return end
     
-        local partyMembers = {}
+    --     local partyMembers = {}
     
-        if IsInGroup() and not IsInRaid() then
-            GameTooltip:AddLine("Party Keystones", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
-            for i = 1, GetNumGroupMembers() - 1 do
-                local unit = "party" .. i
-                local name = GetUnitName(unit, true)
-                if name then
-                    table.insert(partyMembers, unit)
-                end
-            end
+    --     if IsInGroup() and not IsInRaid() then
+    --         GameTooltip:AddLine("Party Keystones", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
+    --         for i = 1, GetNumGroupMembers() - 1 do
+    --             local unit = "party" .. i
+    --             local name = GetUnitName(unit, true)
+    --             if name then
+    --                 table.insert(partyMembers, unit)
+    --             end
+    --         end
             
-            for _, unit in ipairs(partyMembers) do
-                local name = GetUnitName(unit, true)
-                local nameServerless = name:match("([^-]+)")
-                local _, class = UnitClass(unit)
-                local classColor = RAID_CLASS_COLORS[class]
-                local keystoneInfo = OR.GetKeystoneInfo(name)
+    --         for _, unit in ipairs(partyMembers) do
+    --             local name = GetUnitName(unit, true)
+    --             local nameServerless = name:match("([^-]+)")
+    --             local _, class = UnitClass(unit)
+    --             local classColor = RAID_CLASS_COLORS[class]
+    --             local keystoneInfo = OR.GetKeystoneInfo(name)
         
-                if keystoneInfo and keystoneInfo.level then
-                    local keystoneName, _, _, keystoneIcon = C_ChallengeMode.GetMapUIInfo(keystoneInfo.mythicPlusMapID)
-                    local keystoneLevel = keystoneInfo.level
-                    if keystoneIcon then
-                        local texturedIcon = "|T" .. keystoneIcon .. ":16:16:0|t "
-                        GameTooltip:AddLine(nameServerless .. ": " .. "|cFFFFFFFF".. texturedIcon.. keystoneName .. " [" .. keystoneLevel .. "]|r" , classColor.r, classColor.g, classColor.b)
-                    end
-                else
-                    GameTooltip:AddLine(nameServerless .. ": " .. "|cFFFFFFFFNo Keystone|r" , classColor.r, classColor.g, classColor.b)
-                end
-            end
-            if MSDBG.DisplayAffixes or MSDBG.DisplayFriendList then
-                GameTooltip:AddLine(" ")
-            end
-        end
-    end
+    --             if keystoneInfo and keystoneInfo.level then
+    --                 local keystoneName, _, _, keystoneIcon = C_ChallengeMode.GetMapUIInfo(keystoneInfo.mythicPlusMapID)
+    --                 local keystoneLevel = keystoneInfo.level
+    --                 if keystoneIcon then
+    --                     local texturedIcon = "|T" .. keystoneIcon .. ":16:16:0|t "
+    --                     GameTooltip:AddLine(nameServerless .. ": " .. "|cFFFFFFFF".. texturedIcon.. keystoneName .. " [" .. keystoneLevel .. "]|r" , classColor.r, classColor.g, classColor.b)
+    --                 end
+    --             else
+    --                 GameTooltip:AddLine(nameServerless .. ": " .. "|cFFFFFFFFNo Keystone|r" , classColor.r, classColor.g, classColor.b)
+    --             end
+    --         end
+    --         if MSDBG.DisplayAffixes or MSDBG.DisplayFriendList then
+    --             GameTooltip:AddLine(" ")
+    --         end
+    --     end
+    -- end
     
-    local function GetAffixInfo()
-        if not MSDBG.DisplayAffixes then return end
-        GameTooltip:AddLine("Current Affixes", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
-        for i = 1, 3 do
-            local affixID = C_MythicPlus.GetCurrentAffixes()[i].id
-            local affixName, affixDesc, affixIconID = C_ChallengeMode.GetAffixInfo(affixID)
-            local affixIcon = "|T" .. affixIconID .. ":16:16:0|t "
-            if i == 1 then
-                GameTooltip:AddLine(affixIcon ..affixName, 1, 1, 1)
-                if MSDBG.DisplayAffixDescriptions then
-                    GameTooltip:AddLine(affixDesc, 1, 1, 1)
-                end
-            elseif i == 2 then
-                GameTooltip:AddLine(affixIcon ..affixName, 1, 1, 1)
-                if MSDBG.DisplayAffixDescriptions then
-                    GameTooltip:AddLine(affixDesc, 1, 1, 1)
-                end
-            elseif i == 3 then
-                GameTooltip:AddLine(affixIcon ..affixName, 1, 1, 1)
-                if MSDBG.DisplayAffixDescriptions then
-                    GameTooltip:AddLine(affixDesc, 1, 1, 1)
-                end
-            end
-        end
-        if MSDBG.DisplayFriendList then
-            GameTooltip:AddLine(" ")
-        end
-    end
+    -- local function GetAffixInfo()
+    --     if not MSDBG.DisplayAffixes then return end
+    --     GameTooltip:AddLine("Current Affixes", MSDBG.SecondaryFontColorR, MSDBG.SecondaryFontColorG, MSDBG.SecondaryFontColorB)
+    --     for i = 1, 3 do
+    --         local affixID = C_MythicPlus.GetCurrentAffixes()[i].id
+    --         local affixName, affixDesc, affixIconID = C_ChallengeMode.GetAffixInfo(affixID)
+    --         local affixIcon = "|T" .. affixIconID .. ":16:16:0|t "
+    --         if i == 1 then
+    --             GameTooltip:AddLine(affixIcon ..affixName, 1, 1, 1)
+    --             if MSDBG.DisplayAffixDescriptions then
+    --                 GameTooltip:AddLine(affixDesc, 1, 1, 1)
+    --             end
+    --         elseif i == 2 then
+    --             GameTooltip:AddLine(affixIcon ..affixName, 1, 1, 1)
+    --             if MSDBG.DisplayAffixDescriptions then
+    --                 GameTooltip:AddLine(affixDesc, 1, 1, 1)
+    --             end
+    --         elseif i == 3 then
+    --             GameTooltip:AddLine(affixIcon ..affixName, 1, 1, 1)
+    --             if MSDBG.DisplayAffixDescriptions then
+    --                 GameTooltip:AddLine(affixDesc, 1, 1, 1)
+    --             end
+    --         end
+    --     end
+    --     if MSDBG.DisplayFriendList then
+    --         GameTooltip:AddLine(" ")
+    --     end
+    -- end
     local function GetFriendListInfo()
         if not MSDBG.DisplayFriendList then return end
     
@@ -437,10 +437,10 @@ function MinimapStats:OnInitialize()
         GameTooltip:SetOwner(Minimap, "ANCHOR_NONE", 0, 0)
         GameTooltip:SetPoint(MSDBG.TooltipAnchorFrom, Minimap, MSDBG.TooltipAnchorTo, MSDBG.TooltipXOffset, MSDBG.TooltipYOffset)
         GetDungeonandRaidLockouts()
-        GetMythicPlusInformation()
-        GetPlayerKeystone()
-        GetPartyKeystones()
-        GetAffixInfo()
+        -- GetMythicPlusInformation()
+        -- GetPlayerKeystone()
+        -- GetPartyKeystones()
+        -- GetAffixInfo()
         GetFriendListInfo()
         GameTooltip:Show()
     end
