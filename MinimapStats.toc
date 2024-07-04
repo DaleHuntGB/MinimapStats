@@ -1,10 +1,7 @@
 ## Title: |cFF8080FFMinimapStats|r
-## Interface: 100206
-## Version: 4.3
-## Author: |cFF8080FFUnhalted|r
+## Version: 5.0
+## Author: Unhalted
+## Notes: Simple, aesthetic, customizable Minimap Elements.
 ## SavedVariables: MSDB
-## OptionalDeps: SharedMedia-3.0, LibSharedMedia-3.0
-## IconTexture: Interface\AddOns\MinimapStats\Libraries\MinimapStatsLogo
-## DefaultState: Enabled
-Libraries\Embeds.xml
-MinimapStats.lua
+
+LoadMinimapStats.xml
