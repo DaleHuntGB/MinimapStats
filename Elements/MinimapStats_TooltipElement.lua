@@ -21,10 +21,52 @@ function MS:FetchPlayerLockouts()
         end
     end
     if #RaidLockouts > 0 then
+        if #DungeonLockouts > 0 then
+            GameTooltip:AddLine(" ", 1, 1, 1, 1)
+        end
         GameTooltip:AddLine("Raid Lockouts", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         for _, Lockout in pairs(RaidLockouts) do
             GameTooltip:AddLine(Lockout, 1, 1, 1, 1)
         end
+    end
+    if (#DungeonLockouts > 0 or #RaidLockouts > 0) and (MS.DB.global.DisplayVaultOptions or MS.DB.global.DisplayPlayerKeystone or MS.DB.global.DisplayPartyKeystones or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
+        GameTooltip:AddLine(" ", 1, 1, 1, 1)
+    end
+end
+
+function MS:FetchVaultOptions()
+    if not MS.DB.global.DisplayVaultOptions then return end
+    local MythicPlusRuns = C_MythicPlus.GetRunHistory(false, true)
+    local MythicPlusRunsFormatted = {}
+    local MythicPlusAbbr =
+    {
+        ["Dawn of the Infinite: Galakrond's Fall"] = "DOTI: Galakrond's Fall",
+        ["Dawn of the Infinite: Murozond's Rise"] = "DOTI: Murozond's Rise",
+    }
+    for _, DungeonRun in ipairs(MythicPlusRuns) do
+        local DungeonName = C_ChallengeMode.GetMapUIInfo(DungeonRun.mapChallengeModeID)
+        local DungeonAbbrName = MythicPlusAbbr[DungeonName] or DungeonName
+        local greatVaultiLvl = MS.GreatVaultiLvls[DungeonRun.level]
+        table.insert(MythicPlusRunsFormatted, string.format("Level: %d [%d]", DungeonRun.level, greatVaultiLvl))
+    end
+    table.sort(MythicPlusRunsFormatted, function(a, b)
+        return tonumber(a:match("%d+")) > tonumber(b:match("%d+"))
+    end)
+    for i = 9, #MythicPlusRunsFormatted do
+        MythicPlusRunsFormatted[i] = nil
+    end
+    if #MythicPlusRunsFormatted > 0 then
+        local R, G, B = MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB
+        GameTooltip:AddLine("Mythic+ Runs", R, G, B)
+        for DungeonNumber, VaultiLvl in ipairs(MythicPlusRunsFormatted) do
+            if DungeonNumber == 1 or DungeonNumber == 4 or DungeonNumber == 8 then
+                local VaultSlot = DungeonNumber == 1 and "1" or DungeonNumber == 4 and "2" or "3"
+                GameTooltip:AddLine("|cFFFFCC00Vault Slot #" .. VaultSlot .. "|r - " .. VaultiLvl, 1, 1, 1)
+            end
+        end
+    end
+    if #MythicPlusRunsFormatted > 0 and (MS.DB.global.DisplayPlayerKeystone or MS.DB.global.DisplayPartyKeystones or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
+        GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
 end
 
@@ -48,6 +90,9 @@ function MS:FetchKeystones()
             end
         end
         GameTooltip:AddLine(KeystoneString, 1, 1, 1, 1)
+        if MS.DB.global.DisplayPartyKeystones or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList then
+            GameTooltip:AddLine(" ", 1, 1, 1, 1)
+        end
     end
     if MS.DB.global.DisplayPartyKeystones then
         local PartyMembers = {}
@@ -78,6 +123,9 @@ function MS:FetchKeystones()
                     end
                 end
             end
+            if (MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
+                GameTooltip:AddLine(" ", 1, 1, 1, 1)
+            end
         end
     end
 end
@@ -105,6 +153,9 @@ function MS:FetchAffixes()
                 GameTooltip:AddLine(AffixDesc, 1, 1, 1)
             end
         end
+    end
+    if MS.DB.global.DisplayFriendsList then
+        GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
 end
 
@@ -154,39 +205,6 @@ function MS:FetchFriendsList()
             end
         end
     end
-end
-
-function MS:FetchVaultOptions()
-    if not MS.DB.global.DisplayVaultOptions then return end
-        local MythicPlusRuns = C_MythicPlus.GetRunHistory(false, true)
-        local MythicPlusRunsFormatted = {}
-        local MythicPlusAbbr =
-        {
-            ["Dawn of the Infinite: Galakrond's Fall"] = "DOTI: Galakrond's Fall",
-            ["Dawn of the Infinite: Murozond's Rise"] = "DOTI: Murozond's Rise",
-        }
-        for _, DungeonRun in ipairs(MythicPlusRuns) do
-            local DungeonName = C_ChallengeMode.GetMapUIInfo(DungeonRun.mapChallengeModeID)
-            local DungeonAbbrName = MythicPlusAbbr[DungeonName] or DungeonName
-            local greatVaultiLvl = MS.GreatVaultiLvls[DungeonRun.level]
-            table.insert(MythicPlusRunsFormatted, string.format("Level: %d [%d]", DungeonRun.level, greatVaultiLvl))
-        end
-        table.sort(MythicPlusRunsFormatted, function(a, b)
-            return tonumber(a:match("%d+")) > tonumber(b:match("%d+"))
-        end)
-        for i = 9, #MythicPlusRunsFormatted do
-            MythicPlusRunsFormatted[i] = nil
-        end
-        if #MythicPlusRunsFormatted > 0 then
-            local R, G, B = MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB
-            GameTooltip:AddLine("Mythic+ Runs", R, G, B)
-            for DungeonNumber, VaultiLvl in ipairs(MythicPlusRunsFormatted) do
-                if DungeonNumber == 1 or DungeonNumber == 4 or DungeonNumber == 8 then
-                    local VaultSlot = DungeonNumber == 1 and "1" or DungeonNumber == 4 and "2" or "3"
-                    GameTooltip:AddLine("|cFFFFCC00Vault Slot #" .. VaultSlot .. "|r - " .. VaultiLvl, 1, 1, 1)
-                end
-            end
-        end
 end
 
 function MS:CreateTooltip()
