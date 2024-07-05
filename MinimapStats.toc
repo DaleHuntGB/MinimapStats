@@ -4,4 +4,4 @@
 ## Notes: Simple, aesthetic, customizable Minimap Elements.
 ## SavedVariables: MSDB
 
-LoadMinimapStats.xml
+Init.xml

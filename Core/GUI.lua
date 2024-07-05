@@ -1,7 +1,7 @@
 local _, MS = ...
 local MSGUI = LibStub:GetLibrary("AceGUI-3.0")
 local GUI_W = 800
-local GUI_H = 550
+local GUI_H = 600
 
 local LSM = LibStub("LibSharedMedia-3.0")
 local LSMFonts = {}
@@ -30,7 +30,7 @@ end
 
 function MS:CreateGUI()
     if MS.isGUIOpen then return end
-    local MSGUI_Container = MSGUI:Create("Frame")
+    local MSGUI_Container = MSGUI:Create("Window")
     MSGUI_Container:SetTitle(MS.ADDON_NAME)
     MSGUI_Container:SetStatusText("V"..MS.ADDON_VERSION)
     MSGUI_Container:SetLayout("Fill")
@@ -137,6 +137,7 @@ function MS:CreateGUI()
             MS.DB.global.SavedAccentColourR = R
             MS.DB.global.SavedAccentColourG = G
             MS.DB.global.SavedAccentColourB = B
+            MS:SetAccentColour()
             MS:UpdateAllElements()
         end)
         AccentColourColourPicker:SetRelativeWidth(0.33)

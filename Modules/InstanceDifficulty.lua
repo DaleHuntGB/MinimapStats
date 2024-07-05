@@ -60,39 +60,38 @@ function MS:FetchInstanceDifficulty()
     local _, _, DiffID, _, MaxPlayers, _, _, InstanceID, CurrentPlayers = GetInstanceInfo()
     local KeystoneLevel = C_ChallengeMode.GetActiveKeystoneInfo()
     local PlayerInGarrison = MS.GarrisonInstanceIDs[InstanceID]
-    local AccentColour = MS:CalculateHexColour(MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
     local InstanceDifficulty = ""
 
     if (DiffID == 0 or PlayerInGarrison) and MS.ShowDiffID == true then 
-        InstanceDifficulty = "25" .. AccentColour .. "N" .. "|r" -- Used for Testing Purposes
+        InstanceDifficulty = "25" .. MS.AccentColour .. "N" .. "|r" -- Used for Testing Purposes
     elseif DiffID == 0 then
         InstanceDifficulty = ""
     elseif PlayerInGarrison then 
         InstanceDifficulty = ""
     elseif DiffID == 1 or DiffID == 3 or DiffID == 4 then 
-        InstanceDifficulty = MaxPlayers .. AccentColour .. "N" .. "|r"
+        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "N" .. "|r"
     elseif DiffID == 2 or DiffID == 5 or DiffID == 6 then 
-        InstanceDifficulty = MaxPlayers .. AccentColour .. "H" .. "|r"
+        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "H" .. "|r"
     elseif DiffID == 16 or DiffID == 23 then 
-        InstanceDifficulty = MaxPlayers .. AccentColour .. "M" .. "|r"
+        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "M" .. "|r"
     elseif DiffID == 8 then 
-        InstanceDifficulty = AccentColour .. "+" .. "|r" .. KeystoneLevel
+        InstanceDifficulty = MS.AccentColour .. "+" .. "|r" .. KeystoneLevel
     elseif DiffID == 9 then 
         InstanceDifficulty = MaxPlayers
     elseif DiffID == 7 or DiffID == 17 then 
-        InstanceDifficulty = MaxPlayers .. AccentColour .. "LFR" .. "|r"
+        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "LFR" .. "|r"
     elseif DiffID == 14 then 
-        InstanceDifficulty = CurrentPlayers .. AccentColour .. "N" .. "|r"
+        InstanceDifficulty = CurrentPlayers .. MS.AccentColour .. "N" .. "|r"
     elseif DiffID == 15 then 
-        InstanceDifficulty = CurrentPlayers .. AccentColour .. "H" .. "|r"
+        InstanceDifficulty = CurrentPlayers .. MS.AccentColour .. "H" .. "|r"
     elseif DiffID == 18 or DiffID == 19 then 
-        InstanceDifficulty = MaxPlayers .. AccentColour .. "EVT" .. "|r"
+        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "EVT" .. "|r"
     elseif DiffID == 24 or DiffID == 33 then 
-        InstanceDifficulty = MaxPlayers .. AccentColour .. "TW" .. "|r"
+        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "TW" .. "|r"
     elseif DiffID == 11 or DiffID == 39 then 
-        InstanceDifficulty = MaxPlayers .. AccentColour .. "S+" .. "|r"
+        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "S+" .. "|r"
     elseif DiffID == 12 or DiffID == 38 then 
-        InstanceDifficulty = MaxPlayers .. AccentColour .. "S" .. "|r"
+        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "S" .. "|r"
     end
 
     return string.format("%s", InstanceDifficulty)

@@ -97,16 +97,17 @@ MS.DefaultSettings = {
 }
 
 function MS:SetAccentColour()
-    local DB = MS.DB.global or {}
-    if DB.ClassAccentColour then
-        DB.AccentColourR = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].r
-        DB.AccentColourG = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].g
-        DB.AccentColourB = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].b
+    if MS.DB.global.ClassAccentColour then
+        MS.DB.global.AccentColourR = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].r
+        MS.DB.global.AccentColourG = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].g
+        MS.DB.global.AccentColourB = (RAID_CLASS_COLORS)[select(2, UnitClass("player"))].b
     else
-        DB.AccentColourR = DB.SavedAccentColourR
-        DB.AccentColourG = DB.SavedAccentColourG
-        DB.AccentColourB = DB.SavedAccentColourB
+        MS.DB.global.AccentColourR = MS.DB.global.SavedAccentColourR
+        MS.DB.global.AccentColourG = MS.DB.global.SavedAccentColourG
+        MS.DB.global.AccentColourB = MS.DB.global.SavedAccentColourB
     end
+
+    MS.AccentColour = MS:CalculateHexColour(MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
 end
 
 function MS:SetReactionColour()

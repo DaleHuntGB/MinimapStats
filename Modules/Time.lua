@@ -51,7 +51,6 @@ function MS:FetchTime()
     local ServerHr, ServerMins = GetGameTime()
     local Server12Hr = ServerHr > 12 and ServerHr - 12 or ServerHr
     local TimeString = ""
-    local AccentColour = MS:CalculateHexColour(MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
     if MS.DB.global.TimeFormat == "24H" then
         if MS.DB.global.TimeType == "LOCAL" then
             TimeString = Current24Hr..":"..CurrentMins
@@ -62,12 +61,12 @@ function MS:FetchTime()
         end
     elseif MS.DB.global.TimeFormat == "12H" then
         if MS.DB.global.TimeType == "LOCAL" then
-            TimeString = Current12Hr..":"..CurrentMins.." " .. AccentColour .. AMPMIndicator .. "|r"
+            TimeString = Current12Hr..":"..CurrentMins.." " .. MS.AccentColour .. AMPMIndicator .. "|r"
         elseif MS.DB.global.TimeType == "SERVER" then
             if Server12Hr == 0 then Server12Hr = 12 end
             if Server12Hr < 10 then Server12Hr = "0"..Server12Hr end
             if ServerMins < 10 then ServerMins = "0"..ServerMins end
-            TimeString = Server12Hr..":"..ServerMins.." ".. AccentColour .. (ServerHr > 12 and "PM" or "AM") .. "|r"
+            TimeString = Server12Hr..":"..ServerMins.." ".. MS.AccentColour .. (ServerHr > 12 and "PM" or "AM") .. "|r"
         end
     end
     return TimeString

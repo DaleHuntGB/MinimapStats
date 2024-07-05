@@ -49,11 +49,10 @@ function MS:FetchSystemStats()
     local DB = MS.DB.global or {}
     local FPS = math.ceil(GetFramerate())
     local _, _, HMS, WMS = GetNetStats()
-    local AccentColour = MS:CalculateHexColour(DB.AccentColourR, DB.AccentColourG, DB.AccentColourB)
     local SystemStatsString = DB.SystemStatsFormatString
-    local FPSText = FPS .. AccentColour .. " FPS" .. "|r"
-    local HMSText = HMS .. AccentColour .. " MS" .. "|r"
-    local WMSText = WMS .. AccentColour .. " MS" .. "|r"
+    local FPSText = FPS .. MS.AccentColour .. " FPS" .. "|r"
+    local HMSText = HMS .. MS.AccentColour .. " MS" .. "|r"
+    local WMSText = WMS .. MS.AccentColour .. " MS" .. "|r"
     local KeyCodes = { ["FPS"] = FPSText, ["HomeMS"] = HMSText, ["WorldMS"] = WMSText }
     for KeyCode, ValueString in pairs(KeyCodes) do
         SystemStatsString = SystemStatsString:gsub(KeyCode, ValueString)
