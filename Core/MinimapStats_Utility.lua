@@ -92,6 +92,7 @@ MS.DefaultSettings = {
         DisplayAffixDesc = false,
         DisplayFriendsList = true,
         DisplayVaultOptions = true,
+        TooltipTextureIconSize = 16,
     }
 }
 
@@ -276,4 +277,5 @@ function MS:ResetTooltipOptions()
     MS.DB.global.DisplayAffixDesc = false
     MS.DB.global.DisplayFriendsList = true
     MS.DB.global.DisplayVaultOptions = true
+    MS.DB.global.TooltipTextureIconSize = 16
 end

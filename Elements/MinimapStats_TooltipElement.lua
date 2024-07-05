@@ -72,6 +72,8 @@ end
 
 function MS:FetchKeystones()
     local OpenRaid = LibStub:GetLibrary("LibOpenRaid-1.0")
+    local TextureSize = MS.DB.global.TooltipTextureIconSize
+    local NoKeyTextureIcon = "|TInterface/Icons/inv_relics_hourglass.blp:" .. TextureSize .. ":" .. TextureSize .. ":0|t"
     if not OpenRaid then return end
     if MS.DB.global.DisplayPlayerKeystone then
         local KeystoneInfo = OpenRaid.GetKeystoneInfo("player")
@@ -79,9 +81,8 @@ function MS:FetchKeystones()
         if KeystoneInfo then
             local KeystoneLevel = KeystoneInfo.level
             local Keystone, _, _, KeystoneIcon = C_ChallengeMode.GetMapUIInfo(KeystoneInfo.mythicPlusMapID)
-            local NoKeyTextureIcon = "|TInterface/Icons/inv_relics_hourglass.blp:16:16:0|t"
             if Keystone and KeystoneIcon then
-                local TexturedIcon = "|T" .. KeystoneIcon .. ":16:16:0|t"
+                local TexturedIcon = "|T" .. KeystoneIcon .. ":" .. TextureSize .. ":" .. TextureSize .. ":0|t"
                 GameTooltip:AddLine(TexturedIcon .. " +" .. KeystoneLevel .. " " .. Keystone, 1, 1, 1, 1)
             elseif Keystone then
                 GameTooltip:AddLine(NoKeyTextureIcon .. " +" .. KeystoneLevel .. " " .. Keystone, 1, 1, 1, 1)
@@ -95,7 +96,6 @@ function MS:FetchKeystones()
     end
     if MS.DB.global.DisplayPartyKeystones then
         local PartyMembers = {}
-        local NoKeyTextureIcon = "|TInterface/Icons/inv_relics_hourglass.blp:16:16:0|t"
         if IsInGroup() and not IsInRaid() then
             GameTooltip:AddLine("Party Keystones", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
             for i = 1, GetNumGroupMembers() - 1 do
@@ -116,7 +116,7 @@ function MS:FetchKeystones()
                 if KeystoneInfo and KeystoneLevel then
                     local Keystone, _, _, KeystoneIcon = C_ChallengeMode.GetMapUIInfo(KeystoneInfo.mythicPlusMapID)
                     if KeystoneIcon then
-                        local TexturedIcon = "|T" .. KeystoneIcon .. "16:16:0|t"
+                        local TexturedIcon = "|T" .. KeystoneIcon .. ":" ..TextureSize .. ":" .. TextureSize .. ":0|t"
                         GameTooltip:AddLine(UnitClassColour .. UnitName .. "|r: " .. TexturedIcon .. " +" .. KeystoneLevel .. " " .. Keystone, 1, 1, 1, 1)
                     else
                         GameTooltip:AddLine(UnitClassColour .. UnitName .. "|r: " .. NoKeyTextureIcon .. " +" .. KeystoneLevel .. " " .. Keystone, 1, 1, 1, 1)
@@ -132,13 +132,14 @@ end
 
 function MS:FetchAffixes()
     if not MS.DB.global.DisplayAffixes then return end
+    local TextureSize = MS.DB.global.TooltipTextureIconSize
     GameTooltip:AddLine("Current Affixes", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
     for i = 1, 3 do
         local AffixID = C_MythicPlus.GetCurrentAffixes()[i].id
         local AffixName, AffixDesc, AffixIconID = C_ChallengeMode.GetAffixInfo(AffixID)
-        local AffixIcon = "|T" .. AffixIconID .. ":16:16:0|t "
+        local AffixIcon = "|T" .. AffixIconID .. ":" .. TextureSize .. ":" .. TextureSize .. ":0|t "
         if i == 1 then
-            GameTooltip:AddLine(AffixIcon ..AffixName, 1, 1, 1)
+            GameTooltip:AddLine(AffixIcon .. AffixName, 1, 1, 1)
             if MS.DB.global.DisplayAffixDesc then
                 GameTooltip:AddLine(AffixDesc, 1, 1, 1)
             end
