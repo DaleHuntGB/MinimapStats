@@ -1,3 +1,4 @@
+local _, MS = ...
 function MS:CreateSystemStatsFrame()
     if not MS.DB.global.ShowSystemsStatsFrame then return end
     MS.SystemStatsFrame = CreateFrame("Frame", "MinimapStats_SystemStatsFrame", Minimap)

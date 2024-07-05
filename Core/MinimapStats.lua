@@ -1,3 +1,4 @@
+local _, MS = ...
 local MinimapStats = LibStub("AceAddon-3.0"):NewAddon("MinimapStats")
 
 function MinimapStats:OnInitialize()

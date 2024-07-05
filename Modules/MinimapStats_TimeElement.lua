@@ -1,3 +1,4 @@
+local _, MS = ...
 local isMouseOver = false
 function MS:CreateTimeFrame()
     if not MS.DB.global.ShowTimeFrame then return end

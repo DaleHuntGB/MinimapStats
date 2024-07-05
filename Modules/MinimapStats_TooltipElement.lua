@@ -1,3 +1,4 @@
+local _, MS = ...
 function MS:FetchPlayerLockouts()
     if not MS.DB.global.DisplayLockouts then return end
     RequestRaidInfo()

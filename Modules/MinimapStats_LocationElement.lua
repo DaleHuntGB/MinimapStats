@@ -1,3 +1,4 @@
+local _, MS = ...
 function MS:CreateLocationFrame()
     if not MS.DB.global.ShowLocationFrame then return end
     MS.LocationFrame = CreateFrame("Frame", "MinimapStats_LocationFrame", Minimap)

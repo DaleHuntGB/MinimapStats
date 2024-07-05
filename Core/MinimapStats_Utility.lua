@@ -1,4 +1,4 @@
-MS = {}
+local _, MS = ...
 MS.ADDON_NAME = C_AddOns.GetAddOnMetadata("MinimapStats", "Title")
 MS.ADDON_VERSION = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
 MS.ADDON_AUTHOR = C_AddOns.GetAddOnMetadata("MinimapStats", "Author")

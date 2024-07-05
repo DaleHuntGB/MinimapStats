@@ -1,3 +1,4 @@
+local _, MS = ...
 function MS:CreateInstanceDifficultyFrame()
     if not MS.DB.global.ShowInstanceDifficultyFrame then return end
     MS.InstanceDifficultyFrame = CreateFrame("Frame", "MinimapStats_InstanceDifficultyFrame", Minimap)

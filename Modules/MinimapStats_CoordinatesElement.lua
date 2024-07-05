@@ -1,3 +1,4 @@
+local _, MS = ...
 function MS:CreateCoordinatesFrame()
     if not MS.DB.global.ShowCoordinatesFrame then return end
     MS.CoordinatesFrame = CreateFrame("Frame", "MinimapStats_CoordinatesFrame", Minimap)

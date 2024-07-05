@@ -1,3 +1,4 @@
+local _, MS = ...
 local MSGUI = LibStub:GetLibrary("AceGUI-3.0")
 local GUI_W = 800
 local GUI_H = 550
