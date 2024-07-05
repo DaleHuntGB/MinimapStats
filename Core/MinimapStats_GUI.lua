@@ -814,7 +814,7 @@ function MS:CreateGUI()
     end
 
     local function DrawTooltipContainer(MSGUI_Container)
-        local TooltipTextureIconSizeOptions = { ["8"] = "8", ["10"] = "10", ["12"] = "12", ["14"] = "14", ["16"] = "16", ["18"] = "18", ["20"] = "20", ["22"] = "22", ["24"] = "24" }
+        local TooltipTextureIconSizeOptions = { ["8"] = "8px", ["10"] = "10px", ["12"] = "12px", ["14"] = "14px", ["16"] = "16px", ["18"] = "18px", ["20"] = "20px", ["22"] = "22px", ["24"] = "24px" }
         local TooltipTextureIconSizeOrder = { "8", "10", "12", "14", "16", "18", "20", "22", "24" }
         local TooltipOptionsContainer = MSGUI:Create("InlineGroup")
         TooltipOptionsContainer:SetTitle("General Options")
@@ -913,7 +913,7 @@ function MS:CreateGUI()
         TooltipDisplayVaultOptionsCheckbox:SetRelativeWidth(0.5)
 
         local TooltipTextureIconSizeDropdown = MSGUI:Create("Dropdown")
-        TooltipTextureIconSizeDropdown:SetLabel("Texture Icon Size")
+        TooltipTextureIconSizeDropdown:SetLabel("Icon Size")
         TooltipTextureIconSizeDropdown:SetList(TooltipTextureIconSizeOptions, TooltipTextureIconSizeOrder)
         TooltipTextureIconSizeDropdown:SetValue(tostring(MS.DB.global.TooltipTextureIconSize))
         TooltipTextureIconSizeDropdown:SetDisabled(not MS.DB.global.ShowTooltip)
