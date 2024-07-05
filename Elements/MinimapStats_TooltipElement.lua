@@ -72,30 +72,31 @@ end
 
 function MS:FetchKeystones()
     local OpenRaid = LibStub:GetLibrary("LibOpenRaid-1.0")
-    local AccentColour = MS:CalculateHexColour(MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
     if not OpenRaid then return end
     if MS.DB.global.DisplayPlayerKeystone then
         local KeystoneInfo = OpenRaid.GetKeystoneInfo("player")
-        local KeystoneString = AccentColour .. "Your Keystone|r: "
+        GameTooltip:AddLine("Your Keystone", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         if KeystoneInfo then
             local KeystoneLevel = KeystoneInfo.level
-            local Keystone, _, KeystoneIcon = C_ChallengeMode.GetMapUIInfo(KeystoneInfo.mapID)
+            local Keystone, _, _, KeystoneIcon = C_ChallengeMode.GetMapUIInfo(KeystoneInfo.mythicPlusMapID)
+            local NoKeyTextureIcon = "|TInterface/Icons/inv_relics_hourglass.blp:16:16:0|t"
             if Keystone and KeystoneIcon then
-                local TexturedIcon = "|T" .. KeystoneIcon .. "16:16:0|t"
-                KeystoneString = KeystoneString .. TexturedIcon .. " +" .. KeystoneLevel .. " " .. Keystone
+                print(KeystoneIcon)
+                local TexturedIcon = "|T" .. KeystoneIcon .. ":16:16:0|t"
+                GameTooltip:AddLine(TexturedIcon .. " +" .. KeystoneLevel .. " " .. Keystone, 1, 1, 1, 1)
             elseif Keystone then
-                KeystoneString = KeystoneString .. " +" .. KeystoneLevel .. " " .. Keystone
+                GameTooltip:AddLine(NoKeyTextureIcon .. " +" .. KeystoneLevel .. " " .. Keystone, 1, 1, 1, 1)
             else
-                KeystoneString = KeystoneString .. "No Key Found"
+                GameTooltip:AddLine(NoKeyTextureIcon .. " No Keystone", 1, 1, 1, 1)
             end
         end
-        GameTooltip:AddLine(KeystoneString, 1, 1, 1, 1)
         if MS.DB.global.DisplayPartyKeystones or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList then
             GameTooltip:AddLine(" ", 1, 1, 1, 1)
         end
     end
     if MS.DB.global.DisplayPartyKeystones then
         local PartyMembers = {}
+        local NoKeyTextureIcon = "|TInterface/Icons/inv_relics_hourglass.blp:16:16:0|t"
         if IsInGroup() and not IsInRaid() then
             GameTooltip:AddLine("Party Keystones", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
             for i = 1, GetNumGroupMembers() - 1 do
@@ -107,19 +108,19 @@ function MS:FetchKeystones()
             end
 
             for _, Member in pairs(PartyMembers) do
-                local UnitName = GetUnitName(Member, false)
-                local _, UnitClass = UnitClass(UnitName)
+                local UnitName = GetUnitName(Member, true):match("([^-]+)")
+                local _, UnitClass = UnitClass(Member)
                 local UnitClassColour = RAID_CLASS_COLORS[UnitClass]
                 local KeystoneInfo = OpenRaid.GetKeystoneInfo(UnitName)
                 local KeystoneLevel = KeystoneInfo.level
 
                 if KeystoneInfo and KeystoneLevel then
-                    local Keystone, _, KeystoneIcon = C_ChallengeMode.GetMapUIInfo(KeystoneInfo.mapID)
+                    local Keystone, _, _, KeystoneIcon = C_ChallengeMode.GetMapUIInfo(KeystoneInfo.mythicPlusMapID)
                     if KeystoneIcon then
                         local TexturedIcon = "|T" .. KeystoneIcon .. "16:16:0|t"
                         GameTooltip:AddLine(UnitClassColour .. UnitName .. "|r: " .. TexturedIcon .. " +" .. KeystoneLevel .. " " .. Keystone, 1, 1, 1, 1)
                     else
-                        GameTooltip:AddLine(UnitClassColour .. UnitName .. "|r: +" .. KeystoneLevel .. " " .. Keystone, 1, 1, 1, 1)
+                        GameTooltip:AddLine(UnitClassColour .. UnitName .. "|r: " .. NoKeyTextureIcon .. " +" .. KeystoneLevel .. " " .. Keystone, 1, 1, 1, 1)
                     end
                 end
             end
