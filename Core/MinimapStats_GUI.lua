@@ -57,23 +57,12 @@ function MS:CreateGUI()
             function(_, _, Value) 
             MS.DB.global.ElementFrameStrata = Value
             MS:UpdateAllElements()
-            StaticPopupDialogs["MINIMAPSTATS_RELOAD"] = {
-                text = "A reload is required for all changes to take effect. Do you want to reload now?",
-                button1 = "Yes",
-                button2 = "No",
-                OnAccept = function() ReloadUI() end,
-                timeout = 0,
-                whileDead = true,
-                hideOnEscape = true,
-                preferredIndex = 3
-            }
-            StaticPopup_Show("MINIMAPSTATS_RELOAD")
         end)
         ElementFrameStrataDropdown:SetCallback("OnEnter", 
             function() 
             GameTooltip:SetOwner(ElementFrameStrataDropdown.frame, "ANCHOR_NONE") 
             GameTooltip:SetPoint("TOPRIGHT", ElementFrameStrataDropdown.frame, "BOTTOMRIGHT", 0, -1) 
-            GameTooltip:SetText("Adjust the layer at which elements are drawn.\nA reload will be required for full effect.") 
+            GameTooltip:SetText("Adjust the layer at which elements are drawn.") 
         end)
         ElementFrameStrataDropdown:SetCallback("OnLeave", function() GameTooltip:Hide() end)
         ElementFrameStrataDropdown:SetRelativeWidth(0.5)
@@ -652,7 +641,7 @@ function MS:CreateGUI()
         ShowLocationFrameCheckBox:SetValue(MS.DB.global.ShowLocationFrame)
         ShowLocationFrameCheckBox:SetCallback("OnValueChanged", 
             function(_, _, Value) MS.DB.global.ShowLocationFrame = Value 
-            MS:UpdateLocationFrame() 
+            MS:UpdateLocationFrame()
             ShowLocationFrameCheckBox:SetLabel(MS:ToggleFont(MS.DB.global.ShowLocationFrame)) 
             MSGUI_Container:DoLayout()
             if not MS.DB.global.ShowLocationFrame then

@@ -24,7 +24,6 @@ end
 
 function MS:UpdateLocationFrame()
     if not MS.LocationFrame and MS.DB.global.ShowLocationFrame then MS:CreateLocationFrame() end
-    MS.LocationFrame = CreateFrame("Frame", "MinimapStats_LocationFrame", Minimap)
     MS.LocationFrame:ClearAllPoints()
     MS.LocationFrame:SetPoint(MS.DB.global.LocationAnchorPosition, Minimap, MS.DB.global.LocationXOffset, MS.DB.global.LocationYOffset)
     MS.LocationFrameText:SetFont(MS.DB.global.FontFace, MS.DB.global.LocationFontSize, MS.DB.global.FontFlag)
@@ -69,11 +68,10 @@ function MS:SetupLocationScripts()
             MS.LocationFrameText:SetText(MS:FetchLocation())
             self:SetHeight(MS.LocationFrameText:GetStringHeight() or 12)
             self:SetWidth(MS.LocationFrameText:GetStringWidth() or 220)
-            
         end)
         MS.LocationFrame:Show()
     else
-        MS.LocationFrame:SetScript("OnEvent", nil)
         MS.LocationFrame:Hide()
+        MS.LocationFrame:SetScript("OnEvent", nil)
     end
 end
