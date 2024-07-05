@@ -186,3 +186,94 @@ function MS:SetupSlashCommands()
         MS.isGUIOpen = true
     end
 end
+
+function MS:ResetGeneralOptions()
+    MS.DB.global.FontFace = "Fonts\\FRIZQT__.ttf"
+    MS.DB.global.FontFlag = "OUTLINE"
+    MS.DB.global.FontShadow = false
+    MS.DB.global.ShadowColorR = 0.0
+    MS.DB.global.ShadowColorG = 0.0
+    MS.DB.global.ShadowColorB = 0.0
+    MS.DB.global.ShadowOffsetX = 0.0
+    MS.DB.global.ShadowOffsetY = 0.0
+    MS.DB.global.ElementFrameStrata = "MEDIUM"
+    MS.DB.global.FontColourR = 1.0
+    MS.DB.global.FontColourG = 1.0
+    MS.DB.global.FontColourB = 1.0
+    MS.DB.global.AccentColourR = 0.5
+    MS.DB.global.AccentColourG = 0.5
+    MS.DB.global.AccentColourB = 1.0
+    MS.DB.global.SavedAccentColourR = 0.5
+    MS.DB.global.SavedAccentColourG = 0.5
+    MS.DB.global.SavedAccentColourB = 1.0
+    MS.DB.global.ClassAccentColour = false
+end
+
+function MS:ResetTimeOptions()
+    MS.DB.global.ShowTimeFrame = true
+    MS.DB.global.TimeFormat = "24H"
+    MS.DB.global.TimeType = "LOCAL"
+    MS.DB.global.MouseoverDate = true
+    MS.DB.global.DateFormat = "DD/MM/YY"
+    MS.DB.global.TimeUpdateInterval = 15
+    MS.DB.global.TimeAnchorPosition = "BOTTOM"
+    MS.DB.global.TimeXOffset = 0
+    MS.DB.global.TimeYOffset = 15
+    MS.DB.global.TimeFontSize = 21
+end
+
+function MS:ResetSystemStatsOptions()
+    MS.DB.global.ShowSystemsStatsFrame = true
+    MS.DB.global.SystemStatsFormatString = "FPS | HomeMS"
+    MS.DB.global.SystemStatsUpdateInterval = 10
+    MS.DB.global.SystemStatsAnchorPosition = "BOTTOM"
+    MS.DB.global.SystemStatsXOffset = 0
+    MS.DB.global.SystemStatsYOffset = 3
+    MS.DB.global.SystemStatsFontSize = 12
+end
+
+function MS:ResetLocationOptions()
+    MS.DB.global.ShowLocationFrame = true
+    MS.DB.global.LocationColourFormat = "Primary"
+    MS.DB.global.LocationColourR = 1.0
+    MS.DB.global.LocationColourG = 1.0
+    MS.DB.global.LocationColourB = 1.0
+    MS.DB.global.LocationAnchorPosition = "TOP"
+    MS.DB.global.LocationXOffset = 0
+    MS.DB.global.LocationYOffset = -3
+    MS.DB.global.LocationFontSize = 12
+end
+
+function MS:ResetCoordinatesOptions()
+    MS.DB.global.ShowCoordinatesFrame = true
+    MS.DB.global.CoordinatesFormat = "0, 0"
+    MS.DB.global.CoordinatesUpdateInterval = 3
+    MS.DB.global.CoordinatesUpdateInRealTime = false
+    MS.DB.global.CoordinatesAnchorPosition = "TOP"
+    MS.DB.global.CoordinatesXOffset = 0
+    MS.DB.global.CoordinatesYOffset = -15
+    MS.DB.global.CoordinatesFontSize = 12
+end
+
+function MS:ResetInstanceDifficultyOptions()
+    MS.DB.global.ShowInstanceDifficultyFrame = true
+    MS.DB.global.InstanceDifficultyAnchorPosition = "TOPLEFT"
+    MS.DB.global.InstanceDifficultyXOffset = 3
+    MS.DB.global.InstanceDifficultyYOffset = -3
+    MS.DB.global.InstanceDifficultyFontSize = 12
+end
+
+function MS:ResetTooltipOptions()
+    MS.DB.global.ShowTooltip = true
+    MS.DB.global.TooltipAnchorFrom = "TOPRIGHT"
+    MS.DB.global.TooltipAnchorTo = "BOTTOMRIGHT"
+    MS.DB.global.TooltipXOffset = 1
+    MS.DB.global.TooltipYOffset = -2
+    MS.DB.global.DisplayLockouts = true
+    MS.DB.global.DisplayPlayerKeystone = true
+    MS.DB.global.DisplayPartyKeystones = true
+    MS.DB.global.DisplayAffixes = true
+    MS.DB.global.DisplayAffixDesc = false
+    MS.DB.global.DisplayFriendsList = true
+    MS.DB.global.DisplayVaultOptions = true
+end

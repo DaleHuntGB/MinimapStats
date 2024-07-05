@@ -42,7 +42,7 @@ function MS:CreateGUI()
         local FontFlagOrder = { "NONE", "OUTLINE", "THICKOUTLINE", "MONOCHROME" }
         local ElementFrameStrataOptions = { ["BACKGROUND"] = "BACKGROUND", ["LOW"] = "LOW", ["MEDIUM"] = "MEDIUM", ["HIGH"] = "HIGH", ["DIALOG"] = "DIALOG", ["FULLSCREEN"] = "FULLSCREEN", ["FULLSCREEN_DIALOG"] = "FULLSCREEN_DIALOG", ["TOOLTIP"] = "TOOLTIP" }
         local ElementFrameStrataOrder = { "BACKGROUND", "LOW", "MEDIUM", "HIGH", "DIALOG", "FULLSCREEN", "FULLSCREEN_DIALOG", "TOOLTIP" }
-        local ResetDefaultsOptions = { ["Select"] = "Select...", ["Everything"] = "Everything", ["General"] = "General", ["Time"] = "Time", ["System Stats"] = "System Stats", ["Location"] = "Location", ["Coordinates"] = "Coordinates", ["Instance Difficulty"] = "Instance Difficulty", ["Tooltip"] = "Tooltip"}
+        local ResetDefaultsOptions = { ["Select"] = "Select...", ["Everything"] = "Reset Everything", ["General"] = "Reset General Options", ["Time"] = "Reset Time Options", ["System Stats"] = "Reset System Stats Options", ["Location"] = "Reset Location Options", ["Coordinates"] = "Reset Coordinates Options", ["Instance Difficulty"] = "Reset Instance Difficulty Options", ["Tooltip"] = "Reset Tooltip Options"}
         local ResetDefaultsOrder = { "Everything", "General", "Time", "System Stats", "Location", "Coordinates", "Instance Difficulty", "Tooltip" }
         local GeneralOptionsContainer = MSGUI:Create("InlineGroup")
         GeneralOptionsContainer:SetTitle("General Options")
@@ -75,84 +75,33 @@ function MS:CreateGUI()
             function(_, _, Value)
             if Value == "Everything" then
                 MS.DB:ResetDB()
-                MS:UpdateAllElements()
+                print(MS.ADDON_NAME .. ": All Options Reset!")
             elseif Value == "General" then
-                MS.DB.global.FontFace = MS.DefaultSettings.global.FontFace
-                MS.DB.global.FontFlag = MS.DefaultSettings.global.FontFlag
-                MS.DB.global.FontShadow = MS.DefaultSettings.global.FontShadow
-                MS.DB.global.ShadowColorR = MS.DefaultSettings.global.ShadowColorR
-                MS.DB.global.ShadowColorG = MS.DefaultSettings.global.ShadowColorG
-                MS.DB.global.ShadowColorB = MS.DefaultSettings.global.ShadowColorB
-                MS.DB.global.ShadowOffsetX = MS.DefaultSettings.global.ShadowOffsetX
-                MS.DB.global.ShadowOffsetY = MS.DefaultSettings.global.ShadowOffsetY
-                MS.DB.global.ElementFrameStrata = MS.DefaultSettings.global.ElementFrameStrata
-                MS.DB.global.FontColourR = MS.DefaultSettings.global.FontColourR
-                MS.DB.global.FontColourG = MS.DefaultSettings.global.FontColourG
-                MS.DB.global.FontColourB = MS.DefaultSettings.global.FontColourB
-                MS.DB.global.AccentColourR = MS.DefaultSettings.global.AccentColourR
-                MS.DB.global.AccentColourG = MS.DefaultSettings.global.AccentColourG
-                MS.DB.global.AccentColourB = MS.DefaultSettings.global.AccentColourB
-                MS.DB.global.SavedAccentColourR = MS.DefaultSettings.global.SavedAccentColourR
-                MS.DB.global.SavedAccentColourG = MS.DefaultSettings.global.SavedAccentColourG
-                MS.DB.global.SavedAccentColourB = MS.DefaultSettings.global.SavedAccentColourB
-                MS.DB.global.ClassAccentColour = MS.DefaultSettings.global.ClassAccentColour
+                MS:ResetGeneralOptions()
                 MSGUI_Container:ReleaseChildren()
                 DrawGeneralContainer(MSGUI_Container)
+                print(MS.ADDON_NAME .. ": General Options Reset!")
             elseif Value == "Time" then
-                MS.DB.global.ShowTimeFrame = MS.DefaultSettings.global.ShowTimeFrame
-                MS.DB.global.TimeFormat = MS.DefaultSettings.global.TimeFormat
-                MS.DB.global.TimeType = MS.DefaultSettings.global.TimeType
-                MS.DB.global.MouseoverDate = MS.DefaultSettings.global.MouseoverDate
-                MS.DB.global.DateFormat = MS.DefaultSettings.global.DateFormat
-                MS.DB.global.TimeUpdateInterval = MS.DefaultSettings.global.TimeUpdateInterval
-                MS.DB.global.TimeAnchorPosition = MS.DefaultSettings.global.TimeAnchorPosition
-                MS.DB.global.TimeXOffset = MS.DefaultSettings.global.TimeXOffset
-                MS.DB.global.TimeYOffset = MS.DefaultSettings.global.TimeYOffset
-                MS.DB.global.TimeFontSize = MS.DefaultSettings.global.TimeFontSize
+                MS:ResetTimeOptions()
+                print(MS.ADDON_NAME .. ": Time Options Reset!")
             elseif Value == "System Stats" then
-                MS.DB.global.ShowSystemsStatsFrame = MS.DefaultSettings.global.ShowSystemsStatsFrame
-                MS.DB.global.SystemStatsFormatString = MS.DefaultSettings.global.SystemStatsFormatString
-                MS.DB.global.SystemStatsUpdateInterval = MS.DefaultSettings.global.SystemStatsUpdateInterval
-                MS.DB.global.SystemStatsAnchorPosition = MS.DefaultSettings.global.SystemStatsAnchorPosition
-                MS.DB.global.SystemStatsXOffset = MS.DefaultSettings.global.SystemStatsXOffset
-                MS.DB.global.SystemStatsYOffset = MS.DefaultSettings.global.SystemStatsYOffset
-                MS.DB.global.SystemStatsFontSize = MS.DefaultSettings.global.SystemStatsFontSize
+                MS:ResetSystemStatsOptions()
+                print(MS.ADDON_NAME .. ": System Stats Options Reset!")
             elseif Value == "Location" then
-                MS.DB.global.ShowLocationFrame = MS.DefaultSettings.global.ShowLocationFrame
-                MS.DB.global.LocationColourFormat = MS.DefaultSettings.global.LocationColourFormat
-                MS.DB.global.LocationColourR = MS.DefaultSettings.global.LocationColourR
-                MS.DB.global.LocationColourG = MS.DefaultSettings.global.LocationColourG
-                MS.DB.global.LocationColourB = MS.DefaultSettings.global.LocationColourB
-                MS.DB.global.LocationAnchorPosition = MS.DefaultSettings.global.LocationAnchorPosition
-                MS.DB.global.LocationXOffset = MS.DefaultSettings.global.LocationXOffset
-                MS.DB.global.LocationYOffset = MS.DefaultSettings.global.LocationYOffset
-                MS.DB.global.LocationFontSize = MS.DefaultSettings.global.LocationFontSize
+                MS:ResetLocationOptions()
+                print(MS.ADDON_NAME .. ": Location Options Reset!")
             elseif Value == "Coordinates" then
-                MS.DB.global.ShowCoordinatesFrame = MS.DefaultSettings.global.ShowCoordinatesFrame
-                MS.DB.global.CoordinatesColourFormat = MS.DefaultSettings.global.CoordinatesColourFormat
-                MS.DB.global.CoordinatesColourR = MS.DefaultSettings.global.CoordinatesColourR
-                MS.DB.global.CoordinatesColourG = MS.DefaultSettings.global.CoordinatesColourG
-                MS.DB.global.CoordinatesColourB = MS.DefaultSettings.global.CoordinatesColourB
-                MS.DB.global.CoordinatesAnchorPosition = MS.DefaultSettings.global.CoordinatesAnchorPosition
-                MS.DB.global.CoordinatesXOffset = MS.DefaultSettings.global.CoordinatesXOffset
-                MS.DB.global.CoordinatesYOffset = MS.DefaultSettings.global.CoordinatesYOffset
-                MS.DB.global.CoordinatesFontSize = MS.DefaultSettings.global.CoordinatesFontSize
+                MS:ResetCoordinatesOptions()
+                print(MS.ADDON_NAME .. ": Coordinates Options Reset!")
             elseif Value == "Instance Difficulty" then
-                MS.DB.global.ShowInstanceDifficultyFrame = MS.DefaultSettings.global.ShowInstanceDifficultyFrame
-                MS.DB.global.InstanceDifficultyAnchorPosition = MS.DefaultSettings.global.InstanceDifficultyAnchorPosition
-                MS.DB.global.InstanceDifficultyXOffset = MS.DefaultSettings.global.InstanceDifficultyXOffset
-                MS.DB.global.InstanceDifficultyYOffset = MS.DefaultSettings.global.InstanceDifficultyYOffset
-                MS.DB.global.InstanceDifficultyFontSize = MS.DefaultSettings.global.InstanceDifficultyFontSize
+                MS:ResetInstanceDifficultyOptions()
+                print(MS.ADDON_NAME .. ": Instance Difficulty Options Reset!")
             elseif Value == "Tooltip" then
-                MS.DB.global.ShowTooltip = MS.DefaultSettings.global.ShowTooltip
-                MS.DB.global.TooltipAnchorPosition = MS.DefaultSettings.global.TooltipAnchorPosition
-                MS.DB.global.TooltipXOffset = MS.DefaultSettings.global.TooltipXOffset
-                MS.DB.global.TooltipYOffset = MS.DefaultSettings.global.TooltipYOffset
-                MS.DB.global.TooltipFontSize = MS.DefaultSettings.global.TooltipFontSize
+                MS:ResetTooltipOptions()
+                print(MS.ADDON_NAME .. ": Tooltip Options Reset!")
             end
             MS:UpdateAllElements()
             ResetDefaultsDropdown:SetValue("Select")
-            print(MS.ADDON_NAME .. ": " .. Value .. " Reset!")
         end)
         ResetDefaultsDropdown:SetCallback("OnEnter", 
             function() 
