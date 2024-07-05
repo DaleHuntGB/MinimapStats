@@ -81,7 +81,6 @@ function MS:FetchKeystones()
             local Keystone, _, _, KeystoneIcon = C_ChallengeMode.GetMapUIInfo(KeystoneInfo.mythicPlusMapID)
             local NoKeyTextureIcon = "|TInterface/Icons/inv_relics_hourglass.blp:16:16:0|t"
             if Keystone and KeystoneIcon then
-                print(KeystoneIcon)
                 local TexturedIcon = "|T" .. KeystoneIcon .. ":16:16:0|t"
                 GameTooltip:AddLine(TexturedIcon .. " +" .. KeystoneLevel .. " " .. Keystone, 1, 1, 1, 1)
             elseif Keystone then
