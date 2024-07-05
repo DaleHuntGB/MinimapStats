@@ -29,7 +29,7 @@ end
 
 function MS:CreateGUI()
     if MS.isGUIOpen then return end
-    local MSGUI_Container = MSGUI:Create("Window")
+    local MSGUI_Container = MSGUI:Create("Frame")
     MSGUI_Container:SetTitle(MS.ADDON_NAME)
     MSGUI_Container:SetStatusText("V"..MS.ADDON_VERSION)
     MSGUI_Container:SetLayout("Fill")
@@ -1030,6 +1030,7 @@ function MS:CreateGUI()
         ImportEditBox:SetLabel("Import String")
         ImportEditBox:SetNumLines(5)
         ImportEditBox:SetFullWidth(true)
+        ImportEditBox:DisableButton(true)
 
         local ImportButton = MSGUI:Create("Button")
         ImportButton:SetText("Import")
@@ -1057,13 +1058,19 @@ function MS:CreateGUI()
 
         local ExportEditBox = MSGUI:Create("MultiLineEditBox")
         ExportEditBox:SetLabel("Export String")
-        ExportEditBox:SetNumLines(5)
         ExportEditBox:SetFullWidth(true)
+        ExportEditBox:SetNumLines(5)
+        ExportEditBox:DisableButton(true)
 
         local ExportButton = MSGUI:Create("Button")
         ExportButton:SetText("Export")
         ExportButton:SetCallback("OnClick", function() ExportEditBox:SetText(MS:ExportSavedVariables()) ExportEditBox:HighlightText() ExportEditBox:SetFocus() end)
-        ExportButton:SetFullWidth(true)
+        ExportButton:SetRelativeWidth(0.5)
+
+        local HighlightExportEditBox = MSGUI:Create("Button")
+        HighlightExportEditBox:SetText("Highlight Text")
+        HighlightExportEditBox:SetCallback("OnClick", function() ExportEditBox:HighlightText() ExportEditBox:SetFocus() end)
+        HighlightExportEditBox:SetRelativeWidth(0.5)
 
         MSGUI_Container:AddChild(ImportOptionsContainer)
         ImportOptionsContainer:AddChild(ImportEditBox)
@@ -1071,6 +1078,7 @@ function MS:CreateGUI()
 
         MSGUI_Container:AddChild(ExportOptionsContainer)
         ExportOptionsContainer:AddChild(ExportButton)
+        ExportOptionsContainer:AddChild(HighlightExportEditBox)
         ExportOptionsContainer:AddChild(ExportEditBox)
     end
 

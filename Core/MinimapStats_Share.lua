@@ -8,7 +8,6 @@ function MS:ExportSavedVariables()
     return EncodedInfo
 end
 
--- Function to decode, decompress, and deserialize the data for importing
 function MS:ImportSavedVariables(EncodedInfo)
     local DecodedInfo = Compress:DecodeForPrint(EncodedInfo)
     local DecompressedInfo = Compress:DecompressDeflate(DecodedInfo)
