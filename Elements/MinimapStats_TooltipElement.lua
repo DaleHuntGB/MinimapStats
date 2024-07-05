@@ -156,11 +156,45 @@ function MS:FetchFriendsList()
     end
 end
 
+function MS:FetchVaultOptions()
+    if not MS.DB.global.DisplayVaultOptions then return end
+        local MythicPlusRuns = C_MythicPlus.GetRunHistory(false, true)
+        local MythicPlusRunsFormatted = {}
+        local MythicPlusAbbr =
+        {
+            ["Dawn of the Infinite: Galakrond's Fall"] = "DOTI: Galakrond's Fall",
+            ["Dawn of the Infinite: Murozond's Rise"] = "DOTI: Murozond's Rise",
+        }
+        for _, DungeonRun in ipairs(MythicPlusRuns) do
+            local DungeonName = C_ChallengeMode.GetMapUIInfo(DungeonRun.mapChallengeModeID)
+            local DungeonAbbrName = MythicPlusAbbr[DungeonName] or DungeonName
+            local greatVaultiLvl = MS.GreatVaultiLvls[DungeonRun.level]
+            table.insert(MythicPlusRunsFormatted, string.format("Level: %d [%d]", DungeonRun.level, greatVaultiLvl))
+        end
+        table.sort(MythicPlusRunsFormatted, function(a, b)
+            return tonumber(a:match("%d+")) > tonumber(b:match("%d+"))
+        end)
+        for i = 9, #MythicPlusRunsFormatted do
+            MythicPlusRunsFormatted[i] = nil
+        end
+        if #MythicPlusRunsFormatted > 0 then
+            local R, G, B = MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB
+            GameTooltip:AddLine("Mythic+ Runs", R, G, B)
+            for DungeonNumber, VaultiLvl in ipairs(MythicPlusRunsFormatted) do
+                if DungeonNumber == 1 or DungeonNumber == 4 or DungeonNumber == 8 then
+                    local VaultSlot = DungeonNumber == 1 and "1" or DungeonNumber == 4 and "2" or "3"
+                    GameTooltip:AddLine("|cFFFFCC00Vault Slot #" .. VaultSlot .. "|r - " .. VaultiLvl, 1, 1, 1)
+                end
+            end
+        end
+end
+
 function MS:CreateTooltip()
     if not MS.DB.global.ShowTooltip or InCombatLockdown() then return end
     GameTooltip:SetOwner(Minimap, "ANCHOR_NONE", 0, 0)
     GameTooltip:SetPoint(MS.DB.global.TooltipAnchorFrom, Minimap, MS.DB.global.TooltipAnchorTo, MS.DB.global.TooltipXOffset, MS.DB.global.TooltipYOffset)
     MS:FetchPlayerLockouts()
+    MS:FetchVaultOptions()
     MS:FetchKeystones()
     MS:FetchAffixes()
     MS:FetchFriendsList()

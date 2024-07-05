@@ -91,6 +91,7 @@ MS.DefaultSettings = {
         DisplayAffixes = true,
         DisplayAffixDesc = false,
         DisplayFriendsList = true,
+        DisplayVaultOptions = true,
     }
 }
 
