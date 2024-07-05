@@ -96,6 +96,8 @@ function MS:CreateGUI()
                 MS.DB.global.SavedAccentColourG = MS.DefaultSettings.global.SavedAccentColourG
                 MS.DB.global.SavedAccentColourB = MS.DefaultSettings.global.SavedAccentColourB
                 MS.DB.global.ClassAccentColour = MS.DefaultSettings.global.ClassAccentColour
+                MSGUI_Container:ReleaseChildren()
+                DrawGeneralContainer(MSGUI_Container)
             elseif Value == "Time" then
                 MS.DB.global.ShowTimeFrame = MS.DefaultSettings.global.ShowTimeFrame
                 MS.DB.global.TimeFormat = MS.DefaultSettings.global.TimeFormat
