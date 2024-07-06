@@ -1,4 +1,5 @@
 ## Title: |cFF8080FFMinimapStats|r
+## Interface: 100207
 ## Version: 5.0
 ## Author: Unhalted
 ## Notes: Simple, aesthetic, customizable Minimap Elements.
