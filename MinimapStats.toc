@@ -2,7 +2,8 @@
 ## Interface: 100207
 ## Version: 5.0
 ## Author: Unhalted
-## Notes: Simple, aesthetic, customizable Minimap Elements.
+## Notes: Adds highly customizable and performance friendly, toggleable UI elements to the minimap.|nElements include:|n• Time.|n• System Stats (FPS / Latency).|n• Location.|n• Coordinates.|n• Instance Difficulty.
 ## SavedVariables: MSDB
+## IconTexture: Interface\AddOns\MinimapStats\Core\Logo
 
 Init.xml
