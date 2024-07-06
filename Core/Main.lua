@@ -12,6 +12,7 @@ end
 
 function MinimapStats:OnEnable()
     MS:SetAccentColour()
+    MS:FetchMythicPlusInfo()
     MS:CreateTimeFrame()
     MS:CreateSystemStatsFrame()
     MS:CreateLocationFrame()

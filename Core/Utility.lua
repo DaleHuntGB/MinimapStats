@@ -280,3 +280,12 @@ function MS:ResetTooltipOptions()
     MS.DB.global.DisplayVaultOptions = true
     MS.DB.global.TooltipTextureIconSize = 16
 end
+
+function MS:FetchMythicPlusInfo()
+    C_Timer.After(1, function()
+        C_AddOns.LoadAddOn("Blizzard_ChallengesUI")
+        C_MythicPlus.RequestCurrentAffixes()
+        C_MythicPlus.RequestMapInfo()
+        C_MythicPlus.RequestRewards()
+    end)
+end
