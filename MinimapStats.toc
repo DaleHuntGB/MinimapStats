@@ -1,4 +1,4 @@
-## Title: |cFF8080FFMinimapStats|r
+## Title: |cFF8080FFMinimap|r|cFFFFFFFFStats|r
 ## Interface: 100207
 ## Version: 5.0
 ## Author: Unhalted
