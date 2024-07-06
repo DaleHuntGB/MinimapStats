@@ -44,7 +44,7 @@ MS.DefaultSettings = {
         TimeUpdateInterval = 15,
         TimeAnchorPosition = "BOTTOM",
         TimeXOffset = 0,
-        TimeYOffset = 15,
+        TimeYOffset = 18,
         TimeFontSize = 21,
         -- SystemStats Frame
         ShowSystemsStatsFrame = true,
@@ -71,7 +71,7 @@ MS.DefaultSettings = {
         CoordinatesUpdateInRealTime = false,
         CoordinatesAnchorPosition = "TOP",
         CoordinatesXOffset = 0,
-        CoordinatesYOffset = -15,
+        CoordinatesYOffset = -18,
         CoordinatesFontSize = 12,
         -- Instance Difficulty Frame
         ShowInstanceDifficultyFrame = true,
@@ -220,7 +220,7 @@ function MS:ResetTimeOptions()
     MS.DB.global.TimeUpdateInterval = 15
     MS.DB.global.TimeAnchorPosition = "BOTTOM"
     MS.DB.global.TimeXOffset = 0
-    MS.DB.global.TimeYOffset = 15
+    MS.DB.global.TimeYOffset = 18
     MS.DB.global.TimeFontSize = 21
 end
 
@@ -253,7 +253,7 @@ function MS:ResetCoordinatesOptions()
     MS.DB.global.CoordinatesUpdateInRealTime = false
     MS.DB.global.CoordinatesAnchorPosition = "TOP"
     MS.DB.global.CoordinatesXOffset = 0
-    MS.DB.global.CoordinatesYOffset = -15
+    MS.DB.global.CoordinatesYOffset = -18
     MS.DB.global.CoordinatesFontSize = 12
 end
 
