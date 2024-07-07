@@ -76,6 +76,7 @@ function MS:FetchKeystones()
     local TextureSize = MS.DB.global.TooltipTextureIconSize
     local NoKeyTextureIcon = "|TInterface/Icons/inv_relics_hourglass.blp:" .. TextureSize .. ":" .. TextureSize .. ":0|t"
     if not OpenRaid then return end
+    if not MS.DB.global.DisplayPlayerKeystone and not MS.DB.global.DisplayPartyKeystones then return end
     if MS.DB.global.DisplayPlayerKeystone then
         local KeystoneInfo = OpenRaid.GetKeystoneInfo("player")
         GameTooltip:AddLine("Your Keystone", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
@@ -97,34 +98,39 @@ function MS:FetchKeystones()
     end
     if MS.DB.global.DisplayPartyKeystones then
         local PartyMembers = {}
+        local WHITE_COLOUR_OVERRIDE = "|cFFFFFFFF"
         if IsInGroup() and not IsInRaid() then
             GameTooltip:AddLine("Party Keystones", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
             for i = 1, GetNumGroupMembers() - 1 do
                 local UnitID = "party" .. i
-                local UnitName = UnitName(UnitID)
+                local UnitName = GetUnitName(UnitID, true)
                 if UnitName then
-                    table.insert(PartyMembers, UnitName)
+                    table.insert(PartyMembers, UnitID)
                 end
             end
 
-            for _, Member in pairs(PartyMembers) do
-                local UnitName = GetUnitName(Member, true):match("([^-]+)")
-                local _, UnitClass = UnitClass(Member)
-                local UnitClassColour = RAID_CLASS_COLORS[UnitClass]
-                local KeystoneInfo = OpenRaid.GetKeystoneInfo(UnitName)
-                local KeystoneLevel = KeystoneInfo.level
+            for _, UnitID in ipairs(PartyMembers) do
+                local UnitName = GetUnitName(UnitID, true)
+                local FormattedUnitName = UnitName:match("([^-]+)")
+                local UnitClassColour = RAID_CLASS_COLORS[select(2, UnitClass(UnitID))]
+                local KeystoneInfo = OpenRaid.GetKeystoneInfo(UnitID)
 
-                if KeystoneInfo and KeystoneLevel then
+                if KeystoneInfo then
                     local Keystone, _, _, KeystoneIcon = C_ChallengeMode.GetMapUIInfo(KeystoneInfo.mythicPlusMapID)
+                    local KeystoneLevel = KeystoneInfo.level
                     if KeystoneIcon then
-                        local TexturedIcon = "|T" .. KeystoneIcon .. ":" ..TextureSize .. ":" .. TextureSize .. ":0|t"
-                        GameTooltip:AddLine(UnitClassColour .. UnitName .. "|r: " .. TexturedIcon .. " +" .. KeystoneLevel .. " " .. Keystone, 1, 1, 1, 1)
+                        local TexturedIcon = "|T" .. KeystoneIcon .. ":" .. TextureSize .. ":" .. TextureSize .. ":0|t"
+                        GameTooltip:AddLine(FormattedUnitName .. ": " .. WHITE_COLOUR_OVERRIDE .. TexturedIcon .. " +" .. KeystoneLevel .. " |r" .. Keystone, UnitClassColour.r, UnitClassColour.g, UnitClassColour.b)
+                    elseif Keystone then
+                        GameTooltip:AddLine(FormattedUnitName .. ": " .. WHITE_COLOUR_OVERRIDE .. NoKeyTextureIcon .. " +" .. KeystoneLevel .. " |r" .. Keystone, UnitClassColour.r, UnitClassColour.g, UnitClassColour.b)
                     else
-                        GameTooltip:AddLine(UnitClassColour .. UnitName .. "|r: " .. NoKeyTextureIcon .. " +" .. KeystoneLevel .. " " .. Keystone, 1, 1, 1, 1)
+                        GameTooltip:AddLine(FormattedUnitName .. ": " .. WHITE_COLOUR_OVERRIDE .. NoKeyTextureIcon .. " No Keystone", UnitClassColour.r, UnitClassColour.g, UnitClassColour.b)
                     end
+                else
+                    GameTooltip:AddLine(FormattedUnitName .. ": " .. WHITE_COLOUR_OVERRIDE .. NoKeyTextureIcon .. " No Keystone", UnitClassColour.r, UnitClassColour.g, UnitClassColour.b)
                 end
             end
-            if (MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
+            if MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList then
                 GameTooltip:AddLine(" ", 1, 1, 1, 1)
             end
         end
@@ -218,7 +224,9 @@ function MS:CreateTooltip()
     MS:FetchKeystones()
     MS:FetchAffixes()
     MS:FetchFriendsList()
-    GameTooltip:AddLine(" ")
+    if MS.DB.global.DisplayVaultOptions or MS.DB.global.DisplayPlayerKeystone or MS.DB.global.DisplayPartyKeystones or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList then
+        GameTooltip:AddLine(" ", 1, 1, 1, 1)
+    end
     GameTooltip:AddLine("Left-Click: " .. MS.AccentColour .. "Collect Garbage|r")
     GameTooltip:AddLine("Right-Click: " .. MS.AccentColour .. "MinimapStats Config|r")
     GameTooltip:AddLine("Middle-Click: " .. MS.AccentColour .. "Reload UI|r")

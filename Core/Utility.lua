@@ -289,3 +289,4 @@ function MS:FetchMythicPlusInfo()
         C_MythicPlus.RequestRewards()
     end)
 end
+
