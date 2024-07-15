@@ -82,7 +82,7 @@ function MS:SetupSystemStatsScripts()
                 ReloadUI()
             end
         end)
-        MS.SystemStatsFrame:SetScript("OnEnter", function() MS:CreateTooltip() end)
+        MS.SystemStatsFrame:SetScript("OnEnter", function() MS:CreateSystemStatsTooltip() end)
         MS.SystemStatsFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
         MS.SystemStatsFrame:Show()
     else

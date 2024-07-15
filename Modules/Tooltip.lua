@@ -16,7 +16,7 @@ function MS:FetchPlayerLockouts()
         end
     end
     if #DungeonLockouts > 0 then
-        GameTooltip:AddLine("Dungeon Lockouts", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
+        GameTooltip:AddLine("Dungeon |cFFFFFFFFLockouts|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         for _, Lockout in pairs(DungeonLockouts) do
             GameTooltip:AddLine(Lockout, 1, 1, 1, 1)
         end
@@ -25,7 +25,7 @@ function MS:FetchPlayerLockouts()
         if #DungeonLockouts > 0 then
             GameTooltip:AddLine(" ", 1, 1, 1, 1)
         end
-        GameTooltip:AddLine("Raid Lockouts", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
+        GameTooltip:AddLine("Raid |cFFFFFFFFLockouts|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         for _, Lockout in pairs(RaidLockouts) do
             GameTooltip:AddLine(Lockout, 1, 1, 1, 1)
         end
@@ -62,7 +62,7 @@ function MS:FetchVaultOptions()
         for DungeonNumber, VaultiLvl in ipairs(MythicPlusRunsFormatted) do
             if DungeonNumber == 1 or DungeonNumber == 4 or DungeonNumber == 8 then
                 local VaultSlot = DungeonNumber == 1 and "1" or DungeonNumber == 4 and "2" or "3"
-                GameTooltip:AddLine("|cFFFFCC00Vault Slot #" .. VaultSlot .. "|r - " .. VaultiLvl, 1, 1, 1)
+                GameTooltip:AddLine(MS.AccentColour .. "Vault Slot #" .. VaultSlot .. "|r - " .. VaultiLvl, 1, 1, 1)
             end
         end
     end
@@ -79,7 +79,7 @@ function MS:FetchKeystones()
     if not MS.DB.global.DisplayPlayerKeystone and not MS.DB.global.DisplayPartyKeystones then return end
     if MS.DB.global.DisplayPlayerKeystone then
         local KeystoneInfo = OpenRaid.GetKeystoneInfo("player")
-        GameTooltip:AddLine("Your Keystone", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
+        GameTooltip:AddLine("Your |cFFFFFFFFKeystone|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         if KeystoneInfo then
             local KeystoneLevel = KeystoneInfo.level
             local Keystone, _, _, KeystoneIcon = C_ChallengeMode.GetMapUIInfo(KeystoneInfo.mythicPlusMapID)
@@ -100,7 +100,7 @@ function MS:FetchKeystones()
         local PartyMembers = {}
         local WHITE_COLOUR_OVERRIDE = "|cFFFFFFFF"
         if IsInGroup() and not IsInRaid() then
-            GameTooltip:AddLine("Party Keystones", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
+            GameTooltip:AddLine("Party |cFFFFFFFFKeystones|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
             for i = 1, GetNumGroupMembers() - 1 do
                 local UnitID = "party" .. i
                 local UnitName = GetUnitName(UnitID, true)
@@ -140,7 +140,7 @@ end
 function MS:FetchAffixes()
     if not MS.DB.global.DisplayAffixes then return end
     local TextureSize = MS.DB.global.TooltipTextureIconSize
-    GameTooltip:AddLine("Current Affixes", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
+    GameTooltip:AddLine("Current |cFFFFFFFFAffixes|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
     for i = 1, 3 do
         local AffixID = C_MythicPlus.GetCurrentAffixes()[i].id
         local AffixName, AffixDesc, AffixIconID = C_ChallengeMode.GetAffixInfo(AffixID)
@@ -180,7 +180,7 @@ function MS:FetchFriendsList()
     end
 
     if HasOnlineFriends then
-        GameTooltip:AddLine("Friends", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
+        GameTooltip:AddLine("Friends |cFFFFFFFFList|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
         for i = 1, TotalFriends do
             local AccountInfo = C_BattleNet.GetFriendAccountInfo(i)
             if AccountInfo then
@@ -215,7 +215,14 @@ function MS:FetchFriendsList()
     end
 end
 
-function MS:CreateTooltip()
+function MS:FetchTimeInformation()
+    local ServerHr, ServerMins = GetGameTime()
+    local ServerTime = string.format("%02d:%02d", ServerHr, ServerMins)
+    GameTooltip:AddDoubleLine("Local Time (24H)", date("%H:%M"), MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1, 1, 1)
+    GameTooltip:AddDoubleLine("Server Time", ServerTime, MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1, 1, 1)
+end
+
+function MS:CreateSystemStatsTooltip()
     if not MS.DB.global.ShowTooltip or InCombatLockdown() then return end
     GameTooltip:SetOwner(Minimap, "ANCHOR_NONE", 0, 0)
     GameTooltip:SetPoint(MS.DB.global.TooltipAnchorFrom, Minimap, MS.DB.global.TooltipAnchorTo, MS.DB.global.TooltipXOffset, MS.DB.global.TooltipYOffset)
@@ -230,5 +237,15 @@ function MS:CreateTooltip()
     GameTooltip:AddLine("Left-Click: " .. MS.AccentColour .. "Collect Garbage|r")
     GameTooltip:AddLine("Right-Click: " .. MS.AccentColour .. "MinimapStats Config|r")
     GameTooltip:AddLine("Middle-Click: " .. MS.AccentColour .. "Reload UI|r")
+    GameTooltip:Show()
+end
+
+function MS:CreateTimeTooltip()
+    if (not MS.DB.global.ShowTooltip or not MS.DB.global.DisplayTime) or InCombatLockdown() then return end
+    GameTooltip:SetOwner(Minimap, "ANCHOR_NONE", 0, 0)
+    GameTooltip:SetPoint(MS.DB.global.TooltipAnchorFrom, Minimap, MS.DB.global.TooltipAnchorTo, MS.DB.global.TooltipXOffset, MS.DB.global.TooltipYOffset)
+    MS:FetchTimeInformation()
+    GameTooltip:AddLine(" ", 1, 1, 1, 1)
+    GameTooltip:AddLine("Left-Click: " .. MS.AccentColour .. "Toggle Calendar|r")
     GameTooltip:Show()
 end

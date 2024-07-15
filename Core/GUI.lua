@@ -1,7 +1,7 @@
 local _, MS = ...
 local MSGUI = LibStub:GetLibrary("AceGUI-3.0")
-local GUI_W = 800
-local GUI_H = 600
+local GUI_W = 910
+local GUI_H = 610
 
 local LSM = LibStub("LibSharedMedia-3.0")
 local LSMFonts = {}
@@ -17,7 +17,7 @@ function MS:GenerateLSMFonts()
 end
 
 function MS:ToggleFont(Shown)
-    return Shown and "|cFF40FF40On|r" or "|cFFFF4040Off|r"
+    return Shown and "|cFF40FF40Active|r" or "|cFFFF4040Inactive|r"
 end
 
 function MS:SetUpdateIntervalLabel(Interval)
@@ -818,10 +818,23 @@ function MS:CreateGUI()
     local function DrawTooltipContainer(MSGUI_Container)
         local TooltipTextureIconSizeOptions = { ["8"] = "8px", ["10"] = "10px", ["12"] = "12px", ["14"] = "14px", ["16"] = "16px", ["18"] = "18px", ["20"] = "20px", ["22"] = "22px", ["24"] = "24px" }
         local TooltipTextureIconSizeOrder = { "8", "10", "12", "14", "16", "18", "20", "22", "24" }
-        local TooltipOptionsContainer = MSGUI:Create("InlineGroup")
-        TooltipOptionsContainer:SetTitle("General Options")
-        TooltipOptionsContainer:SetLayout("Flow")
-        TooltipOptionsContainer:SetFullWidth(true)
+        local SystemStatsTooltipOptionsContainer = MSGUI:Create("InlineGroup")
+        if not MS.DB.global.ShowSystemsStatsFrame then
+            SystemStatsTooltipOptionsContainer:SetTitle("System Stats Tooltip - Systems Stats Frame: |cFFFF4040Inactive|r. No Tooltip Will Be Displayed.")
+        else 
+            SystemStatsTooltipOptionsContainer:SetTitle("System Stats Tooltip")
+        end
+        SystemStatsTooltipOptionsContainer:SetLayout("Flow")
+        SystemStatsTooltipOptionsContainer:SetFullWidth(true)
+
+        local TimeTooltipOptionsContainer = MSGUI:Create("InlineGroup")
+        if not MS.DB.global.ShowTimeFrame then
+            TimeTooltipOptionsContainer:SetTitle("Time Tooltip - Time Frame: |cFFFF4040Inactive|r. No Tooltip Will Be Displayed.")
+        else 
+            TimeTooltipOptionsContainer:SetTitle("Time Tooltip")
+        end
+        TimeTooltipOptionsContainer:SetLayout("Flow")
+        TimeTooltipOptionsContainer:SetFullWidth(true)
 
         local PositionOptionsContainer = MSGUI:Create("InlineGroup")
         PositionOptionsContainer:SetTitle("Position Options")
@@ -832,6 +845,8 @@ function MS:CreateGUI()
         MythicPlusOptionsContainer:SetTitle("Mythic+ Options")
         MythicPlusOptionsContainer:SetLayout("Flow")
         MythicPlusOptionsContainer:SetFullWidth(true)
+
+        -- Position Options
 
         local TooltipAnchorFromPosition = MSGUI:Create("Dropdown")
         TooltipAnchorFromPosition:SetLabel("Anchor Point on Tooltip")
@@ -865,52 +880,54 @@ function MS:CreateGUI()
         TooltipYOffsetSlider:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.TooltipYOffset = Value end)
         TooltipYOffsetSlider:SetRelativeWidth(0.5)
 
+        -- Toggles
+
         local TooltipDisplayLockoutCheckbox = MSGUI:Create("CheckBox")
         TooltipDisplayLockoutCheckbox:SetLabel("Display Lockouts")
         TooltipDisplayLockoutCheckbox:SetValue(MS.DB.global.DisplayLockouts)
-        TooltipDisplayLockoutCheckbox:SetDisabled(not MS.DB.global.ShowTooltip)
+        TooltipDisplayLockoutCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.ShowSystemsStatsFrame)
         TooltipDisplayLockoutCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayLockouts = Value end)
         TooltipDisplayLockoutCheckbox:SetRelativeWidth(0.5)
 
         local TooltipDisplayFriendsListCheckbox = MSGUI:Create("CheckBox")
         TooltipDisplayFriendsListCheckbox:SetLabel("Display Friends List")
         TooltipDisplayFriendsListCheckbox:SetValue(MS.DB.global.DisplayFriendsList)
-        TooltipDisplayFriendsListCheckbox:SetDisabled(not MS.DB.global.ShowTooltip)
+        TooltipDisplayFriendsListCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.ShowSystemsStatsFrame)
         TooltipDisplayFriendsListCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayFriendsList = Value end)
         TooltipDisplayFriendsListCheckbox:SetRelativeWidth(0.5)
 
         local TooltipDisplayPlayerKeystoneCheckbox = MSGUI:Create("CheckBox")
         TooltipDisplayPlayerKeystoneCheckbox:SetLabel("Display Player Keystone")
         TooltipDisplayPlayerKeystoneCheckbox:SetValue(MS.DB.global.DisplayPartyKeystones)
-        TooltipDisplayPlayerKeystoneCheckbox:SetDisabled(not MS.DB.global.ShowTooltip)
+        TooltipDisplayPlayerKeystoneCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.ShowSystemsStatsFrame)
         TooltipDisplayPlayerKeystoneCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayPlayerKeystone = Value end)
         TooltipDisplayPlayerKeystoneCheckbox:SetRelativeWidth(0.5)
 
         local TooltipDisplayPartyKeystoneCheckbox = MSGUI:Create("CheckBox")
         TooltipDisplayPartyKeystoneCheckbox:SetLabel("Display Party Keystone")
         TooltipDisplayPartyKeystoneCheckbox:SetValue(MS.DB.global.DisplayPartyKeystones)
-        TooltipDisplayPartyKeystoneCheckbox:SetDisabled(not MS.DB.global.ShowTooltip)
+        TooltipDisplayPartyKeystoneCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.ShowSystemsStatsFrame)
         TooltipDisplayPartyKeystoneCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayPartyKeystones = Value end)
         TooltipDisplayPartyKeystoneCheckbox:SetRelativeWidth(0.5)
 
         local TooltipDisplayAffixesCheckbox = MSGUI:Create("CheckBox")
         TooltipDisplayAffixesCheckbox:SetLabel("Display Affixes")
         TooltipDisplayAffixesCheckbox:SetValue(MS.DB.global.DisplayAffixes)
-        TooltipDisplayAffixesCheckbox:SetDisabled(not MS.DB.global.ShowTooltip)
+        TooltipDisplayAffixesCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.ShowSystemsStatsFrame)
         TooltipDisplayAffixesCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayAffixes = Value end)
         TooltipDisplayAffixesCheckbox:SetRelativeWidth(0.5)
 
         local TooltipDisplayAffixesDescCheckbox = MSGUI:Create("CheckBox")
         TooltipDisplayAffixesDescCheckbox:SetLabel("Display Affix Descriptions")
         TooltipDisplayAffixesDescCheckbox:SetValue(MS.DB.global.DisplayAffixDesc)
-        TooltipDisplayAffixesDescCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.DisplayAffixes)
+        TooltipDisplayAffixesDescCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.DisplayAffixes or not MS.DB.global.ShowSystemsStatsFrame)
         TooltipDisplayAffixesDescCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayAffixDesc = Value end)
         TooltipDisplayAffixesDescCheckbox:SetRelativeWidth(0.5)
 
         local TooltipDisplayVaultOptionsCheckbox = MSGUI:Create("CheckBox")
         TooltipDisplayVaultOptionsCheckbox:SetLabel("Display Vault Options")
         TooltipDisplayVaultOptionsCheckbox:SetValue(MS.DB.global.DisplayVaultOptions)
-        TooltipDisplayVaultOptionsCheckbox:SetDisabled(not MS.DB.global.ShowTooltip)
+        TooltipDisplayVaultOptionsCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.ShowSystemsStatsFrame)
         TooltipDisplayVaultOptionsCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayVaultOptions = Value end)
         TooltipDisplayVaultOptionsCheckbox:SetRelativeWidth(0.5)
 
@@ -918,10 +935,16 @@ function MS:CreateGUI()
         TooltipTextureIconSizeDropdown:SetLabel("Icon Size")
         TooltipTextureIconSizeDropdown:SetList(TooltipTextureIconSizeOptions, TooltipTextureIconSizeOrder)
         TooltipTextureIconSizeDropdown:SetValue(tostring(MS.DB.global.TooltipTextureIconSize))
-        TooltipTextureIconSizeDropdown:SetDisabled(not MS.DB.global.ShowTooltip)
+        TooltipTextureIconSizeDropdown:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.ShowSystemsStatsFrame)
         TooltipTextureIconSizeDropdown:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.TooltipTextureIconSize = tonumber(Value) end)
         TooltipTextureIconSizeDropdown:SetRelativeWidth(0.5)
 
+        local TooltipDisplayTimeCheckbox = MSGUI:Create("CheckBox")
+        TooltipDisplayTimeCheckbox:SetLabel("Display Local & Server Time")
+        TooltipDisplayTimeCheckbox:SetValue(MS.DB.global.DisplayTime)
+        TooltipDisplayTimeCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.ShowTimeFrame)
+        TooltipDisplayTimeCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayTime = Value end)
+        TooltipDisplayTimeCheckbox:SetRelativeWidth(0.5)
 
         local ShowTooltipFrameCheckBox = MSGUI:Create("CheckBox")
         ShowTooltipFrameCheckBox:SetLabel(MS:ToggleFont(MS.DB.global.ShowTooltip))
@@ -943,6 +966,7 @@ function MS:CreateGUI()
                 TooltipDisplayAffixesDescCheckbox:SetDisabled(true)
                 TooltipDisplayVaultOptionsCheckbox:SetDisabled(true)
                 TooltipTextureIconSizeDropdown:SetDisabled(true)
+                TooltipDisplayTimeCheckbox:SetDisabled(true)
             else
                 TooltipAnchorFromPosition:SetDisabled(false)
                 TooltipAnchorToPosition:SetDisabled(false)
@@ -956,14 +980,17 @@ function MS:CreateGUI()
                 TooltipDisplayAffixesDescCheckbox:SetDisabled(not MS.DB.global.DisplayAffixes)
                 TooltipDisplayVaultOptionsCheckbox:SetDisabled(false)
                 TooltipTextureIconSizeDropdown:SetDisabled(false)
+                TooltipDisplayTimeCheckbox:SetDisabled(false)
             end
         end)
 
         MSGUI_Container:AddChild(ShowTooltipFrameCheckBox)
-        MSGUI_Container:AddChild(TooltipOptionsContainer)
-        TooltipOptionsContainer:AddChild(TooltipDisplayLockoutCheckbox)
-        TooltipOptionsContainer:AddChild(TooltipDisplayFriendsListCheckbox)
-        MSGUI_Container:AddChild(MythicPlusOptionsContainer)
+        MSGUI_Container:AddChild(TimeTooltipOptionsContainer)
+        MSGUI_Container:AddChild(SystemStatsTooltipOptionsContainer)
+        TimeTooltipOptionsContainer:AddChild(TooltipDisplayTimeCheckbox)
+        SystemStatsTooltipOptionsContainer:AddChild(TooltipDisplayLockoutCheckbox)
+        SystemStatsTooltipOptionsContainer:AddChild(TooltipDisplayFriendsListCheckbox)
+        SystemStatsTooltipOptionsContainer:AddChild(MythicPlusOptionsContainer)
         MythicPlusOptionsContainer:AddChild(TooltipDisplayVaultOptionsCheckbox)
         MythicPlusOptionsContainer:AddChild(TooltipDisplayPlayerKeystoneCheckbox)
         MythicPlusOptionsContainer:AddChild(TooltipDisplayPartyKeystoneCheckbox)

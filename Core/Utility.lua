@@ -92,6 +92,7 @@ MS.DefaultSettings = {
         DisplayAffixDesc = false,
         DisplayFriendsList = true,
         DisplayVaultOptions = true,
+        DisplayTime = true,
         TooltipTextureIconSize = 16,
     }
 }
@@ -279,6 +280,7 @@ function MS:ResetTooltipOptions()
     MS.DB.global.DisplayFriendsList = true
     MS.DB.global.DisplayVaultOptions = true
     MS.DB.global.TooltipTextureIconSize = 16
+    MS.DB.global.DisplayTime = true
 end
 
 function MS:FetchMythicPlusInfo()

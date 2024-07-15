@@ -104,10 +104,12 @@ function MS:SetupTimeScripts()
             MS.TimeFrame:SetScript("OnEnter", function()
                 isMouseOver = true
                 MS.TimeFrameText:SetText(MS:FetchDate())
+                MS:CreateTimeTooltip()
             end)
             MS.TimeFrame:SetScript("OnLeave", function()
                 isMouseOver = false
                 MS.TimeFrameText:SetText(MS:FetchTime())
+                GameTooltip:Hide()
             end)
         else
             MS.TimeFrame:SetScript("OnEnter", nil)
