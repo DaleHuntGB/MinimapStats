@@ -42,7 +42,7 @@ function MS:FetchPlayerLockouts()
             GameTooltip:AddDoubleLine(RaidDisplayString, RaidReset, 1, 1, 1, 1, 1, 1)
         end
     end
-    if (#DungeonLockouts > 0 or #RaidLockouts > 0) and (MS.DB.global.DisplayVaultOptions or MS.DB.global.DisplayPlayerKeystone or MS.DB.global.DisplayPartyKeystones or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
+    if (#DungeonLockouts > 0 or #RaidLockouts > 0) and (MS.DB.global.DisplayVaultOptions or MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
 end
@@ -73,7 +73,7 @@ function MS:FetchVaultOptions()
             end
         end
     end
-    if #MythicPlusRunsFormatted > 0 and (MS.DB.global.DisplayPlayerKeystone or MS.DB.global.DisplayPartyKeystones or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
+    if #MythicPlusRunsFormatted > 0 and (MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
 end
@@ -99,7 +99,7 @@ function MS:FetchKeystones()
                 GameTooltip:AddLine(NoKeyTextureIcon .. " No Keystone", 1, 1, 1, 1)
             end
         end
-        if MS.DB.global.DisplayPartyKeystones or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList then
+        if (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList then
             GameTooltip:AddLine(" ", 1, 1, 1, 1)
         end
     end
