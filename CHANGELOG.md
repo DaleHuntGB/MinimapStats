@@ -6,3 +6,4 @@
 - Added ChangeLog.
 # V5.2: 16 / 07 / 2024
 - Fix: Instance Difficulty not hiding when you close config with Instance Difficulty Tab active.
+- Feature: Raid Lockouts will now be abbreviated on the tooltip.

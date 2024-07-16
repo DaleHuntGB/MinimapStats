@@ -27,7 +27,10 @@ function MS:FetchPlayerLockouts()
         end
         GameTooltip:AddLine("Raid |cFFFFFFFFLockouts|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         for _, Lockout in pairs(RaidLockouts) do
-            GameTooltip:AddLine(Lockout, 1, 1, 1, 1)
+            local RaidTitle, RaidLockout = Lockout:match("([^:]+): (.+)")
+            local RaidTitle = MS.AbbrRaidTitles[RaidTitle:match("([^:]+)")] or RaidTitle
+            local RaidDisplayString = MS.AccentColour .. RaidTitle .. "|r: " .. RaidLockout
+            GameTooltip:AddLine(RaidDisplayString, 1, 1, 1, 1)
         end
     end
     if (#DungeonLockouts > 0 or #RaidLockouts > 0) and (MS.DB.global.DisplayVaultOptions or MS.DB.global.DisplayPlayerKeystone or MS.DB.global.DisplayPartyKeystones or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
