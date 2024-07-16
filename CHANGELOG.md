@@ -14,3 +14,4 @@
 - Added `WoWProject` tags to Friends List.
 - `RequestRaidInfo` added to `ENCOUNTER_END` check for better functionality with lockouts and tooltips.
 - Better abbreviations for raid difficulties for tooltips.
+- Added Textures for `Online`, `AFK` and `DND` Friend Tooltips.

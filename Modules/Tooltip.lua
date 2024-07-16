@@ -193,30 +193,26 @@ function MS:FetchFriendsList()
             if AccountInfo then
                 local FriendInfo = AccountInfo.gameAccountInfo
                 local InGame = FriendInfo.clientProgram == "WoW"
-                local IsOnline = FriendInfo.isOnline
-                local IsAFK = AccountInfo.isAFK
-                local IsDND = AccountInfo.isDND
+                local IsOnline = FriendInfo.isOnline or AccountInfo.isOnline
+                local IsAFK = FriendInfo.isGameAFK or AccountInfo.isAFK
+                local IsDND = FriendInfo.isGameBusy or AccountInfo.isDND
                 local FriendBNetTag = AccountInfo.accountName
                 local CharacterName = FriendInfo.characterName
                 local CharacterClass = FriendInfo.className
                 local WoWProject = FriendInfo.wowProjectID
                 local CharacterLevel = FriendInfo.characterLevel
                 local ClassColour = MS.CharacterClassColours[CharacterClass]
-                local StatusColour;
-
-                local OnlineColour = string.format("|cFF%02x%02x%02x", 64, 255, 64)
-                local AFKColour = string.format("|cFF%02x%02x%02x", 255, 128, 64)
-                local DNDColour = string.format("|cFF%02x%02x%02x", 255, 64, 64)
+                local FriendStatus;
 
                 if InGame and CharacterClass ~= nil then
-                    if IsOnline then
-                        StatusColour = OnlineColour
+                    if IsDND then
+                        FriendStatus = "|TInterface/AddOns/MinimapStats/Media/FriendBusy:8:8:0:0|t"
                     elseif IsAFK then
-                        StatusColour = AFKColour
-                    elseif IsDND then
-                        StatusColour = DNDColour
+                        FriendStatus = "|TInterface/AddOns/MinimapStats/Media/FriendAway:8:8:0:0|t"
+                    else
+                        FriendStatus = "|TInterface/AddOns/MinimapStats/Media/FriendOnline:8:8:0:0|t"
                     end
-                    GameTooltip:AddDoubleLine(StatusColour .. "• " .. "|r" .. FriendBNetTag .. ": " .. ClassColour .. CharacterName .. "|r [L|cFFFFCC40" .. CharacterLevel .. "|r]", MS.WoWProjects[WoWProject], 1, 1, 1, 1, 1, 1)
+                    GameTooltip:AddDoubleLine(FriendStatus .. " |r" .. FriendBNetTag .. ": " .. ClassColour .. CharacterName .. "|r [L|cFFFFCC40" .. CharacterLevel .. "|r]", MS.WoWProjects[WoWProject], 1, 1, 1, 1, 1, 1)
                 end
             end
         end
