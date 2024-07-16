@@ -23,7 +23,10 @@ function MS:FetchPlayerLockouts()
     if #DungeonLockouts > 0 then
         GameTooltip:AddLine("Dungeon |cFFFFFFFFLockouts|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         for _, Lockout in pairs(DungeonLockouts) do
-            GameTooltip:AddLine(Lockout, 1, 1, 1, 1)
+            local DungeonTitle, DungeonLockout, DungeonReset = Lockout:match("([^:]+): (.+) %[(.+)%]")
+            local DungeonTitle = MS.AbbrInstances[DungeonTitle:match("([^:]+)")] or DungeonTitle
+            local DungeonDisplayString = MS.AccentColour .. DungeonTitle .. "|r: " .. DungeonLockout
+            GameTooltip:AddDoubleLine(DungeonDisplayString, DungeonReset, 1, 1, 1, 1, 1, 1)
         end
     end
     if #RaidLockouts > 0 then
@@ -32,10 +35,10 @@ function MS:FetchPlayerLockouts()
         end
         GameTooltip:AddLine("Raid |cFFFFFFFFLockouts|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         for _, Lockout in pairs(RaidLockouts) do
-            local RaidTitle, RaidLockout = Lockout:match("([^:]+): (.+)")
+            local RaidTitle, RaidLockout, RaidReset = Lockout:match("([^:]+): (.+) %[(.+)%]")
             local RaidTitle = MS.AbbrInstances[RaidTitle:match("([^:]+)")] or RaidTitle
             local RaidDisplayString = MS.AccentColour .. RaidTitle .. "|r: " .. RaidLockout
-            GameTooltip:AddLine(RaidDisplayString, 1, 1, 1, 1)
+            GameTooltip:AddDoubleLine(RaidDisplayString, RaidReset, 1, 1, 1, 1, 1, 1)
         end
     end
     if (#DungeonLockouts > 0 or #RaidLockouts > 0) and (MS.DB.global.DisplayVaultOptions or MS.DB.global.DisplayPlayerKeystone or MS.DB.global.DisplayPartyKeystones or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
@@ -195,13 +198,14 @@ function MS:FetchFriendsList()
                 local FriendBNetTag = AccountInfo.accountName
                 local CharacterName = FriendInfo.characterName
                 local CharacterClass = FriendInfo.className
+                local WoWProject = FriendInfo.wowProjectID
                 local CharacterLevel = FriendInfo.characterLevel
                 local ClassColour = MS.CharacterClassColours[CharacterClass]
                 local StatusColour;
 
-                local OnlineColour = string.format("%02x%02x%02x", 64, 255, 64)
-                local AFKColour = string.format("%02x%02x%02x", 255, 128, 64)
-                local DNDColour = string.format("%02x%02x%02x", 255, 64, 64)
+                local OnlineColour = string.format("|cFF%02x%02x%02x", 64, 255, 64)
+                local AFKColour = string.format("|cFF%02x%02x%02x", 255, 128, 64)
+                local DNDColour = string.format("|cFF%02x%02x%02x", 255, 64, 64)
 
                 if InGame and CharacterClass ~= nil then
                     if IsOnline then
@@ -211,7 +215,7 @@ function MS:FetchFriendsList()
                     elseif IsDND then
                         StatusColour = DNDColour
                     end
-                    GameTooltip:AddLine("|cFF"..StatusColour.."• " .."|r|cFFFFFFFF"..FriendBNetTag .. "|r: " .. ClassColour .. CharacterName .. "|r [L|cFFFFCC40" .. CharacterLevel .. "|r]", 1, 1, 1)
+                    GameTooltip:AddDoubleLine(StatusColour .. "• " .. "|r" .. FriendBNetTag .. ": " .. ClassColour .. CharacterName .. "|r [L|cFFFFCC40" .. CharacterLevel .. "|r]", MS.WoWProjects[WoWProject], 1, 1, 1, 1, 1, 1)
                 end
             end
         end

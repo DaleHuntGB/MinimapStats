@@ -297,3 +297,10 @@ MS.AbbrInstances = {
     ["Aberrus, the Shadowed Crucible"] = "ATSC",        -- DF Season 2
     ["Amirdrassil, the Dream's Hope"] = "AOTD",         -- DF Season 3
 }
+
+MS.WoWProjects = {
+    [1] = "Retail",
+    [2] = "Classic",
+    [3] = "Burning Crusade",
+    [11] = "Wrath of the Lich King",
+}

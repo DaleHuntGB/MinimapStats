@@ -11,3 +11,4 @@
 - Tidied up `FetchVaultOptions()`, and added comments so I remember what it does.
 - Added `Reset` to the Raid/Dungeon Lockout Tooltip.
 - Renamed `AbbrRaidTitles` -> `AbbrInstances` for maintainability.
+- Added `WoWProject` tags to Friends List.
