@@ -12,3 +12,4 @@
 - Added `Reset` to the Raid/Dungeon Lockout Tooltip.
 - Renamed `AbbrRaidTitles` -> `AbbrInstances` for maintainability.
 - Added `WoWProject` tags to Friends List.
+- `RequestRaidInfo` added to `ENCOUNTER_END` check for better functionality with lockouts and tooltips.

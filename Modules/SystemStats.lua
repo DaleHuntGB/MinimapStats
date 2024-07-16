@@ -84,12 +84,16 @@ function MS:SetupSystemStatsScripts()
         end)
         MS.SystemStatsFrame:SetScript("OnEnter", function() MS:CreateSystemStatsTooltip() end)
         MS.SystemStatsFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        MS.SystemStatsFrame:RegisterEvent("ENCOUNTER_END")
+        MS.SystemStatsFrame:SetScript("OnEvent", function(self, event, ...) RequestRaidInfo() end)
         MS.SystemStatsFrame:Show()
     else
         MS.SystemStatsFrame:SetScript("OnUpdate", nil)
         MS.SystemStatsFrame:SetScript("OnMouseDown", nil)
         MS.SystemStatsFrame:SetScript("OnEnter", nil)
         MS.SystemStatsFrame:SetScript("OnLeave", nil)
+        MS.SystemStatsFrame:UnregisterEvent("ENCOUNTER_END")
+        MS.SystemStatsFrame:SetScript("OnEvent", nil)
         MS.SystemStatsFrame:Hide()
     end
 end

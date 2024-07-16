@@ -107,6 +107,7 @@ function MS:SetupInstanceDifficultyScripts()
         MS.InstanceDifficultyFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         MS.InstanceDifficultyFrame:RegisterEvent("PLAYER_DIFFICULTY_CHANGED")
         MS.InstanceDifficultyFrame:SetScript("OnEvent", function(self, event, ...)
+            if InCombatLockdown() then return end
             MS.InstanceDifficultyFrameText:SetText(MS:FetchInstanceDifficulty())
             self:SetHeight(MS.InstanceDifficultyFrameText:GetStringHeight() or 12)
             self:SetWidth(MS.InstanceDifficultyFrameText:GetStringWidth() or 220)
