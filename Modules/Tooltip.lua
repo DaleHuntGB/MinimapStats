@@ -10,7 +10,7 @@ function MS:FetchPlayerLockouts()
         local Hours = math.floor((Reset % 86400) / 3600)
         local Mins = math.floor((Reset % 3600) / 60)
         Reset = Days > 0 and string.format("%dd %dh %dm", Days, Hours, Mins) or string.format("%dh %dm", Hours, Mins)
-        local LockoutString = string.format("%s: %d/%d%s [%s%s|r]", Name, CurrentProgress, MaxEncounters, DifficultyName, MS.AccentColour, Reset)
+        local LockoutString = string.format("%s: %d/%d %s [%s%s|r]", Name, CurrentProgress, MaxEncounters, DifficultyName, MS.AccentColour, Reset)
         if IsLocked then
             if IsRaid then
                 table.insert(RaidLockouts, LockoutString)
