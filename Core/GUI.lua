@@ -36,7 +36,7 @@ function MS:CreateGUI()
     MSGUI_Container:SetWidth(GUI_W)
     MSGUI_Container:SetHeight(GUI_H)
     MSGUI_Container:EnableResize(false)
-    MSGUI_Container:SetCallback("OnClose", function(widget) MSGUI:Release(widget) MS.isGUIOpen = false MS:UpdateInstanceDifficultyFrame() end)
+    MSGUI_Container:SetCallback("OnClose", function(widget) MSGUI:Release(widget) MS.isGUIOpen = false MS.ShowDiffID = false MS:UpdateInstanceDifficultyFrame() end)
 
     local function DrawGeneralContainer(MSGUI_Container)
         local FontFlagOptions = { ["NONE"] = "NONE", ["OUTLINE"] = "OUTLINE", ["THICKOUTLINE"] = "THICKOUTLINE", ["MONOCHROME"] = "MONOCHROME" }
