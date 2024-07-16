@@ -1,4 +1,5 @@
 local _, MS = ...
+local _, _, _, GameVersion = GetBuildInfo()
 MS.ADDON_NAME = C_AddOns.GetAddOnMetadata("MinimapStats", "Title")
 MS.ADDON_VERSION = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
 MS.ADDON_AUTHOR = C_AddOns.GetAddOnMetadata("MinimapStats", "Author")
@@ -148,17 +149,31 @@ MS.CharacterClassColours = {
     ["Warrior"] = "|cFFC69B6D",
 }
 
-MS.GreatVaultiLvls = {
-    [2] = "509", -- +2
-    [3] = "509", -- +3
-    [4] = "512", -- +4
-    [5] = "512", -- +5
-    [6] = "515", -- +6
-    [7] = "515", -- +7
-    [8] = "519", -- +8
-    [9] = "519", -- +9
-    [10] = "522" -- +10
-}
+if GameVersion == 100207 then
+    MS.GreatVaultiLvls = {
+        [2] = "509", -- +2
+        [3] = "509", -- +3
+        [4] = "512", -- +4
+        [5] = "512", -- +5
+        [6] = "515", -- +6
+        [7] = "515", -- +7
+        [8] = "519", -- +8
+        [9] = "519", -- +9
+        [10] = "522" -- +10
+    }
+elseif GameVersion == 110000 then
+    MS.GreatVaultiLvls = {
+        [2] = "600", -- +2
+        [3] = "600", -- +3
+        [4] = "603", -- +4
+        [5] = "603", -- +5
+        [6] = "606", -- +6
+        [7] = "606", -- +7
+        [8] = "610", -- +8
+        [9] = "610", -- +9
+        [10] = "613" -- +10
+    }
+end
 
 MS.GarrisonInstanceIDs = {
     [1152] = true,

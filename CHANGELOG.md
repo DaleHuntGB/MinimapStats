@@ -16,3 +16,4 @@
 - Better abbreviations for raid difficulties for tooltips.
 - Added Textures for `Online`, `AFK` and `DND` Friend Tooltips.
 - Fixed Tooltip Information Spacing.
+- Added TWW Great Vault iLvls.
