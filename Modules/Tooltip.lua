@@ -193,7 +193,6 @@ function MS:FetchFriendsList()
             if AccountInfo then
                 local FriendInfo = AccountInfo.gameAccountInfo
                 local InGame = FriendInfo.clientProgram == "WoW"
-                local IsOnline = FriendInfo.isOnline or AccountInfo.isOnline
                 local IsAFK = FriendInfo.isGameAFK or AccountInfo.isAFK
                 local IsDND = FriendInfo.isGameBusy or AccountInfo.isDND
                 local FriendBNetTag = AccountInfo.accountName
