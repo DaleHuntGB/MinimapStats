@@ -293,9 +293,9 @@ function MS:FetchMythicPlusInfo()
 end
 
 MS.AbbrInstances = {
-    ["Vault of the Incarnates"] = "VOTI",               -- DF Season 1
-    ["Aberrus, the Shadowed Crucible"] = "ATSC",        -- DF Season 2
-    ["Amirdrassil, the Dream's Hope"] = "AOTD",         -- DF Season 3
+    ["Vault of the Incarnates"] = "VOTI",               -- Dragonflight
+    ["Aberrus, the Shadowed Crucible"] = "ATSC",        -- Dragonflight
+    ["Amirdrassil, the Dream's Hope"] = "AOTD",         -- Dragonflight
 }
 
 MS.WoWProjects = {
