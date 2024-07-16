@@ -297,4 +297,3 @@ MS.AbbrRaidTitles = {
     ["Aberrus, the Shadowed Crucible"] = "ATSC",        -- DF Season 2
     ["Amirdrassil, the Dream's Hope"] = "AOTD",         -- DF Season 3
 }
-

@@ -42,24 +42,19 @@ function MS:FetchVaultOptions()
     if not MS.DB.global.DisplayVaultOptions then return end
     local MythicPlusRuns = C_MythicPlus.GetRunHistory(false, true)
     local MythicPlusRunsFormatted = {}
-    local MythicPlusAbbr =
-    {
-        ["Dawn of the Infinite: Galakrond's Fall"] = "DOTI: Galakrond's Fall",
-        ["Dawn of the Infinite: Murozond's Rise"] = "DOTI: Murozond's Rise",
-    }
+    -- Loop through all MythicPlusRuns, Get Dungeon Level & Max iLvl from Vault.
     for _, DungeonRun in ipairs(MythicPlusRuns) do
-        local DungeonName = C_ChallengeMode.GetMapUIInfo(DungeonRun.mapChallengeModeID)
-        local DungeonAbbrName = MythicPlusAbbr[DungeonName] or DungeonName
-        local greatVaultiLvl = MS.GreatVaultiLvls[DungeonRun.level]
-        table.insert(MythicPlusRunsFormatted, string.format("Level: %d [%d]", DungeonRun.level, greatVaultiLvl))
+        local GViLvl = MS.GreatVaultiLvls[DungeonRun.level]
+        table.insert(MythicPlusRunsFormatted, string.format("Level: %d [%d]", DungeonRun.level, GViLvl))
     end
+    -- Sort: Highest to Lowest iLvl
     table.sort(MythicPlusRunsFormatted, function(a, b)
         return tonumber(a:match("%d+")) > tonumber(b:match("%d+"))
     end)
     for i = 9, #MythicPlusRunsFormatted do
         MythicPlusRunsFormatted[i] = nil
     end
-    if #MythicPlusRunsFormatted > 0 then
+    if #MythicPlusRuns > 0 then
         local R, G, B = MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB
         GameTooltip:AddLine("Mythic+ Runs", R, G, B)
         for DungeonNumber, VaultiLvl in ipairs(MythicPlusRunsFormatted) do
