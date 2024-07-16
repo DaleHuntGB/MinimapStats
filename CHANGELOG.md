@@ -9,3 +9,5 @@
 - Fixed Instance Difficulty Frame not hiding on config window close.
 - Abbreviate raid titles in tooltip.
 - Tidied up `FetchVaultOptions()`, and added comments so I remember what it does.
+- Added `Reset` to the Raid/Dungeon Lockout Tooltip.
+- Renamed `AbbrRaidTitles` -> `AbbrInstances` for maintainability.
