@@ -29,6 +29,7 @@ function MS:HideInstanceDifficulty()
     local InstanceIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Instance or _G["MiniMapInstanceDifficulty"]
     local GuildIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Guild or _G["GuildInstanceDifficulty"]
     local ChallengeIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.ChallengeMode or _G["MiniMapChallengeMode"]
+    if InstanceDifficultyIndicator then InstanceDifficultyIndicator:ClearAllPoints() InstanceDifficultyIndicator:SetAlpha(0) end
     if InstanceIndicator then InstanceIndicator:ClearAllPoints() InstanceIndicator:SetAlpha(0) end
     if GuildIndicator then GuildIndicator:ClearAllPoints() GuildIndicator:SetAlpha(0) end
     if ChallengeIndicator then ChallengeIndicator:ClearAllPoints() ChallengeIndicator:SetAlpha(0) end
@@ -77,7 +78,7 @@ function MS:FetchInstanceDifficulty()
     elseif DiffID == 8 then 
         InstanceDifficulty = MS.AccentColour .. "+" .. "|r" .. KeystoneLevel
     elseif DiffID == 9 then 
-        InstanceDifficulty = MaxPlayers
+        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "N" .. "|r"
     elseif DiffID == 7 or DiffID == 17 then 
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "LFR" .. "|r"
     elseif DiffID == 14 then 

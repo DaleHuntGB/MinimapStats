@@ -231,6 +231,7 @@ function MS:CreateSystemStatsTooltip()
     GameTooltip:SetPoint(MS.DB.global.TooltipAnchorFrom, Minimap, MS.DB.global.TooltipAnchorTo, MS.DB.global.TooltipXOffset, MS.DB.global.TooltipYOffset)
     MS:FetchPlayerLockouts()
     MS:FetchVaultOptions()
+    -- TODO: Check for Open Raid before attempting to call these functions.
     MS:FetchKeystones()
     MS:FetchAffixes()
     MS:FetchFriendsList()
