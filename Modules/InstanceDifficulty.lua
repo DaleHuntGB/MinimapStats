@@ -57,6 +57,14 @@ function MS:UpdateInstanceDifficultyFrame()
     MS:SetupInstanceDifficultyScripts()
 end
 
+function MS:FetchDelveTierDifficulty(WidgetID)
+    -- TODO: Check if WidgetID is consistent
+    if not WidgetID then return end
+    local DelveTier = C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(WidgetID).tierText
+
+    return string.format("%s", DelveTier)
+end
+
 function MS:FetchInstanceDifficulty()
     local _, _, DiffID, _, MaxPlayers, _, _, InstanceID, CurrentPlayers = GetInstanceInfo()
     local KeystoneLevel = C_ChallengeMode.GetActiveKeystoneInfo()
@@ -76,7 +84,7 @@ function MS:FetchInstanceDifficulty()
     elseif DiffID == 16 or DiffID == 23 then 
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "M" .. "|r"
     elseif DiffID == 8 then 
-        InstanceDifficulty = MS.AccentColour .. "+" .. "|r" .. KeystoneLevel
+        InstanceDifficulty = MS.AccentColour .. "M" .. "|r" .. KeystoneLevel
     elseif DiffID == 9 then 
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "N" .. "|r"
     elseif DiffID == 7 or DiffID == 17 then 
@@ -93,6 +101,8 @@ function MS:FetchInstanceDifficulty()
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "S+" .. "|r"
     elseif DiffID == 12 or DiffID == 38 then 
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "S" .. "|r"
+    elseif DiffID == 208 then
+        InstanceDifficulty = "T" .. MS.AccentColour .. MS:FetchDelveTierDifficulty(6183) .. "|r"
     end
 
     return string.format("%s", InstanceDifficulty)
