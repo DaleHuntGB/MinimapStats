@@ -318,4 +318,5 @@ MS.WoWProjects = {
     [2] = "Classic",
     [3] = "Burning Crusade",
     [11] = "Wrath of the Lich King",
+    [14] = "Cataclysm"
 }
