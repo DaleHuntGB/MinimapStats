@@ -1,8 +1,9 @@
 local _, MS = ...
-local _, _, _, GameVersion = GetBuildInfo()
 MS.ADDON_NAME = C_AddOns.GetAddOnMetadata("MinimapStats", "Title")
 MS.ADDON_VERSION = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
 MS.ADDON_AUTHOR = C_AddOns.GetAddOnMetadata("MinimapStats", "Author")
+MS.BUILDVERSION = select(4, GetBuildInfo())
+MS.OR = LibStub:GetLibrary("LibOpenRaid-1.0")
 MS.ANCHORS = {
     ["TOPLEFT"] = "TOPLEFT",
     ["TOP"] = "TOP",
@@ -93,6 +94,7 @@ MS.DefaultSettings = {
         DisplayAffixDesc = false,
         DisplayFriendsList = true,
         DisplayVaultOptions = true,
+        DisplayDelveOptions = true,
         DisplayTime = true,
         TooltipTextureIconSize = 16,
     }
@@ -149,7 +151,7 @@ MS.CharacterClassColours = {
     ["Warrior"] = "|cFFC69B6D",
 }
 
-if GameVersion == 100207 then
+if MS.BUILDVERSION <= 110000 then
     MS.GreatVaultiLvls = {
         [2] = "509", -- +2
         [3] = "509", -- +3
@@ -161,7 +163,7 @@ if GameVersion == 100207 then
         [9] = "519", -- +9
         [10] = "522" -- +10
     }
-elseif GameVersion == 110000 then
+elseif MS.BUILDVERSION > 110000 then
     MS.GreatVaultiLvls = {
         [2] = "600", -- +2
         [3] = "600", -- +3
@@ -294,6 +296,7 @@ function MS:ResetTooltipOptions()
     MS.DB.global.DisplayAffixDesc = false
     MS.DB.global.DisplayFriendsList = true
     MS.DB.global.DisplayVaultOptions = true
+    MS.DB.global.DisplayDelveOptions = true
     MS.DB.global.TooltipTextureIconSize = 16
     MS.DB.global.DisplayTime = true
 end

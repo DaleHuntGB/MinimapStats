@@ -887,14 +887,23 @@ function MS:CreateGUI()
         TooltipDisplayLockoutCheckbox:SetValue(MS.DB.global.DisplayLockouts)
         TooltipDisplayLockoutCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.ShowSystemsStatsFrame)
         TooltipDisplayLockoutCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayLockouts = Value end)
-        TooltipDisplayLockoutCheckbox:SetRelativeWidth(0.5)
+        TooltipDisplayLockoutCheckbox:SetRelativeWidth(0.33)
 
         local TooltipDisplayFriendsListCheckbox = MSGUI:Create("CheckBox")
         TooltipDisplayFriendsListCheckbox:SetLabel("Display Friends List")
         TooltipDisplayFriendsListCheckbox:SetValue(MS.DB.global.DisplayFriendsList)
         TooltipDisplayFriendsListCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.ShowSystemsStatsFrame)
         TooltipDisplayFriendsListCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayFriendsList = Value end)
-        TooltipDisplayFriendsListCheckbox:SetRelativeWidth(0.5)
+        TooltipDisplayFriendsListCheckbox:SetRelativeWidth(0.33)
+
+        if MS.BUILDVERSION > 110000 then
+            local TooltipDisplayDelveOptionsCheckbox = MSGUI:Create("CheckBox")
+            TooltipDisplayDelveOptionsCheckbox:SetLabel("Display Delve Options")
+            TooltipDisplayDelveOptionsCheckbox:SetValue(MS.DB.global.DisplayDelveOptions)
+            TooltipDisplayDelveOptionsCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.ShowSystemsStatsFrame)
+            TooltipDisplayDelveOptionsCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayDelveOptions = Value end)
+            TooltipDisplayDelveOptionsCheckbox:SetRelativeWidth(0.33)
+        end
 
         local TooltipDisplayPlayerKeystoneCheckbox = MSGUI:Create("CheckBox")
         TooltipDisplayPlayerKeystoneCheckbox:SetLabel("Display Player Keystone")
@@ -967,6 +976,9 @@ function MS:CreateGUI()
                 TooltipDisplayVaultOptionsCheckbox:SetDisabled(true)
                 TooltipTextureIconSizeDropdown:SetDisabled(true)
                 TooltipDisplayTimeCheckbox:SetDisabled(true)
+                if MS.BUILDVERSION > 110000 then
+                    TooltipDisplayDelveOptionsCheckbox:SetDisabled(true)
+                end
             else
                 TooltipAnchorFromPosition:SetDisabled(false)
                 TooltipAnchorToPosition:SetDisabled(false)
@@ -981,6 +993,9 @@ function MS:CreateGUI()
                 TooltipDisplayVaultOptionsCheckbox:SetDisabled(false)
                 TooltipTextureIconSizeDropdown:SetDisabled(false)
                 TooltipDisplayTimeCheckbox:SetDisabled(false)
+                if MS.BUILDVERSION > 110000 then
+                    TooltipDisplayDelveOptionsCheckbox:SetDisabled(false)
+                end
             end
         end)
 
@@ -990,6 +1005,9 @@ function MS:CreateGUI()
         TimeTooltipOptionsContainer:AddChild(TooltipDisplayTimeCheckbox)
         SystemStatsTooltipOptionsContainer:AddChild(TooltipDisplayLockoutCheckbox)
         SystemStatsTooltipOptionsContainer:AddChild(TooltipDisplayFriendsListCheckbox)
+        if MS.BUILDVERSION > 110000 then
+            SystemStatsTooltipOptionsContainer:AddChild(TooltipDisplayDelveOptionsCheckbox)
+        end
         SystemStatsTooltipOptionsContainer:AddChild(MythicPlusOptionsContainer)
         MythicPlusOptionsContainer:AddChild(TooltipDisplayVaultOptionsCheckbox)
         MythicPlusOptionsContainer:AddChild(TooltipDisplayPlayerKeystoneCheckbox)

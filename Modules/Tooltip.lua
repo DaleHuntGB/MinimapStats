@@ -65,7 +65,7 @@ function MS:FetchVaultOptions()
     end
     if #MythicPlusRuns > 0 then
         local R, G, B = MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB
-        GameTooltip:AddLine("Mythic+ Runs", R, G, B)
+        GameTooltip:AddLine("Mythic+ |cFFFFFFFFRuns|r", R, G, B)
         for DungeonNumber, VaultiLvl in ipairs(MythicPlusRunsFormatted) do
             if DungeonNumber == 1 or DungeonNumber == 4 or DungeonNumber == 8 then
                 local VaultSlot = DungeonNumber == 1 and "1" or DungeonNumber == 4 and "2" or "3"
@@ -73,19 +73,28 @@ function MS:FetchVaultOptions()
             end
         end
     end
-    if #MythicPlusRunsFormatted > 0 and (MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
+    if #MythicPlusRunsFormatted > 0 and (MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList or MS.DB.global.DisplayDelveOptions) then
+        GameTooltip:AddLine(" ", 1, 1, 1, 1)
+    end
+end
+
+function MS:FetchDelveOptions()
+    if not MS.DB.global.DisplayDelveOptions then return end
+
+    GameTooltip:AddLine("Delve |cFFFFFFFFRuns|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
+
+    if (MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
 end
 
 function MS:FetchKeystones()
-    local OpenRaid = LibStub:GetLibrary("LibOpenRaid-1.0")
     local TextureSize = MS.DB.global.TooltipTextureIconSize
     local NoKeyTextureIcon = "|TInterface/Icons/inv_relics_hourglass.blp:" .. TextureSize .. ":" .. TextureSize .. ":0|t"
-    if not OpenRaid then return end
+    if not MS.OR then return end
     if not MS.DB.global.DisplayPlayerKeystone and not MS.DB.global.DisplayPartyKeystones then return end
     if MS.DB.global.DisplayPlayerKeystone then
-        local KeystoneInfo = OpenRaid.GetKeystoneInfo("player")
+        local KeystoneInfo = MS.OR.GetKeystoneInfo("player")
         GameTooltip:AddLine("Your |cFFFFFFFFKeystone|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         if KeystoneInfo then
             local KeystoneLevel = KeystoneInfo.level
@@ -120,7 +129,7 @@ function MS:FetchKeystones()
                 local UnitName = GetUnitName(UnitID, true)
                 local FormattedUnitName = UnitName:match("([^-]+)")
                 local UnitClassColour = RAID_CLASS_COLORS[select(2, UnitClass(UnitID))]
-                local KeystoneInfo = OpenRaid.GetKeystoneInfo(UnitID)
+                local KeystoneInfo = MS.OR.GetKeystoneInfo(UnitID)
 
                 if KeystoneInfo then
                     local Keystone, _, _, KeystoneIcon = C_ChallengeMode.GetMapUIInfo(KeystoneInfo.mythicPlusMapID)
@@ -137,7 +146,7 @@ function MS:FetchKeystones()
                     GameTooltip:AddLine(FormattedUnitName .. ": " .. WHITE_COLOUR_OVERRIDE .. NoKeyTextureIcon .. " No Keystone", UnitClassColour.r, UnitClassColour.g, UnitClassColour.b)
                 end
             end
-            if MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList then
+            if MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList or MS.DB.global.DisplayDelveOptions then
                 GameTooltip:AddLine(" ", 1, 1, 1, 1)
             end
         end
@@ -205,13 +214,13 @@ function MS:FetchFriendsList()
 
                 if InGame and CharacterClass ~= nil then
                     if IsDND then
-                        FriendStatus = "|TInterface/AddOns/MinimapStats/Media/FriendBusy:8:8:0:0|t"
+                        FriendStatus = "|TInterface/AddOns/MinimapStats/Media/FriendBusy:14:14:0:0|t"
                     elseif IsAFK then
-                        FriendStatus = "|TInterface/AddOns/MinimapStats/Media/FriendAway:8:8:0:0|t"
+                        FriendStatus = "|TInterface/AddOns/MinimapStats/Media/FriendAway:14:14:0:0|t"
                     else
-                        FriendStatus = "|TInterface/AddOns/MinimapStats/Media/FriendOnline:8:8:0:0|t"
+                        FriendStatus = "|TInterface/AddOns/MinimapStats/Media/FriendOnline:14:14:0:0|t"
                     end
-                    GameTooltip:AddDoubleLine(FriendStatus .. " |r" .. FriendBNetTag .. ": " .. ClassColour .. CharacterName .. "|r [L|cFFFFCC40" .. CharacterLevel .. "|r]", MS.WoWProjects[WoWProject], 1, 1, 1, 1, 1, 1)
+                    GameTooltip:AddDoubleLine(FriendStatus .. "|r" .. FriendBNetTag .. ": " .. ClassColour .. CharacterName .. "|r [L|cFFFFCC40" .. CharacterLevel .. "|r]", MS.WoWProjects[WoWProject], 1, 1, 1, 1, 1, 1)
                 end
             end
         end
@@ -231,10 +240,14 @@ function MS:CreateSystemStatsTooltip()
     GameTooltip:SetPoint(MS.DB.global.TooltipAnchorFrom, Minimap, MS.DB.global.TooltipAnchorTo, MS.DB.global.TooltipXOffset, MS.DB.global.TooltipYOffset)
     MS:FetchPlayerLockouts()
     MS:FetchVaultOptions()
-    -- TODO: Check for Open Raid before attempting to call these functions.
-    MS:FetchKeystones()
-    MS:FetchAffixes()
-    MS:FetchFriendsList()
+    if MS.BUILDVERSION > 110000 then
+        MS:FetchDelveOptions()
+    end
+    if MS.OR then 
+        MS:FetchKeystones()
+        MS:FetchAffixes()
+        MS:FetchFriendsList()
+    end
     if MS.DB.global.DisplayVaultOptions or MS.DB.global.DisplayPlayerKeystone or MS.DB.global.DisplayPartyKeystones or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
