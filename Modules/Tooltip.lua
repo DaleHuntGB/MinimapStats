@@ -239,6 +239,7 @@ function MS:CreateSystemStatsTooltip()
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
     GameTooltip:AddLine("Left-Click: " .. MS.AccentColour .. "Collect Garbage|r")
+    GameTooltip:AddLine("Shift + Left-Click: " .. MS.AccentColour .. "Open Great Vault|r")
     GameTooltip:AddLine("Right-Click: " .. MS.AccentColour .. "MinimapStats Config|r")
     GameTooltip:AddLine("Middle-Click: " .. MS.AccentColour .. "Reload UI|r")
     GameTooltip:Show()
