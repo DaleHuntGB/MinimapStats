@@ -50,40 +50,30 @@ end
 function MS:FetchVaultOptions()
     if not MS.DB.global.DisplayVaultOptions then return end
     local MythicPlusRuns = C_MythicPlus.GetRunHistory(false, true)
-    local MythicPlusRunsFormatted = {}
+    local MythicPlusRunsCompleted = {}
     -- Loop through all MythicPlusRuns, Get Dungeon Level & Max iLvl from Vault.
     for _, DungeonRun in ipairs(MythicPlusRuns) do
         local GViLvl = MS.GreatVaultiLvls[DungeonRun.level]
-        table.insert(MythicPlusRunsFormatted, string.format("Level: %d [%d]", DungeonRun.level, GViLvl))
+        table.insert(MythicPlusRunsCompleted, string.format("Level: %d [%d]", DungeonRun.level, GViLvl))
     end
     -- Sort: Highest to Lowest iLvl
-    table.sort(MythicPlusRunsFormatted, function(a, b)
+    table.sort(MythicPlusRunsCompleted, function(a, b)
         return tonumber(a:match("%d+")) > tonumber(b:match("%d+"))
     end)
-    for i = 9, #MythicPlusRunsFormatted do
-        MythicPlusRunsFormatted[i] = nil
+    for i = 9, #MythicPlusRunsCompleted do
+        MythicPlusRunsCompleted[i] = nil
     end
     if #MythicPlusRuns > 0 then
         local R, G, B = MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB
         GameTooltip:AddLine("Mythic+ |cFFFFFFFFRuns|r", R, G, B)
-        for DungeonNumber, VaultiLvl in ipairs(MythicPlusRunsFormatted) do
+        for DungeonNumber, VaultiLvl in ipairs(MythicPlusRunsCompleted) do
             if DungeonNumber == 1 or DungeonNumber == 4 or DungeonNumber == 8 then
                 local VaultSlot = DungeonNumber == 1 and "1" or DungeonNumber == 4 and "2" or "3"
                 GameTooltip:AddLine(MS.AccentColour .. "Vault Slot #" .. VaultSlot .. "|r - " .. VaultiLvl, 1, 1, 1)
             end
         end
     end
-    if #MythicPlusRunsFormatted > 0 and (MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList or MS.DB.global.DisplayDelveOptions) then
-        GameTooltip:AddLine(" ", 1, 1, 1, 1)
-    end
-end
-
-function MS:FetchDelveOptions()
-    if not MS.DB.global.DisplayDelveOptions then return end
-
-    GameTooltip:AddLine("Delve |cFFFFFFFFRuns|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
-
-    if (MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
+    if #MythicPlusRunsCompleted > 0 and (MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
 end
@@ -146,7 +136,7 @@ function MS:FetchKeystones()
                     GameTooltip:AddLine(FormattedUnitName .. ": " .. WHITE_COLOUR_OVERRIDE .. NoKeyTextureIcon .. " No Keystone", UnitClassColour.r, UnitClassColour.g, UnitClassColour.b)
                 end
             end
-            if MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList or MS.DB.global.DisplayDelveOptions then
+            if MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList then
                 GameTooltip:AddLine(" ", 1, 1, 1, 1)
             end
         end
@@ -240,15 +230,12 @@ function MS:CreateSystemStatsTooltip()
     GameTooltip:SetPoint(MS.DB.global.TooltipAnchorFrom, Minimap, MS.DB.global.TooltipAnchorTo, MS.DB.global.TooltipXOffset, MS.DB.global.TooltipYOffset)
     MS:FetchPlayerLockouts()
     MS:FetchVaultOptions()
-    if MS.BUILDVERSION > 110000 then
-        MS:FetchDelveOptions()
-    end
     if MS.OR then 
         MS:FetchKeystones()
-        MS:FetchAffixes()
-        MS:FetchFriendsList()
     end
-    if MS.DB.global.DisplayVaultOptions or MS.DB.global.DisplayPlayerKeystone or MS.DB.global.DisplayPartyKeystones or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList then
+    MS:FetchAffixes()
+    MS:FetchFriendsList()
+    if MS.DB.global.DisplayVaultOptions or MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and not IsInRaid() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or (MS.DB.global.DisplayFriendsList ) then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
     GameTooltip:AddLine("Left-Click: " .. MS.AccentColour .. "Collect Garbage|r")
