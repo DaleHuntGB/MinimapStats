@@ -55,6 +55,7 @@ function MS:FetchVaultOptions()
     for i = 1, 3 do
         local DifficultyName = MS.RaidDifficultyIDs[RaidRuns[i].level]
         local GViLvl = MS.RaidGreatVaultiLvls[RaidRuns[i].level]
+        if DifficultyName == nil then break end
         table.insert(RaidsCompleted, string.format(MS.AccentColour .. "%s|r [%d]", DifficultyName, GViLvl))
     end
     -- Fetch Mythic+ Options
@@ -63,24 +64,49 @@ function MS:FetchVaultOptions()
     for i = 1, 3 do
         local KeyLevel = MythicPlusRuns[i].level
         local GViLvl = MS.MythicPlusGreatVaultiLvls[MythicPlusRuns[i].level]
+        if KeyLevel == nil or KeyLevel == 0 then break end
         table.insert(MythicPlusRunsCompleted, string.format(MS.AccentColour .. "+%d|r [%d]", KeyLevel, GViLvl))
     end
-    if #RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 then
+    -- Fetch Delve Options
+    local DelveRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Delve)
+    local DelveRunsCompleted = {}
+    for i = 1, 3 do
+        local DelveLevel = DelveRuns[i].level
+        local GViLvl = MS.DelveGreatVaultiLvls[DelveRuns[i].level]
+        if DelveLevel == nil or DelveLevel == 0 then break end
+        table.insert(DelveRunsCompleted, string.format(MS.AccentColour .. "%d|r [%d]", DelveLevel, GViLvl))
+    end
+
+    if #RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 or (MS.BUILDVERSION > 110000 and #DelveRunsCompleted > 0) then
         GameTooltip:AddLine("Great |cFFFFFFFFVault|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
     end
+
     if #RaidsCompleted > 0 then
         GameTooltip:AddLine("Raid |cFFFFFFFFSlots|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         for i, Raid in ipairs(RaidsCompleted) do
             GameTooltip:AddLine(string.format("Slot #%d: %s", i, Raid), 1, 1, 1)
         end
     end
+
     if #RaidsCompleted > 0 and #MythicPlusRunsCompleted > 0 then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
+
     if #MythicPlusRunsCompleted > 0 then
         GameTooltip:AddLine("Mythic+ |cFFFFFFFFSlots|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         for i, MythicPlusRun in ipairs(MythicPlusRunsCompleted) do
             GameTooltip:AddLine(string.format("Slot #%d: %s", i, MythicPlusRun), 1, 1, 1)
+        end
+    end
+
+    if #MythicPlusRunsCompleted > 0 and (MS.BUILDVERSION > 110000 and #DelveRunsCompleted > 0) then
+        GameTooltip:AddLine(" ", 1, 1, 1, 1)
+    end
+
+    if MS.BUILDVERSION > 110000 and #DelveRunsCompleted > 0 then
+        GameTooltip:AddLine("Delve |cFFFFFFFFSlots|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
+        for i, DelveRun in ipairs(DelveRunsCompleted) do
+            GameTooltip:AddLine(string.format("Slot #%d: %s", i, DelveRun), 1, 1, 1)
         end
     end
 
