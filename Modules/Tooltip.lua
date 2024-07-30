@@ -10,7 +10,8 @@ function MS:FetchPlayerLockouts()
         local Hours = math.floor((Reset % 86400) / 3600)
         local Mins = math.floor((Reset % 3600) / 60)
         Reset = Days > 0 and string.format("%dd %dh %dm", Days, Hours, Mins) or string.format("%dh %dm", Hours, Mins)
-        local LockoutString = string.format("%s: %d/%d %s [%s%s|r]", Name, CurrentProgress, MaxEncounters, DifficultyName, MS.AccentColour, Reset)
+        local FormattedName = MS.AbbrInstances[Name] or Name
+        local LockoutString = string.format("%s: %d/%d %s [%s%s|r]", FormattedName, CurrentProgress, MaxEncounters, DifficultyName, MS.AccentColour, Reset)
         if IsLocked then
             if IsRaid then
                 table.insert(RaidLockouts, LockoutString)
@@ -246,7 +247,7 @@ end
 function MS:FetchTimeInformation()
     local ServerHr, ServerMins = GetGameTime()
     local ServerTime = string.format("%02d:%02d", ServerHr, ServerMins)
-    GameTooltip:AddDoubleLine("Local Time (24H)", date("%H:%M"), MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1, 1, 1)
+    GameTooltip:AddDoubleLine("Local Time", date("%H:%M"), MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1, 1, 1)
     GameTooltip:AddDoubleLine("Server Time", ServerTime, MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1, 1, 1)
 end
 

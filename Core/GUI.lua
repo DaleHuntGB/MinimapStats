@@ -915,19 +915,23 @@ function MS:CreateGUI()
         TooltipDisplayPartyKeystoneCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayPartyKeystones = Value end)
         TooltipDisplayPartyKeystoneCheckbox:SetRelativeWidth(0.25)
 
-        local TooltipDisplayAffixesCheckbox = MSGUI:Create("CheckBox")
-        TooltipDisplayAffixesCheckbox:SetLabel("Display Affixes")
-        TooltipDisplayAffixesCheckbox:SetValue(MS.DB.global.DisplayAffixes)
-        TooltipDisplayAffixesCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.ShowSystemsStatsFrame)
-        TooltipDisplayAffixesCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayAffixes = Value end)
-        TooltipDisplayAffixesCheckbox:SetRelativeWidth(0.25)
-
         local TooltipDisplayAffixesDescCheckbox = MSGUI:Create("CheckBox")
         TooltipDisplayAffixesDescCheckbox:SetLabel("Display Affix Descriptions")
         TooltipDisplayAffixesDescCheckbox:SetValue(MS.DB.global.DisplayAffixDesc)
         TooltipDisplayAffixesDescCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.DisplayAffixes or not MS.DB.global.ShowSystemsStatsFrame)
         TooltipDisplayAffixesDescCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayAffixDesc = Value end)
         TooltipDisplayAffixesDescCheckbox:SetRelativeWidth(0.25)
+
+        
+        local TooltipDisplayAffixesCheckbox = MSGUI:Create("CheckBox")
+        TooltipDisplayAffixesCheckbox:SetLabel("Display Affixes")
+        TooltipDisplayAffixesCheckbox:SetValue(MS.DB.global.DisplayAffixes)
+        TooltipDisplayAffixesCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.ShowSystemsStatsFrame)
+        TooltipDisplayAffixesCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayAffixes = Value
+            MSGUI_Container:DoLayout()
+            TooltipDisplayAffixesDescCheckbox:SetDisabled(not MS.DB.global.DisplayAffixes)
+        end)
+        TooltipDisplayAffixesCheckbox:SetRelativeWidth(0.25)
 
         local TooltipTextureIconSizeDropdown = MSGUI:Create("Dropdown")
         TooltipTextureIconSizeDropdown:SetLabel("Icon Size")
