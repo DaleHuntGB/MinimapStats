@@ -49,9 +49,11 @@ end
 
 function MS:FetchVaultOptions()
     if not MS.DB.global.DisplayVaultOptions then return end
+    local RaidsCompleted = {}
+    local MythicPlusRunsCompleted = {}
+    local DelveRunsCompleted = {}
     -- Fetch Raid Options
     local RaidRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Raid)
-    local RaidsCompleted = {}
     for i = 1, 3 do
         local DifficultyName = MS.RaidDifficultyIDs[RaidRuns[i].level]
         local GViLvl = MS.RaidGreatVaultiLvls[RaidRuns[i].level]
@@ -60,7 +62,6 @@ function MS:FetchVaultOptions()
     end
     -- Fetch Mythic+ Options
     local MythicPlusRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.MythicPlus)
-    local MythicPlusRunsCompleted = {}
     for i = 1, 3 do
         local KeyLevel = MythicPlusRuns[i].level
         local GViLvl = MS.MythicPlusGreatVaultiLvls[MythicPlusRuns[i].level]
@@ -70,7 +71,7 @@ function MS:FetchVaultOptions()
     -- Fetch Delve Options
     if MS.BUILDVERSION > 110000 then
         local DelveRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Delve)
-        local DelveRunsCompleted = {}
+
         for i = 1, 3 do
             local DelveLevel = DelveRuns[i].level
             local GViLvl = MS.DelveGreatVaultiLvls[DelveRuns[i].level]
