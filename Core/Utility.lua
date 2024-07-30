@@ -95,6 +95,9 @@ MS.DefaultSettings = {
         DisplayAffixDesc = false,
         DisplayFriendsList = true,
         DisplayVaultOptions = true,
+        DisplayRaidSlots = true,
+        DisplayMythicPlusSlots = true,
+        DisplayDelveSlots = true,
         DisplayTime = true,
         TooltipTextureIconSize = 16,
     }
@@ -325,6 +328,9 @@ function MS:ResetTooltipOptions()
     MS.DB.global.DisplayVaultOptions = true
     MS.DB.global.TooltipTextureIconSize = 16
     MS.DB.global.DisplayTime = true
+    MS.DB.global.DisplayRaidSlots = true
+    MS.DB.global.DisplayMythicPlusSlots = true
+    MS.DB.global.DisplayDelveSlots = true
 end
 
 function MS:FetchMythicPlusInfo()
