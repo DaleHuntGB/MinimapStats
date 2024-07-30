@@ -68,13 +68,15 @@ function MS:FetchVaultOptions()
         table.insert(MythicPlusRunsCompleted, string.format(MS.AccentColour .. "+%d|r [%d]", KeyLevel, GViLvl))
     end
     -- Fetch Delve Options
-    local DelveRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Delve)
-    local DelveRunsCompleted = {}
-    for i = 1, 3 do
-        local DelveLevel = DelveRuns[i].level
-        local GViLvl = MS.DelveGreatVaultiLvls[DelveRuns[i].level]
-        if DelveLevel == nil or DelveLevel == 0 then break end
-        table.insert(DelveRunsCompleted, string.format(MS.AccentColour .. "%d|r [%d]", DelveLevel, GViLvl))
+    if MS.BUILDVERSION > 110000 then
+        local DelveRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Delve)
+        local DelveRunsCompleted = {}
+        for i = 1, 3 do
+            local DelveLevel = DelveRuns[i].level
+            local GViLvl = MS.DelveGreatVaultiLvls[DelveRuns[i].level]
+            if DelveLevel == nil or DelveLevel == 0 then break end
+            table.insert(DelveRunsCompleted, string.format(MS.AccentColour .. "%d|r [%d]", DelveLevel, GViLvl))
+        end
     end
 
     if #RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 or (MS.BUILDVERSION > 110000 and #DelveRunsCompleted > 0) then
