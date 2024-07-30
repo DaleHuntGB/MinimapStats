@@ -69,7 +69,7 @@ function MS:FetchVaultOptions()
         GameTooltip:AddLine("Great |cFFFFFFFFVault|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
     end
     if #RaidsCompleted > 0 then
-        GameTooltip:AddLine("Raid |cFFFFFFFFOptions|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
+        GameTooltip:AddLine("Raid |cFFFFFFFFSlots|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         for i, Raid in ipairs(RaidsCompleted) do
             GameTooltip:AddLine(string.format("Slot #%d: %s", i, Raid), 1, 1, 1)
         end
@@ -78,7 +78,7 @@ function MS:FetchVaultOptions()
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
     if #MythicPlusRunsCompleted > 0 then
-        GameTooltip:AddLine("Mythic+ |cFFFFFFFFOptions|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
+        GameTooltip:AddLine("Mythic+ |cFFFFFFFFSlots|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         for i, MythicPlusRun in ipairs(MythicPlusRunsCompleted) do
             GameTooltip:AddLine(string.format("Slot #%d: %s", i, MythicPlusRun), 1, 1, 1)
         end
