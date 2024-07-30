@@ -54,30 +54,33 @@ function MS:FetchVaultOptions()
     local RaidsCompleted = {}
     for i = 1, 3 do
         local DifficultyName = MS.RaidDifficultyIDs[RaidRuns[i].level]
-        table.insert(RaidsCompleted, string.format(MS.AccentColour .. "Raid Vault Slot #%d|r: %s", i, DifficultyName))
+        local GViLvl = MS.RaidGreatVaultiLvls[RaidRuns[i].level]
+        table.insert(RaidsCompleted, string.format(MS.AccentColour .. "%s|r [%d]", DifficultyName, GViLvl))
     end
     -- Fetch Mythic+ Options
     local MythicPlusRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.MythicPlus)
     local MythicPlusRunsCompleted = {}
     for i = 1, 3 do
         local KeyLevel = MythicPlusRuns[i].level
-        local GViLvl = MS.GreatVaultiLvls[MythicPlusRuns[i].level]
-        table.insert(MythicPlusRunsCompleted, string.format(MS.AccentColour .. "Mythic+ Vault Slot #%d|r: +%d [%d]", i, KeyLevel, GViLvl))
+        local GViLvl = MS.MythicPlusGreatVaultiLvls[MythicPlusRuns[i].level]
+        table.insert(MythicPlusRunsCompleted, string.format(MS.AccentColour .. "+%d|r [%d]", KeyLevel, GViLvl))
     end
     if #RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 then
-        GameTooltip:AddLine("Vault |cFFFFFFFFOptions|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
+        GameTooltip:AddLine("Great |cFFFFFFFFVault|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
     end
     if #RaidsCompleted > 0 then
-        for _, Raid in ipairs(RaidsCompleted) do
-            GameTooltip:AddLine(Raid, 1, 1, 1)
+        GameTooltip:AddLine("Raid |cFFFFFFFFOptions|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
+        for i, Raid in ipairs(RaidsCompleted) do
+            GameTooltip:AddLine(string.format("Slot #%d: %s", i, Raid), 1, 1, 1)
         end
     end
     if #RaidsCompleted > 0 and #MythicPlusRunsCompleted > 0 then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
     if #MythicPlusRunsCompleted > 0 then
-        for _, MythicPlusRun in ipairs(MythicPlusRunsCompleted) do
-            GameTooltip:AddLine(MythicPlusRun, 1, 1, 1)
+        GameTooltip:AddLine("Mythic+ |cFFFFFFFFOptions|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
+        for i, MythicPlusRun in ipairs(MythicPlusRunsCompleted) do
+            GameTooltip:AddLine(string.format("Slot #%d: %s", i, MythicPlusRun), 1, 1, 1)
         end
     end
 

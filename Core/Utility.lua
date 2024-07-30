@@ -152,7 +152,7 @@ MS.CharacterClassColours = {
 }
 
 if MS.BUILDVERSION <= 110000 then
-    MS.GreatVaultiLvls = {
+    MS.MythicPlusGreatVaultiLvls = {
         [2] = "509", -- +2
         [3] = "509", -- +3
         [4] = "512", -- +4
@@ -163,8 +163,13 @@ if MS.BUILDVERSION <= 110000 then
         [9] = "519", -- +9
         [10] = "522" -- +10
     }
+    MS.RaidGreatVaultiLvls = {
+        [14] = "493",
+        [15] = "506",
+        [16] = "519",
+    }
 elseif MS.BUILDVERSION > 110000 then
-    MS.GreatVaultiLvls = {
+    MS.MythicPlusGreatVaultiLvls = {
         [2] = "606 [Champion: 4/8]",    -- +2
         [3] = "610 [Hero: 1/6]",        -- +3
         [4] = "610 [Hero: 1/6]",        -- +4
@@ -174,6 +179,21 @@ elseif MS.BUILDVERSION > 110000 then
         [8] = "619 [Hero: 4/6]",        -- +8
         [9] = "619 [Hero: 4/6]",        -- +9
         [10] = "623 [Myth: 1/6]",       -- +10
+    }
+    MS.RaidGreatVaultiLvls = {
+        [14] = "597",
+        [15] = "610",
+        [16] = "623",
+    }
+    MS.DelveGreatVaultiLvls = {
+        [1] = "584",
+        [2] = "584",
+        [3] = "587",
+        [4] = "597",
+        [5] = "603",
+        [6] = "606",
+        [7] = "610",
+        [8] = "616",
     }
 end
 
