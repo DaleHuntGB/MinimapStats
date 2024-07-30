@@ -49,30 +49,38 @@ end
 
 function MS:FetchVaultOptions()
     if not MS.DB.global.DisplayVaultOptions then return end
-    local MythicPlusRuns = C_MythicPlus.GetRunHistory(false, true)
+    -- Fetch Raid Options
+    local RaidRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Raid)
+    local RaidsCompleted = {}
+    for i = 1, 3 do
+        local DifficultyName = MS.RaidDifficultyIDs[RaidRuns[i].level]
+        table.insert(RaidsCompleted, string.format(MS.AccentColour .. "Raid Vault Slot #%d|r: %s", i, DifficultyName))
+    end
+    -- Fetch Mythic+ Options
+    local MythicPlusRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.MythicPlus)
     local MythicPlusRunsCompleted = {}
-    -- Loop through all MythicPlusRuns, Get Dungeon Level & Max iLvl from Vault.
-    for _, DungeonRun in ipairs(MythicPlusRuns) do
-        local GViLvl = MS.GreatVaultiLvls[DungeonRun.level]
-        table.insert(MythicPlusRunsCompleted, string.format("Level: %d [%d]", DungeonRun.level, GViLvl))
+    for i = 1, 3 do
+        local KeyLevel = MythicPlusRuns[i].level
+        local GViLvl = MS.GreatVaultiLvls[MythicPlusRuns[i].level]
+        table.insert(MythicPlusRunsCompleted, string.format(MS.AccentColour .. "Mythic+ Vault Slot #%d|r: +%d [%d]", i, KeyLevel, GViLvl))
     end
-    -- Sort: Highest to Lowest iLvl
-    table.sort(MythicPlusRunsCompleted, function(a, b)
-        return tonumber(a:match("%d+")) > tonumber(b:match("%d+"))
-    end)
-    for i = 9, #MythicPlusRunsCompleted do
-        MythicPlusRunsCompleted[i] = nil
+    if #RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 then
+        GameTooltip:AddLine("Vault |cFFFFFFFFOptions|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
     end
-    if #MythicPlusRuns > 0 then
-        local R, G, B = MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB
-        GameTooltip:AddLine("Mythic+ |cFFFFFFFFRuns|r", R, G, B)
-        for DungeonNumber, VaultiLvl in ipairs(MythicPlusRunsCompleted) do
-            if DungeonNumber == 1 or DungeonNumber == 4 or DungeonNumber == 8 then
-                local VaultSlot = DungeonNumber == 1 and "1" or DungeonNumber == 4 and "2" or "3"
-                GameTooltip:AddLine(MS.AccentColour .. "Vault Slot #" .. VaultSlot .. "|r - " .. VaultiLvl, 1, 1, 1)
-            end
+    if #RaidsCompleted > 0 then
+        for _, Raid in ipairs(RaidsCompleted) do
+            GameTooltip:AddLine(Raid, 1, 1, 1)
         end
     end
+    if #RaidsCompleted > 0 and #MythicPlusRunsCompleted > 0 then
+        GameTooltip:AddLine(" ", 1, 1, 1, 1)
+    end
+    if #MythicPlusRunsCompleted > 0 then
+        for _, MythicPlusRun in ipairs(MythicPlusRunsCompleted) do
+            GameTooltip:AddLine(MythicPlusRun, 1, 1, 1)
+        end
+    end
+
     if #MythicPlusRunsCompleted > 0 and (MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
