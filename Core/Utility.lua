@@ -101,6 +101,9 @@ MS.DefaultSettings = {
         DisplayDelveSlots = true,
         DisplayTime = true,
         TooltipTextureIconSize = 16,
+        -- Custom Abbreviations
+        CustomAbbreviations = {
+        },
     }
 }
 
@@ -342,9 +345,6 @@ function MS:FetchMythicPlusInfo()
         C_MythicPlus.RequestRewards()
     end)
 end
-
-MS.AbbrInstances = {
-}
 
 MS.WoWProjects = {
     [1] = "Retail",
