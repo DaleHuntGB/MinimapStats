@@ -4,7 +4,8 @@ MS.ADDON_VERSION = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
 MS.ADDON_AUTHOR = C_AddOns.GetAddOnMetadata("MinimapStats", "Author")
 MS.BUILDVERSION = select(4, GetBuildInfo())
 MS.OR = LibStub:GetLibrary("LibOpenRaid-1.0", true)
-MS.NUM_OF_AFFIXES = MS.BUILDVERSION <= 110000 and 3 or 4
+-- MS.NUM_OF_AFFIXES = MS.BUILDVERSION <= 110000 and 3 or 4 -- The new affixes added in 11.0.2 are not available in the API yet.
+MS.NUM_OF_AFFIXES = 3
 MS.ANCHORS = {
     ["TOPLEFT"] = "TOPLEFT",
     ["TOP"] = "TOP",
