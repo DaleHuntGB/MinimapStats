@@ -72,7 +72,7 @@ function MS:SetupSystemStatsScripts()
             end
         end)
         MS.SystemStatsFrame:SetScript("OnMouseDown", function(_, mButton)
-            if IsShiftKeyDown and mButton == "LeftButton" then
+            if IsShiftKeyDown() and mButton == "LeftButton" then
                 C_AddOns.LoadAddOn("Blizzard_WeeklyRewards")
                 if WeeklyRewardsFrame:IsShown() then WeeklyRewardsFrame:Hide() else WeeklyRewardsFrame:Show() end
             elseif mButton == "LeftButton" then
