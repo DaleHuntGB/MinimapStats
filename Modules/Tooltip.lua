@@ -38,7 +38,7 @@ function MS:FetchPlayerLockouts()
         for _, Lockout in pairs(RaidLockouts) do
             local RaidTitle, RaidLockout, RaidReset = Lockout:match("([^:]+): (.+) %[(.+)%]")
             local RaidTitle = MS.DB.global.CustomAbbreviations[RaidTitle:match("([^:]+)")] or RaidTitle
-            local RaidLockout = RaidLockout:gsub("Normal", "N"):gsub("Heroic", "H"):gsub("Mythic", "M"):gsub("Looking For Raid", "LFR")
+            local RaidLockout = RaidLockout:gsub("Normal", "N"):gsub("Heroic", "H"):gsub("Mythic", "M"):gsub("Looking For Raid", "LFR"):gsub("25 Player", "25M"):gsub("10 Player", "10M")
             local RaidDisplayString = MS.AccentColour .. RaidTitle .. "|r: " .. RaidLockout
             GameTooltip:AddDoubleLine(RaidDisplayString, RaidReset, 1, 1, 1, 1, 1, 1)
         end
