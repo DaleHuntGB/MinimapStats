@@ -43,8 +43,8 @@ function MS:CreateGUI()
         local FontFlagOrder = { "NONE", "OUTLINE", "THICKOUTLINE", "MONOCHROME" }
         local ElementFrameStrataOptions = { ["BACKGROUND"] = "BACKGROUND", ["LOW"] = "LOW", ["MEDIUM"] = "MEDIUM", ["HIGH"] = "HIGH", ["DIALOG"] = "DIALOG", ["FULLSCREEN"] = "FULLSCREEN", ["FULLSCREEN_DIALOG"] = "FULLSCREEN_DIALOG", ["TOOLTIP"] = "TOOLTIP" }
         local ElementFrameStrataOrder = { "BACKGROUND", "LOW", "MEDIUM", "HIGH", "DIALOG", "FULLSCREEN", "FULLSCREEN_DIALOG", "TOOLTIP" }
-        local ResetDefaultsOptions = { ["Select"] = "Select...", ["Everything"] = "Reset Everything", ["General"] = "Reset General Options", ["Time"] = "Reset Time Options", ["System Stats"] = "Reset System Stats Options", ["Location"] = "Reset Location Options", ["Coordinates"] = "Reset Coordinates Options", ["Instance Difficulty"] = "Reset Instance Difficulty Options", ["Tooltip"] = "Reset Tooltip Options"}
-        local ResetDefaultsOrder = { "Everything", "General", "Time", "System Stats", "Location", "Coordinates", "Instance Difficulty", "Tooltip" }
+        local ResetDefaultsOptions = { ["Select"] = "Select...", ["Everything"] = "Reset Everything", ["General"] = "Reset General Options", ["Time"] = "Reset Time Options", ["System Stats"] = "Reset System Stats Options", ["Location"] = "Reset Location Options", ["Coordinates"] = "Reset Coordinates Options", ["Instance Difficulty"] = "Reset Instance Difficulty Options", ["Tooltip"] = "Reset Tooltip Options", ["CustomInstanceNames"] = "Reset Custom Instance Names" }
+        local ResetDefaultsOrder = { "Everything", "General", "Time", "System Stats", "Location", "Coordinates", "Instance Difficulty", "Tooltip", "CustomInstanceNames" }
         local GeneralOptionsContainer = MSGUI:Create("InlineGroup")
         GeneralOptionsContainer:SetTitle("General Options")
         GeneralOptionsContainer:SetLayout("Flow")
@@ -100,6 +100,9 @@ function MS:CreateGUI()
             elseif Value == "Tooltip" then
                 MS:ResetTooltipOptions()
                 print(MS.ADDON_NAME .. ": Tooltip Options Reset!")
+            elseif Value == "CustomInstanceNames" then
+                MS:ResetCustomAbbreviations()
+                print(MS.ADDON_NAME .. ": Custom Abbreviations Reset!")
             end
             MS:UpdateAllElements()
             ResetDefaultsDropdown:SetValue("Select")

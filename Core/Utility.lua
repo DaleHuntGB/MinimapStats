@@ -337,6 +337,10 @@ function MS:ResetTooltipOptions()
     MS.DB.global.DisplayDelveSlots = true
 end
 
+function MS:ResetCustomAbbreviations()
+    MS.DB.global.CustomAbbreviations = {}
+end
+
 function MS:FetchMythicPlusInfo()
     C_Timer.After(1, function()
         C_AddOns.LoadAddOn("Blizzard_ChallengesUI")
