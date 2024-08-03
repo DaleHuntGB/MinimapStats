@@ -10,8 +10,7 @@ function MS:FetchPlayerLockouts()
         local Hours = math.floor((Reset % 86400) / 3600)
         local Mins = math.floor((Reset % 3600) / 60)
         Reset = Days > 0 and string.format("%dd %dh %dm", Days, Hours, Mins) or string.format("%dh %dm", Hours, Mins)
-        local FormattedName = MS.DB.global.CustomAbbreviations[Name] or Name
-        local LockoutString = string.format("%s: %d/%d %s [%s%s|r]", FormattedName, CurrentProgress, MaxEncounters, DifficultyName, MS.AccentColour, Reset)
+        local LockoutString = string.format("%s: %d/%d %s [%s%s|r]", Name, CurrentProgress, MaxEncounters, DifficultyName, MS.AccentColour, Reset)
         if IsLocked then
             if IsRaid then
                 table.insert(RaidLockouts, LockoutString)
@@ -24,7 +23,6 @@ function MS:FetchPlayerLockouts()
         GameTooltip:AddLine("Dungeon |cFFFFFFFFLockouts|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         for _, Lockout in pairs(DungeonLockouts) do
             local DungeonTitle, DungeonLockout, DungeonReset = Lockout:match("([^:]+): (.+) %[(.+)%]")
-            local DungeonTitle = MS.DB.global.CustomAbbreviations[DungeonTitle:match("([^:]+)")] or DungeonTitle
             local DungeonLockout = DungeonLockout:gsub("Normal", "N"):gsub("Heroic", "H"):gsub("Mythic", "M")
             local DungeonDisplayString = MS.AccentColour .. DungeonTitle .. "|r: " .. DungeonLockout
             GameTooltip:AddDoubleLine(DungeonDisplayString, DungeonReset, 1, 1, 1, 1, 1, 1)
@@ -37,7 +35,6 @@ function MS:FetchPlayerLockouts()
         GameTooltip:AddLine("Raid |cFFFFFFFFLockouts|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         for _, Lockout in pairs(RaidLockouts) do
             local RaidTitle, RaidLockout, RaidReset = Lockout:match("([^:]+): (.+) %[(.+)%]")
-            local RaidTitle = MS.DB.global.CustomAbbreviations[RaidTitle:match("([^:]+)")] or RaidTitle
             local RaidLockout = RaidLockout:gsub("Normal", "N"):gsub("Heroic", "H"):gsub("Mythic", "M"):gsub("Looking For Raid", "LFR"):gsub("25 Player", "25M"):gsub("10 Player", "10M")
             local RaidDisplayString = MS.AccentColour .. RaidTitle .. "|r: " .. RaidLockout
             GameTooltip:AddDoubleLine(RaidDisplayString, RaidReset, 1, 1, 1, 1, 1, 1)

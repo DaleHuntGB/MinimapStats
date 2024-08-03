@@ -101,9 +101,6 @@ MS.DefaultSettings = {
         DisplayDelveSlots = true,
         DisplayTime = true,
         TooltipTextureIconSize = 16,
-        -- Custom Abbreviations
-        CustomAbbreviations = {
-        },
     }
 }
 
@@ -335,10 +332,6 @@ function MS:ResetTooltipOptions()
     MS.DB.global.DisplayRaidSlots = true
     MS.DB.global.DisplayMythicPlusSlots = true
     MS.DB.global.DisplayDelveSlots = true
-end
-
-function MS:ResetCustomAbbreviations()
-    MS.DB.global.CustomAbbreviations = {}
 end
 
 function MS:FetchMythicPlusInfo()

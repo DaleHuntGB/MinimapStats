@@ -43,8 +43,8 @@ function MS:CreateGUI()
         local FontFlagOrder = { "NONE", "OUTLINE", "THICKOUTLINE", "MONOCHROME" }
         local ElementFrameStrataOptions = { ["BACKGROUND"] = "BACKGROUND", ["LOW"] = "LOW", ["MEDIUM"] = "MEDIUM", ["HIGH"] = "HIGH", ["DIALOG"] = "DIALOG", ["FULLSCREEN"] = "FULLSCREEN", ["FULLSCREEN_DIALOG"] = "FULLSCREEN_DIALOG", ["TOOLTIP"] = "TOOLTIP" }
         local ElementFrameStrataOrder = { "BACKGROUND", "LOW", "MEDIUM", "HIGH", "DIALOG", "FULLSCREEN", "FULLSCREEN_DIALOG", "TOOLTIP" }
-        local ResetDefaultsOptions = { ["Select"] = "Select...", ["Everything"] = "Reset Everything", ["General"] = "Reset General Options", ["Time"] = "Reset Time Options", ["System Stats"] = "Reset System Stats Options", ["Location"] = "Reset Location Options", ["Coordinates"] = "Reset Coordinates Options", ["Instance Difficulty"] = "Reset Instance Difficulty Options", ["Tooltip"] = "Reset Tooltip Options", ["CustomInstanceNames"] = "Reset Custom Instance Names" }
-        local ResetDefaultsOrder = { "Everything", "General", "Time", "System Stats", "Location", "Coordinates", "Instance Difficulty", "Tooltip", "CustomInstanceNames" }
+        local ResetDefaultsOptions = { ["Select"] = "Select...", ["Everything"] = "Reset Everything", ["General"] = "Reset General Options", ["Time"] = "Reset Time Options", ["System Stats"] = "Reset System Stats Options", ["Location"] = "Reset Location Options", ["Coordinates"] = "Reset Coordinates Options", ["Instance Difficulty"] = "Reset Instance Difficulty Options", ["Tooltip"] = "Reset Tooltip Options" }
+        local ResetDefaultsOrder = { "Everything", "General", "Time", "System Stats", "Location", "Coordinates", "Instance Difficulty", "Tooltip" }
         local GeneralOptionsContainer = MSGUI:Create("InlineGroup")
         GeneralOptionsContainer:SetTitle("General Options")
         GeneralOptionsContainer:SetLayout("Flow")
@@ -100,9 +100,6 @@ function MS:CreateGUI()
             elseif Value == "Tooltip" then
                 MS:ResetTooltipOptions()
                 print(MS.ADDON_NAME .. ": Tooltip Options Reset!")
-            elseif Value == "CustomInstanceNames" then
-                MS:ResetCustomAbbreviations()
-                print(MS.ADDON_NAME .. ": Custom Abbreviations Reset!")
             end
             MS:UpdateAllElements()
             ResetDefaultsDropdown:SetValue("Select")
@@ -904,19 +901,6 @@ function MS:CreateGUI()
         TooltipDisplayFriendsListCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayFriendsList = Value end)
         TooltipDisplayFriendsListCheckbox:SetRelativeWidth(0.33)
 
-        local CustomInstanceNamesAbbreviationsButton = MSGUI:Create("Button")
-        CustomInstanceNamesAbbreviationsButton:SetText("Custom Instance Abbreviations")
-        CustomInstanceNamesAbbreviationsButton:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.ShowSystemsStatsFrame)
-        CustomInstanceNamesAbbreviationsButton:SetCallback("OnClick", function() GUIContainerTabGroup:SelectTab("Custom Instance Abbreviations") end)
-        CustomInstanceNamesAbbreviationsButton:SetCallback("OnEnter", function()
-            GameTooltip:SetOwner(CustomInstanceNamesAbbreviationsButton.frame, "ANCHOR_NONE")
-            GameTooltip:SetPoint("TOPRIGHT", CustomInstanceNamesAbbreviationsButton.frame, "BOTTOMRIGHT", 0, -1)
-            GameTooltip:SetText("Add Custom Abbreviations For Instance Names.")
-            GameTooltip:Show()
-        end)
-        CustomInstanceNamesAbbreviationsButton:SetCallback("OnLeave", function() GameTooltip:Hide() end)
-        CustomInstanceNamesAbbreviationsButton:SetRelativeWidth(0.33)
-
         local TooltipDisplayPlayerKeystoneCheckbox = MSGUI:Create("CheckBox")
         TooltipDisplayPlayerKeystoneCheckbox:SetLabel("Display Player Keystone")
         TooltipDisplayPlayerKeystoneCheckbox:SetValue(MS.DB.global.DisplayPartyKeystones)
@@ -1021,7 +1005,6 @@ function MS:CreateGUI()
                 TooltipDisplayRaidSlotsCheckbox:SetDisabled(true)
                 TooltipDisplayMythicPlusSlotsCheckbox:SetDisabled(true)
                 TooltipDisplayDelveSlotsCheckbox:SetDisabled(true)
-                CustomInstanceNamesAbbreviationsButton:SetDisabled(true)
             else
                 TooltipAnchorFromPosition:SetDisabled(false)
                 TooltipAnchorToPosition:SetDisabled(false)
@@ -1039,7 +1022,6 @@ function MS:CreateGUI()
                 TooltipDisplayRaidSlotsCheckbox:SetDisabled(false)
                 TooltipDisplayMythicPlusSlotsCheckbox:SetDisabled(false)
                 TooltipDisplayDelveSlotsCheckbox:SetDisabled(false)
-                CustomInstanceNamesAbbreviationsButton:SetDisabled(false)
             end
         end)
 
@@ -1049,7 +1031,6 @@ function MS:CreateGUI()
         TimeTooltipOptionsContainer:AddChild(TooltipDisplayTimeCheckbox)
         SystemStatsTooltipOptionsContainer:AddChild(TooltipDisplayLockoutCheckbox)
         SystemStatsTooltipOptionsContainer:AddChild(TooltipDisplayFriendsListCheckbox)
-        SystemStatsTooltipOptionsContainer:AddChild(CustomInstanceNamesAbbreviationsButton)
         SystemStatsTooltipOptionsContainer:AddChild(MythicPlusOptionsContainer)
         SystemStatsTooltipOptionsContainer:AddChild(GreatVaultOptionsContainer)
         GreatVaultOptionsContainer:AddChild(TooltipDisplayVaultOptionsCheckbox)
@@ -1067,87 +1048,6 @@ function MS:CreateGUI()
         PositionOptionsContainer:AddChild(TooltipXOffsetSlider)
         PositionOptionsContainer:AddChild(TooltipYOffsetSlider)
 
-    end
-
-    local function DrawCustomAbbreviationsContainer(MSGUI_Container)
-        MSGUI_Container:ReleaseChildren()
-
-        local CustomAbbreviationsListScrollFrame = MSGUI:Create("ScrollFrame")
-        CustomAbbreviationsListScrollFrame:SetLayout("Flow")
-        CustomAbbreviationsListScrollFrame:SetFullWidth(true)
-        CustomAbbreviationsListScrollFrame:SetHeight(GUI_H * 0.75)
-    
-        local CustomAbbreviationsContainer = MSGUI:Create("InlineGroup")
-        CustomAbbreviationsContainer:SetLayout("Flow")
-        CustomAbbreviationsContainer:SetFullWidth(true)
-
-        CustomAbbreviationsListScrollFrame:AddChild(CustomAbbreviationsContainer)
-        MSGUI_Container.CustomAbbreviationsListScrollFrame = CustomAbbreviationsListScrollFrame
-    
-        for Original, Custom in pairs(MS.DB.global.CustomAbbreviations) do
-            CreateNewEditBoxes(CustomAbbreviationsContainer, Original, Custom)
-        end
-    
-        local AddNewEditBoxesButton = MSGUI:Create("Button")
-        AddNewEditBoxesButton:SetText("Add New")
-        AddNewEditBoxesButton:SetCallback("OnClick", function()
-            CreateNewEditBoxes(CustomAbbreviationsContainer, "", "")
-            MSGUI_Container:DoLayout()
-        end)
-        AddNewEditBoxesButton:SetFullWidth(true)
-    
-        MSGUI_Container:AddChild(CustomAbbreviationsListScrollFrame)
-        MSGUI_Container:AddChild(AddNewEditBoxesButton)
-    end
-    
-    function CreateNewEditBoxes(ParentContainer, OriginalInstanceName, CustomAbbreviation)
-        local OriginalEditBox = MSGUI:Create("EditBox")
-        OriginalEditBox:SetLabel("Original")
-        OriginalEditBox:SetText(OriginalInstanceName)
-        OriginalEditBox:SetRelativeWidth(0.4)
-    
-        local CustomEditBox = MSGUI:Create("EditBox")
-        CustomEditBox:SetLabel("Custom")
-        CustomEditBox:SetText(CustomAbbreviation)
-        CustomEditBox:SetRelativeWidth(0.4)
-            
-        ParentContainer:AddChild(OriginalEditBox)
-        ParentContainer:AddChild(CustomEditBox)
-    
-        local AddAbbreviationButton = MSGUI:Create("Button")
-        if OriginalInstanceName ~= "" then
-            AddAbbreviationButton:SetText("Update")
-            AddAbbreviationButton:SetRelativeWidth(0.1)
-        else
-            AddAbbreviationButton:SetText("Save")
-            AddAbbreviationButton:SetRelativeWidth(0.1)
-        end
-        AddAbbreviationButton:SetCallback("OnClick", function()
-            MS.DB.global.CustomAbbreviations[OriginalEditBox:GetText()] = CustomEditBox:GetText()
-            ParentContainer:ReleaseChildren()
-            for Original, Custom in pairs(MS.DB.global.CustomAbbreviations) do
-                CreateNewEditBoxes(ParentContainer, Original, Custom)
-            end
-            ParentContainer:DoLayout()
-        end)
-        ParentContainer:AddChild(AddAbbreviationButton)
-
-        local RemoveAbbreviationButton = MSGUI:Create("Button")
-        if OriginalInstanceName == "" then
-            RemoveAbbreviationButton:SetText("Cancel")
-        else
-            RemoveAbbreviationButton:SetText("Remove")
-        end
-        RemoveAbbreviationButton:SetCallback("OnClick", function()
-            MS.DB.global.CustomAbbreviations[OriginalEditBox:GetText()] = nil
-            ParentContainer:ReleaseChildren()
-            for Original, Custom in pairs(MS.DB.global.CustomAbbreviations) do
-                CreateNewEditBoxes(ParentContainer, Original, Custom)
-            end
-            ParentContainer:DoLayout()
-        end)
-        RemoveAbbreviationButton:SetRelativeWidth(0.1)
-        ParentContainer:AddChild(RemoveAbbreviationButton)
     end
 
     local function DrawLayoutContainer(MSGUI_Container)
@@ -1281,9 +1181,6 @@ function MS:CreateGUI()
         elseif Group == "Tooltip" then
             DrawTooltipContainer(MSGUI_Container)
             MS.ShowDiffID = false
-        elseif Group == "Custom Instance Abbreviations" then
-            DrawCustomAbbreviationsContainer(MSGUI_Container)
-            MS.ShowDiffID = false
         elseif Group == "Layout Manager" then
             DrawLayoutContainer(MSGUI_Container)
             MS.ShowDiffID = false
@@ -1304,7 +1201,6 @@ function MS:CreateGUI()
         { text = "Coordinates",                         value = "Coordinates" },
         { text = "Instance Difficulty",                 value = "Instance Difficulty" },
         { text = "Tooltip",                             value = "Tooltip" },
-        { text = "Custom Instance Abbreviations",       value = "Custom Instance Abbreviations" },
         { text = "Layout Manager",                      value = "Layout Manager" },
         { text = "Import/Export",                       value = "Import/Export" }
     })
