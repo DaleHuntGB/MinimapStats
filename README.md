@@ -1,4 +1,4 @@
-# MinimapStats V5.0
+# MinimapStats
 **Clean**. **Functional**. **Minimal**.
 
 <hr>
