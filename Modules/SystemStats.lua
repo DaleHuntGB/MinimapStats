@@ -80,7 +80,6 @@ function MS:SetupSystemStatsScripts()
                 print(MS.ADDON_NAME .. ": Garbage Collected!")
             elseif mButton == "RightButton" then
                 MS:CreateGUI()
-                MS.isGUIOpen = true
             elseif mButton == "MiddleButton" then
                 ReloadUI()
             end

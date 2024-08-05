@@ -234,7 +234,6 @@ function MS:SetupSlashCommands()
     SLASH_MINIMAPSTATS2 = "/ms"
     SlashCmdList["MINIMAPSTATS"] = function()
         MS:CreateGUI()
-        MS.isGUIOpen = true
     end
 end
 
