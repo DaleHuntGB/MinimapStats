@@ -5,5 +5,6 @@
 ## Notes: Adds highly customizable and performance friendly, toggleable UI elements to the minimap.|nElements include:|n• Time.|n• System Stats (FPS / Latency).|n• Location.|n• Coordinates.|n• Instance Difficulty.
 ## SavedVariables: MSDB
 ## IconTexture: Interface\AddOns\MinimapStats\Media\Logo
+## OptionalDeps: LibOpenRaid-1.0, LibSharedMedia-3.0, LibDeflate
 
 Init.xml

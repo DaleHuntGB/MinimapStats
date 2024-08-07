@@ -124,7 +124,7 @@ function MS:FetchKeystones()
         GameTooltip:AddLine("Your |cFFFFFFFFKeystone|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
         if KeystoneInfo then
             local KeystoneLevel = KeystoneInfo.level
-            local Keystone, _, _, KeystoneIcon = C_ChallengeMode.GetMapUIInfo(KeystoneInfo.mythicPlusMapID)
+            local Keystone, _, _, KeystoneIcon = C_ChallengeMode.GetMapUIInfo(KeystoneInfo.challengeMapID)
             if Keystone and KeystoneIcon then
                 local TexturedIcon = "|T" .. KeystoneIcon .. ":" .. TextureSize .. ":" .. TextureSize .. ":0|t"
                 GameTooltip:AddLine(TexturedIcon .. " +" .. KeystoneLevel .. " " .. Keystone, 1, 1, 1, 1)
@@ -158,7 +158,7 @@ function MS:FetchKeystones()
                 local KeystoneInfo = MS.OR.GetKeystoneInfo(UnitID)
 
                 if KeystoneInfo then
-                    local Keystone, _, _, KeystoneIcon = C_ChallengeMode.GetMapUIInfo(KeystoneInfo.mythicPlusMapID)
+                    local Keystone, _, _, KeystoneIcon = C_ChallengeMode.GetMapUIInfo(KeystoneInfo.challengeMapID)
                     local KeystoneLevel = KeystoneInfo.level
                     if KeystoneIcon then
                         local TexturedIcon = "|T" .. KeystoneIcon .. ":" .. TextureSize .. ":" .. TextureSize .. ":0|t"

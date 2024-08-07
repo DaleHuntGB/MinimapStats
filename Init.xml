@@ -7,6 +7,7 @@
 	<Include file="Libs/Ace3/AceDBOptions-3.0/AceDBOptions-3.0.xml"/>
 	<Include file="Libs/Ace3/AceGUI-3.0/AceGUI-3.0.xml"/>
 	<Include file="Libs/Ace3/AceSerializer-3.0/AceSerializer-3.0.xml"/>
+	<Include file="Libs/LibOpenRaid/lib.xml"/>
 	<!-- Core -->
 	<Script file="Core/Main.lua"/>
 	<Script file="Core/Utility.lua"/>
