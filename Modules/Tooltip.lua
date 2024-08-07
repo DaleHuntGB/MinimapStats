@@ -160,7 +160,7 @@ function MS:FetchKeystones()
                 if KeystoneInfo then
                     local Keystone, _, _, KeystoneIcon = C_ChallengeMode.GetMapUIInfo(KeystoneInfo.challengeMapID)
                     local KeystoneLevel = KeystoneInfo.level
-                    if KeystoneIcon then
+                    if Keystone and KeystoneIcon then
                         local TexturedIcon = "|T" .. KeystoneIcon .. ":" .. TextureSize .. ":" .. TextureSize .. ":0|t"
                         GameTooltip:AddLine(FormattedUnitName .. ": " .. WHITE_COLOUR_OVERRIDE .. TexturedIcon .. " +" .. KeystoneLevel .. " " .. Keystone .. "|r", UnitClassColour.r, UnitClassColour.g, UnitClassColour.b)
                     elseif Keystone then
