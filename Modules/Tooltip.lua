@@ -182,17 +182,18 @@ end
 function MS:FetchAffixes()
     if not MS.DB.global.DisplayAffixes then return end
     local TextureSize = MS.DB.global.TooltipTextureIconSize
+    local AffixIDs = C_MythicPlus.GetCurrentAffixes()
+    if not AffixIDs or not AffixIDs[1] then return end
     GameTooltip:AddLine("Current |cFFFFFFFFAffixes|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
     for i = 1, MS.NUM_OF_AFFIXES do
-        local AffixID = C_MythicPlus.GetCurrentAffixes()[i].id
-        local AffixName, AffixDesc, AffixIconID = C_ChallengeMode.GetAffixInfo(AffixID)
+        local AffixName, AffixDesc, AffixIconID = C_ChallengeMode.GetAffixInfo(AffixIDs[i].id)
         local AffixIcon = "|T" .. AffixIconID .. ":" .. TextureSize .. ":" .. TextureSize .. ":0|t "
         GameTooltip:AddLine(AffixIcon .. AffixName, 1, 1, 1)
         if MS.DB.global.DisplayAffixDesc then
             GameTooltip:AddLine(AffixDesc, 1, 1, 1)
         end
     end
-    if MS.DB.global.DisplayFriendsList then
+    if MS.DB.global.DisplayFriendsList and (AffixIDs or AffixIDs[1]) then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
 end
