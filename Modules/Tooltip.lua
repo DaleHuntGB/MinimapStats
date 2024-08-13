@@ -138,7 +138,7 @@ function MS:FetchKeystones()
             end
         end
         if (IsInGroup() and MS.DB.global.DisplayPartyKeystones) 
-        or (MS.DB.global.DisplayAffixes and MS.AffixIDs[1] ~= nil) 
+        or (MS.DB.global.DisplayAffixes) 
         or MS.DB.global.DisplayFriendsList 
         then
             GameTooltip:AddLine(" ", 1, 1, 1, 1)
@@ -178,7 +178,7 @@ function MS:FetchKeystones()
                     GameTooltip:AddLine(FormattedUnitName .. ": " .. WHITE_COLOUR_OVERRIDE .. NoKeyTextureIcon .. " No Keystone", UnitClassColour.r, UnitClassColour.g, UnitClassColour.b)
                 end
             end
-            if (MS.DB.global.DisplayAffixes and MS.AffixIDs[1] ~= nil) 
+            if (MS.DB.global.DisplayAffixes) 
             or MS.DB.global.DisplayFriendsList 
             then
                 GameTooltip:AddLine(" ", 1, 1, 1, 1)
@@ -190,9 +190,12 @@ end
 function MS:FetchAffixes()
     if not MS.DB.global.DisplayAffixes then return end
     local TextureSize = MS.DB.global.TooltipTextureIconSize
-    if (MS.AffixIDs[1] == nil) then return end
     GameTooltip:AddLine("Current |cFFFFFFFFAffixes|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
+    if (MS.AffixIDs[1] == nil) then
+        GameTooltip:AddLine("Affix Data: |cFFFFFFFFNone Found.|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
+    end
     for i = 1, MS.NUM_OF_AFFIXES do
+        if MS.AffixIDs[i] == nil then break end
         local AffixName, AffixDesc, AffixIconID = C_ChallengeMode.GetAffixInfo(MS.AffixIDs[i].id)
         local AffixIcon = "|T" .. AffixIconID .. ":" .. TextureSize .. ":" .. TextureSize .. ":0|t "
         GameTooltip:AddLine(AffixIcon .. AffixName, 1, 1, 1)
@@ -267,7 +270,7 @@ function MS:CreateSystemStatsTooltip()
     if MS.DB.global.DisplayVaultOptions
     or MS.DB.global.DisplayPlayerKeystone
     or (IsInGroup() and not IsInRaid() and MS.DB.global.DisplayPartyKeystones)
-    or (MS.DB.global.DisplayAffixes and (MS.AffixIDs and MS.AffixIDs[1]))
+    or (MS.DB.global.DisplayAffixes)
     or (MS.DB.global.DisplayFriendsList)
     then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)

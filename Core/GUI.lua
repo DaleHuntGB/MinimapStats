@@ -922,7 +922,6 @@ function MS:CreateGUI()
         TooltipDisplayAffixesDescCheckbox:SetDisabled(not MS.DB.global.ShowTooltip or not MS.DB.global.DisplayAffixes or not MS.DB.global.ShowSystemsStatsFrame)
         TooltipDisplayAffixesDescCheckbox:SetCallback("OnValueChanged", function(_, _, Value) MS.DB.global.DisplayAffixDesc = Value end)
         TooltipDisplayAffixesDescCheckbox:SetRelativeWidth(0.25)
-
         
         local TooltipDisplayAffixesCheckbox = MSGUI:Create("CheckBox")
         TooltipDisplayAffixesCheckbox:SetLabel("Display Affixes")
@@ -971,7 +970,6 @@ function MS:CreateGUI()
             TooltipDisplayRaidSlotsCheckbox:SetDisabled(not MS.DB.global.DisplayVaultOptions)
             TooltipDisplayMythicPlusSlotsCheckbox:SetDisabled(not MS.DB.global.DisplayVaultOptions)
             TooltipDisplayDelveSlotsCheckbox:SetDisabled(not MS.DB.global.DisplayVaultOptions or MS.BUILDVERSION <= 110000)
-
         end)
         TooltipDisplayVaultOptionsCheckbox:SetRelativeWidth(0.25)
 
