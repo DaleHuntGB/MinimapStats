@@ -40,7 +40,10 @@ function MS:FetchPlayerLockouts()
             GameTooltip:AddDoubleLine(RaidDisplayString, RaidReset, 1, 1, 1, 1, 1, 1)
         end
     end
-    if (#DungeonLockouts > 0 or #RaidLockouts > 0) and (MS.DB.global.DisplayVaultOptions or MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
+    -- if (#DungeonLockouts > 0 or #RaidLockouts > 0) and (MS.DB.global.DisplayVaultOptions or MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
+    --     GameTooltip:AddLine(" ", 1, 1, 1, 1)
+    -- end
+    if (#DungeonLockouts > 0 or #RaidLockouts > 0) and (MS.DB.global.DisplayTime) then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
 end
@@ -257,7 +260,6 @@ function MS:CreateSystemStatsTooltip()
     if not MS.DB.global.ShowTooltip or InCombatLockdown() then return end
     GameTooltip:SetOwner(Minimap, "ANCHOR_NONE", 0, 0)
     GameTooltip:SetPoint(MS.DB.global.TooltipAnchorFrom, Minimap, MS.DB.global.TooltipAnchorTo, MS.DB.global.TooltipXOffset, MS.DB.global.TooltipYOffset)
-    MS:FetchPlayerLockouts()
     MS:FetchVaultOptions()
     if MS.OR then MS:FetchKeystones() end
     MS:FetchAffixes()
@@ -281,6 +283,7 @@ function MS:CreateTimeTooltip()
     if (not MS.DB.global.ShowTooltip or not MS.DB.global.DisplayTime) or InCombatLockdown() then return end
     GameTooltip:SetOwner(Minimap, "ANCHOR_NONE", 0, 0)
     GameTooltip:SetPoint(MS.DB.global.TooltipAnchorFrom, Minimap, MS.DB.global.TooltipAnchorTo, MS.DB.global.TooltipXOffset, MS.DB.global.TooltipYOffset)
+    MS:FetchPlayerLockouts()
     MS:FetchTimeInformation()
     GameTooltip:AddLine(" ", 1, 1, 1, 1)
     GameTooltip:AddLine("Left-Click: " .. MS.AccentColour .. "Toggle Calendar|r")
