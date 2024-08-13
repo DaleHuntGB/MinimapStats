@@ -334,13 +334,11 @@ function MS:ResetTooltipOptions()
 end
 
 function MS:FetchMythicPlusInfo()
-    C_Timer.After(1, function()
-        C_AddOns.LoadAddOn("Blizzard_ChallengesUI")
-        C_MythicPlus.RequestMapInfo()
-        C_MythicPlus.RequestCurrentAffixes()
-        MS.AffixIDs = C_MythicPlus.GetCurrentAffixes()
-        C_MythicPlus.RequestRewards()
-    end)
+    C_AddOns.LoadAddOn("Blizzard_ChallengesUI")
+    C_MythicPlus.RequestMapInfo()
+    C_MythicPlus.RequestCurrentAffixes()
+    MS.AffixIDs = C_MythicPlus.GetCurrentAffixes()
+    C_MythicPlus.RequestRewards()
 end
 
 MS.WoWProjects = {
