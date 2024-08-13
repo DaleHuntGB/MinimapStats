@@ -147,7 +147,8 @@ function MS:FetchKeystones()
     if MS.DB.global.DisplayPartyKeystones then
         local PartyMembers = {}
         local WHITE_COLOUR_OVERRIDE = "|cFFFFFFFF"
-        if IsInGroup() and not IsInRaid() then
+        local IsInDelve = select(4, GetInstanceInfo())
+        if IsInGroup() and not IsInRaid() and not IsInDelve then
             GameTooltip:AddLine("Party |cFFFFFFFFKeystones|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
             for i = 1, GetNumGroupMembers() - 1 do
                 local UnitID = "party" .. i
