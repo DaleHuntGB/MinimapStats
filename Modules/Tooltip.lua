@@ -134,7 +134,10 @@ function MS:FetchKeystones()
                 GameTooltip:AddLine(NoKeyTextureIcon .. " No Keystone", 1, 1, 1, 1)
             end
         end
-        if (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList then
+        if (IsInGroup() and MS.DB.global.DisplayPartyKeystones) 
+        or (MS.DB.global.DisplayAffixes and MS.AffixIDs[1] ~= nil) 
+        or MS.DB.global.DisplayFriendsList 
+        then
             GameTooltip:AddLine(" ", 1, 1, 1, 1)
         end
     end
@@ -172,7 +175,9 @@ function MS:FetchKeystones()
                     GameTooltip:AddLine(FormattedUnitName .. ": " .. WHITE_COLOUR_OVERRIDE .. NoKeyTextureIcon .. " No Keystone", UnitClassColour.r, UnitClassColour.g, UnitClassColour.b)
                 end
             end
-            if MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList then
+            if (MS.DB.global.DisplayAffixes and MS.AffixIDs[1] ~= nil) 
+            or MS.DB.global.DisplayFriendsList 
+            then
                 GameTooltip:AddLine(" ", 1, 1, 1, 1)
             end
         end
@@ -182,18 +187,17 @@ end
 function MS:FetchAffixes()
     if not MS.DB.global.DisplayAffixes then return end
     local TextureSize = MS.DB.global.TooltipTextureIconSize
-    local AffixIDs = C_MythicPlus.GetCurrentAffixes()
-    if not AffixIDs or not AffixIDs[1] then return end
+    if (MS.AffixIDs[1] == nil) then return end
     GameTooltip:AddLine("Current |cFFFFFFFFAffixes|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
     for i = 1, MS.NUM_OF_AFFIXES do
-        local AffixName, AffixDesc, AffixIconID = C_ChallengeMode.GetAffixInfo(AffixIDs[i].id)
+        local AffixName, AffixDesc, AffixIconID = C_ChallengeMode.GetAffixInfo(MS.AffixIDs[i].id)
         local AffixIcon = "|T" .. AffixIconID .. ":" .. TextureSize .. ":" .. TextureSize .. ":0|t "
         GameTooltip:AddLine(AffixIcon .. AffixName, 1, 1, 1)
         if MS.DB.global.DisplayAffixDesc then
             GameTooltip:AddLine(AffixDesc, 1, 1, 1)
         end
     end
-    if MS.DB.global.DisplayFriendsList and (AffixIDs or AffixIDs[1]) then
+    if MS.DB.global.DisplayFriendsList then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
 end
@@ -255,12 +259,15 @@ function MS:CreateSystemStatsTooltip()
     GameTooltip:SetPoint(MS.DB.global.TooltipAnchorFrom, Minimap, MS.DB.global.TooltipAnchorTo, MS.DB.global.TooltipXOffset, MS.DB.global.TooltipYOffset)
     MS:FetchPlayerLockouts()
     MS:FetchVaultOptions()
-    if MS.OR then 
-        MS:FetchKeystones()
-    end
+    if MS.OR then MS:FetchKeystones() end
     MS:FetchAffixes()
     MS:FetchFriendsList()
-    if MS.DB.global.DisplayVaultOptions or MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and not IsInRaid() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or (MS.DB.global.DisplayFriendsList ) then
+    if MS.DB.global.DisplayVaultOptions
+    or MS.DB.global.DisplayPlayerKeystone
+    or (IsInGroup() and not IsInRaid() and MS.DB.global.DisplayPartyKeystones)
+    or (MS.DB.global.DisplayAffixes and (MS.AffixIDs and MS.AffixIDs[1]))
+    or (MS.DB.global.DisplayFriendsList)
+    then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
     GameTooltip:AddLine("Left-Click: " .. MS.AccentColour .. "Collect Garbage|r")
