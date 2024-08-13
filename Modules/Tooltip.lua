@@ -190,6 +190,7 @@ end
 
 function MS:FetchAffixes()
     if not MS.DB.global.DisplayAffixes then return end
+    if MS.AffixIDs == nil then MS:FetchMythicPlusInfo() end
     local TextureSize = MS.DB.global.TooltipTextureIconSize
     GameTooltip:AddLine("Current |cFFFFFFFFAffixes|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
     if (not MS.AffixIDs or MS.AffixIDs[1] == nil) then
