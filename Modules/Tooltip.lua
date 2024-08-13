@@ -192,7 +192,7 @@ function MS:FetchAffixes()
     if not MS.DB.global.DisplayAffixes then return end
     local TextureSize = MS.DB.global.TooltipTextureIconSize
     GameTooltip:AddLine("Current |cFFFFFFFFAffixes|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
-    if (MS.AffixIDs[1] == nil) then
+    if (not MS.AffixIDs or MS.AffixIDs[1] == nil) then
         GameTooltip:AddLine("Affix Data: |cFFFFFFFFNone Found.|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
     end
     for i = 1, MS.NUM_OF_AFFIXES do
