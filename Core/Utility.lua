@@ -371,10 +371,10 @@ function MS:FetchAddOnMemoryUsage()
     local AddOns = {}
     local AddOnsCount = C_AddOns.GetNumAddOns()
     local TotalAddOnMemory = 0
-
+    UpdateAddOnMemoryUsage()
     for i = 1, AddOnsCount do
-        local AddOnMemory = GetAddOnMemoryUsage(i) / 1024
         local AddOnName = C_AddOns.GetAddOnInfo(i)
+        local AddOnMemory = GetAddOnMemoryUsage(i) / 1024
 
         if AddOnMemory > 1 then
             table.insert(AddOns, {AddOnName, AddOnMemory})
