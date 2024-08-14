@@ -75,6 +75,8 @@ function MS:SetupSystemStatsScripts()
             if IsShiftKeyDown() and mButton == "LeftButton" then
                 C_AddOns.LoadAddOn("Blizzard_WeeklyRewards")
                 if WeeklyRewardsFrame:IsShown() then WeeklyRewardsFrame:Hide() else WeeklyRewardsFrame:Show() end
+            elseif IsControlKeyDown() and mButton == "LeftButton" then
+                MS:FetchAddOnMemoryUsage()
             elseif mButton == "LeftButton" then
                 collectgarbage("collect")
                 print(MS.ADDON_NAME .. ": Garbage Collected!")

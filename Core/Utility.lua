@@ -348,3 +348,47 @@ MS.WoWProjects = {
     [11] = "Wrath of the Lich King",
     [14] = "Cataclysm"
 }
+
+local function GetTotalMemoryColor(AddOnTotalMemory)
+    if AddOnTotalMemory > 110 then
+        return "|cFFFF4040"
+    else
+        return "|cFF40FF40"  -- Green for good (<= 110MB)
+    end
+end
+
+local function GetMemoryColor(AddOnMemory)
+    if AddOnMemory >= 30 then
+        return "|cFFFF4040"
+    elseif AddOnMemory >= 10 then
+        return "|cFFFFA500"
+    else
+        return "|cFF40FF40"
+    end
+end
+
+function MS:FetchAddOnMemoryUsage()
+    local AddOns = {}
+    local AddOnsCount = C_AddOns.GetNumAddOns()
+    local TotalAddOnMemory = 0
+
+    for i = 1, AddOnsCount do
+        local AddOnMemory = GetAddOnMemoryUsage(i) / 1024
+        local AddOnName = C_AddOns.GetAddOnInfo(i)
+
+        if AddOnMemory > 1 then
+            table.insert(AddOns, {AddOnName, AddOnMemory})
+            TotalAddOnMemory = TotalAddOnMemory + AddOnMemory
+        end
+    end
+
+    table.sort(AddOns, function(a, b) return a[2] > b[2] end)
+
+    for _, AddOnData in ipairs(AddOns) do
+        local AddOnMemoryColour = GetMemoryColor(AddOnData[2])
+        print(MS.AccentColour .. AddOnData[1] .. "|r: ", string.format("%s%.2f|rMB", AddOnMemoryColour, AddOnData[2]))
+    end
+
+    local TotalAddOnMemoryColour = GetTotalMemoryColor(TotalAddOnMemory)
+    print("|cFFFFCC00Total AddOn Memory Usage|r: ", string.format("%s%.2f|rMB", TotalAddOnMemoryColour, TotalAddOnMemory))
+end

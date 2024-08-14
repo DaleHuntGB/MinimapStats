@@ -40,9 +40,6 @@ function MS:FetchPlayerLockouts()
             GameTooltip:AddDoubleLine(RaidDisplayString, RaidReset, 1, 1, 1, 1, 1, 1)
         end
     end
-    -- if (#DungeonLockouts > 0 or #RaidLockouts > 0) and (MS.DB.global.DisplayVaultOptions or MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
-    --     GameTooltip:AddLine(" ", 1, 1, 1, 1)
-    -- end
     if (#DungeonLockouts > 0 or #RaidLockouts > 0) and (MS.DB.global.DisplayTime) then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
@@ -279,6 +276,7 @@ function MS:CreateSystemStatsTooltip()
     end
     GameTooltip:AddLine("Left-Click: " .. MS.AccentColour .. "Collect Garbage|r")
     GameTooltip:AddLine("Shift + Left-Click: " .. MS.AccentColour .. "Open Great Vault|r")
+    GameTooltip:AddLine("Control + Left-Click: " .. MS.AccentColour .. "AddOn Memory Usage|r")
     GameTooltip:AddLine("Right-Click: " .. MS.AccentColour .. "MinimapStats Config|r")
     GameTooltip:AddLine("Middle-Click: " .. MS.AccentColour .. "Reload UI|r")
     GameTooltip:Show()
