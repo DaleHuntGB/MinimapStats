@@ -61,6 +61,7 @@ MS.DefaultSettings = {
         -- Location Frame
         ShowLocationFrame = true,
         LocationColourFormat = "Primary", -- "Primary", "Reaction", "Accent" or "Custom"
+        LocationOnMouseover = false,
         LocationColourR = 1.0,
         LocationColourG = 1.0,
         LocationColourB = 1.0,
@@ -284,6 +285,7 @@ end
 
 function MS:ResetLocationOptions()
     MS.DB.global.ShowLocationFrame = true
+    MS.DB.global.LocationOnMouseover = false
     MS.DB.global.LocationColourFormat = "Primary"
     MS.DB.global.LocationColourR = 1.0
     MS.DB.global.LocationColourG = 1.0
