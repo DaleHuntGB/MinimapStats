@@ -554,7 +554,7 @@ function MS:CreateGUI()
         LocationColourFormatDropdown:SetRelativeWidth(0.25)
 
         local LocationOnMouseoverCheckBox = MSGUI:Create("CheckBox")
-        LocationOnMouseoverCheckBox:SetLabel("Show On Mouseover")
+        LocationOnMouseoverCheckBox:SetLabel("Minimap Mouseover")
         LocationOnMouseoverCheckBox:SetValue(MS.DB.global.LocationOnMouseover)
         LocationOnMouseoverCheckBox:SetDisabled(not MS.DB.global.ShowLocationFrame)
         LocationOnMouseoverCheckBox:SetCallback("OnValueChanged",
