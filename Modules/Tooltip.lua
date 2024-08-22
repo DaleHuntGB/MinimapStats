@@ -109,7 +109,7 @@ function MS:FetchVaultOptions()
         end
     end
 
-    if (#RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 or #DelveRunsCompleted > 0) and (MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or MS.DB.global.DisplayAffixes or MS.DB.global.DisplayFriendsList) then
+    if (#RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 or #DelveRunsCompleted > 0) and (MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or --[[MS.DB.global.DisplayAffixes or ]]MS.DB.global.DisplayFriendsList) then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
 end
@@ -135,8 +135,8 @@ function MS:FetchKeystones()
             end
         end
         if (IsInGroup() and MS.DB.global.DisplayPartyKeystones) 
-        or (MS.DB.global.DisplayAffixes) 
-        or MS.DB.global.DisplayFriendsList 
+        or --[[(MS.DB.global.DisplayAffixes)
+        or]] MS.DB.global.DisplayFriendsList
         then
             GameTooltip:AddLine(" ", 1, 1, 1, 1)
         end
@@ -176,8 +176,8 @@ function MS:FetchKeystones()
                     GameTooltip:AddLine(FormattedUnitName .. ": " .. WHITE_COLOUR_OVERRIDE .. NoKeyTextureIcon .. " No Keystone", UnitClassColour.r, UnitClassColour.g, UnitClassColour.b)
                 end
             end
-            if (MS.DB.global.DisplayAffixes) 
-            or MS.DB.global.DisplayFriendsList 
+            if --[[(MS.DB.global.DisplayAffixes)
+            or ]]MS.DB.global.DisplayFriendsList
             then
                 GameTooltip:AddLine(" ", 1, 1, 1, 1)
             end
@@ -185,27 +185,27 @@ function MS:FetchKeystones()
     end
 end
 
-function MS:FetchAffixes()
-    if not MS.DB.global.DisplayAffixes then return end
-    if MS.AffixIDs == nil then MS:FetchMythicPlusInfo() end
-    local TextureSize = MS.DB.global.TooltipTextureIconSize
-    GameTooltip:AddLine("Current |cFFFFFFFFAffixes|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
-    if (not MS.AffixIDs or MS.AffixIDs[1] == nil) then
-        GameTooltip:AddLine("Affix Data: |cFFFFFFFFNone Found.|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
-    end
-    for i = 1, MS.NUM_OF_AFFIXES do
-        if MS.AffixIDs[i] == nil then break end
-        local AffixName, AffixDesc, AffixIconID = C_ChallengeMode.GetAffixInfo(MS.AffixIDs[i].id)
-        local AffixIcon = "|T" .. AffixIconID .. ":" .. TextureSize .. ":" .. TextureSize .. ":0|t "
-        GameTooltip:AddLine(AffixIcon .. AffixName, 1, 1, 1)
-        if MS.DB.global.DisplayAffixDesc then
-            GameTooltip:AddLine(AffixDesc, 1, 1, 1)
-        end
-    end
-    if MS.DB.global.DisplayFriendsList then
-        GameTooltip:AddLine(" ", 1, 1, 1, 1)
-    end
-end
+-- function MS:FetchAffixes()
+--     if not MS.DB.global.DisplayAffixes then return end
+--     if MS.AffixIDs == nil then MS:FetchMythicPlusInfo() end
+--     local TextureSize = MS.DB.global.TooltipTextureIconSize
+--     GameTooltip:AddLine("Current |cFFFFFFFFAffixes|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
+--     if (not MS.AffixIDs or MS.AffixIDs[1] == nil) then
+--         GameTooltip:AddLine("Affix Data: |cFFFFFFFFNone Found.|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
+--     end
+--     for i = 1, MS.NUM_OF_AFFIXES do
+--         if MS.AffixIDs[i] == nil then break end
+--         local AffixName, AffixDesc, AffixIconID = C_ChallengeMode.GetAffixInfo(MS.AffixIDs[i].id)
+--         local AffixIcon = "|T" .. AffixIconID .. ":" .. TextureSize .. ":" .. TextureSize .. ":0|t "
+--         GameTooltip:AddLine(AffixIcon .. AffixName, 1, 1, 1)
+--         if MS.DB.global.DisplayAffixDesc then
+--             GameTooltip:AddLine(AffixDesc, 1, 1, 1)
+--         end
+--     end
+--     if MS.DB.global.DisplayFriendsList then
+--         GameTooltip:AddLine(" ", 1, 1, 1, 1)
+--     end
+-- end
 
 function MS:FetchFriendsList()
     if not MS.DB.global.DisplayFriendsList then return end
@@ -264,13 +264,13 @@ function MS:CreateSystemStatsTooltip()
     GameTooltip:SetPoint(MS.DB.global.TooltipAnchorFrom, Minimap, MS.DB.global.TooltipAnchorTo, MS.DB.global.TooltipXOffset, MS.DB.global.TooltipYOffset)
     MS:FetchVaultOptions()
     if MS.OR then MS:FetchKeystones() end
-    MS:FetchAffixes()
+    --MS:FetchAffixes()
     MS:FetchFriendsList()
     if MS.DB.global.DisplayVaultOptions
     or MS.DB.global.DisplayPlayerKeystone
     or (IsInGroup() and not IsInRaid() and MS.DB.global.DisplayPartyKeystones)
-    or (MS.DB.global.DisplayAffixes)
-    or (MS.DB.global.DisplayFriendsList)
+    or --[[(MS.DB.global.DisplayAffixes)
+    or]] (MS.DB.global.DisplayFriendsList)
     then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
