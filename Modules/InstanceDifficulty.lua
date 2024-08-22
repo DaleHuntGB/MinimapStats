@@ -59,7 +59,7 @@ end
 
 function MS:FetchDelveTierDifficulty(WidgetID)
     -- TODO: Check if WidgetID is consistent
-    if not WidgetID then return end
+    if not WidgetID or WidgetID == nil then return end
     local DelveTier = C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(WidgetID).tierText
 
     return string.format("%s", DelveTier)
