@@ -324,8 +324,8 @@ function MS:ResetTooltipOptions()
     MS.DB.global.DisplayLockouts = true
     MS.DB.global.DisplayPlayerKeystone = true
     MS.DB.global.DisplayPartyKeystones = true
-    MS.DB.global.DisplayAffixes = true
-    MS.DB.global.DisplayAffixDesc = false
+    --[[MS.DB.global.DisplayAffixes = true
+    MS.DB.global.DisplayAffixDesc = false]]
     MS.DB.global.DisplayFriendsList = true
     MS.DB.global.DisplayVaultOptions = true
     MS.DB.global.TooltipTextureIconSize = 16
