@@ -102,7 +102,8 @@ function MS:FetchInstanceDifficulty()
     elseif DiffID == 12 or DiffID == 38 then 
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "S" .. "|r"
     elseif DiffID == 208 then
-        InstanceDifficulty = "T" .. MS.AccentColour .. MS:FetchDelveTierDifficulty(6183) .. "|r"
+        -- InstanceDifficulty = "T" .. MS.AccentColour .. MS:FetchDelveTierDifficulty(6183) .. "|r"
+        InstanceDifficulty = "D"
     end
 
     return string.format("%s", InstanceDifficulty)

@@ -70,19 +70,9 @@ function MS:SetupLocationScripts()
             self:SetHeight(MS.LocationFrameText:GetStringHeight() or 12)
             self:SetWidth(MS.LocationFrameText:GetStringWidth() or 220)
         end)
-        if MS.DB.global.LocationOnMouseover then
-            Minimap:SetScript("OnEnter", function() MS.LocationFrame:Show() end)
-            Minimap:SetScript("OnLeave", function() MS.LocationFrame:Hide() end)
-            MS.LocationFrame:Hide()
-        else
-            Minimap:SetScript("OnEnter", nil)
-            Minimap:SetScript("OnLeave", nil)
-            MS.LocationFrame:Show()
-        end
+        MS.LocationFrame:Show()
     else
         MS.LocationFrame:Hide()
         MS.LocationFrame:SetScript("OnEvent", nil)
-        Minimap:SetScript("OnEnter", nil)
-        Minimap:SetScript("OnLeave", nil)
     end
 end
