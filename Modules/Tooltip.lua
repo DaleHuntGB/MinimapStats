@@ -117,6 +117,7 @@ end
 function MS:FetchKeystones()
     local TextureSize = MS.DB.global.TooltipTextureIconSize
     local NoKeyTextureIcon = "|TInterface/Icons/inv_relics_hourglass.blp:" .. TextureSize .. ":" .. TextureSize .. ":0|t"
+    local IsInDelve = select(4, GetInstanceInfo()) == "Delve"
     if not MS.OR then return end
     if not MS.DB.global.DisplayPlayerKeystone and not MS.DB.global.DisplayPartyKeystones then return end
     if MS.DB.global.DisplayPlayerKeystone then
@@ -134,7 +135,7 @@ function MS:FetchKeystones()
                 GameTooltip:AddLine(NoKeyTextureIcon .. " No Keystone", 1, 1, 1, 1)
             end
         end
-        if (IsInGroup() and MS.DB.global.DisplayPartyKeystones) 
+        if (IsInGroup() and not IsInRaid() and not IsInDelve and MS.DB.global.DisplayPartyKeystones)
         or --[[(MS.DB.global.DisplayAffixes)
         or]] MS.DB.global.DisplayFriendsList
         then
@@ -144,7 +145,6 @@ function MS:FetchKeystones()
     if MS.DB.global.DisplayPartyKeystones then
         local PartyMembers = {}
         local WHITE_COLOUR_OVERRIDE = "|cFFFFFFFF"
-        local IsInDelve = select(4, GetInstanceInfo()) == "Delve"
         if IsInGroup() and not IsInRaid() and not IsInDelve then
             GameTooltip:AddLine("Party |cFFFFFFFFKeystones|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
             for i = 1, GetNumGroupMembers() - 1 do
