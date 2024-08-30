@@ -233,7 +233,7 @@ function MS:FetchFriendsList()
                 local CharacterClass = FriendInfo.className
                 local WoWProject = FriendInfo.wowProjectID
                 local CharacterLevel = FriendInfo.characterLevel
-                local ClassColour = MS.CharacterClassColours[CharacterClass]
+                local ClassColour = MS.CharacterClassColours[MS.ClassNameMap[FriendInfo.className]] or "|cFFFFFFFF"
                 local FriendStatus;
 
                 if InGame and CharacterClass ~= nil then
