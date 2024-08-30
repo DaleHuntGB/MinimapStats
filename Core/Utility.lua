@@ -155,6 +155,84 @@ MS.CharacterClassColours = {
     ["Warrior"] = "|cFFC69B6D",
 }
 
+MS.ClassNameMap = {
+    -- English
+    ["Warrior"] = "Warrior",
+    ["Paladin"] = "Paladin",
+    ["Hunter"] = "Hunter",
+    ["Rogue"] = "Rogue",
+    ["Priest"] = "Priest",
+    ["Death Knight"] = "Death Knight",
+    ["Shaman"] = "Shaman",
+    ["Mage"] = "Mage",
+    ["Warlock"] = "Warlock",
+    ["Monk"] = "Monk",
+    ["Druid"] = "Druid",
+    ["Demon Hunter"] = "Demon Hunter",
+    ["Evoker"] = "Evoker",
+
+    -- German (Deutsch)
+    ["Krieger"] = "Warrior",
+    ["Paladin"] = "Paladin",
+    ["Jäger"] = "Hunter",
+    ["Schurke"] = "Rogue",
+    ["Priester"] = "Priest",
+    ["Todesritter"] = "Death Knight",
+    ["Schamane"] = "Shaman",
+    ["Magier"] = "Mage",
+    ["Hexenmeister"] = "Warlock",
+    ["Mönch"] = "Monk",
+    ["Druide"] = "Druid",
+    ["Dämonenjäger"] = "Demon Hunter",
+    ["Rufer"] = "Evoker",
+
+    -- French (Français)
+    ["Guerrier"] = "Warrior",
+    ["Paladin"] = "Paladin",
+    ["Chasseur"] = "Hunter",
+    ["Voleur"] = "Rogue",
+    ["Prêtre"] = "Priest",
+    ["Chevalier de la mort"] = "Death Knight",
+    ["Chaman"] = "Shaman",
+    ["Mage"] = "Mage",
+    ["Démoniste"] = "Warlock",
+    ["Moine"] = "Monk",
+    ["Druide"] = "Druid",
+    ["Chasseur de démons"] = "Demon Hunter",
+    ["Évocateur"] = "Evoker",
+
+    -- Spanish (Español)
+    ["Guerrero"] = "Warrior",
+    ["Paladín"] = "Paladin",
+    ["Cazador"] = "Hunter",
+    ["Pícaro"] = "Rogue",
+    ["Sacerdote"] = "Priest",
+    ["Caballero de la Muerte"] = "Death Knight",
+    ["Chamán"] = "Shaman",
+    ["Mago"] = "Mage",
+    ["Brujo"] = "Warlock",
+    ["Monje"] = "Monk",
+    ["Druida"] = "Druid",
+    ["Cazador de demonios"] = "Demon Hunter",
+    ["Evocador"] = "Evoker",
+
+    -- Russian (Русский)
+    ["Воин"] = "Warrior",
+    ["Паладин"] = "Paladin",
+    ["Охотник"] = "Hunter",
+    ["Разбойник"] = "Rogue",
+    ["Жрец"] = "Priest",
+    ["Рыцарь смерти"] = "Death Knight",
+    ["Шаман"] = "Shaman",
+    ["Маг"] = "Mage",
+    ["Чернокнижник"] = "Warlock",
+    ["Монах"] = "Monk",
+    ["Друид"] = "Druid",
+    ["Охотник на демонов"] = "Demon Hunter",
+    ["Пробудитель"] = "Evoker",
+}
+
+
 if MS.BUILDVERSION <= 110000 then
     MS.MythicPlusGreatVaultiLvls = {
         [2] = "509", -- +2
