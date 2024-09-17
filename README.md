@@ -76,7 +76,6 @@ Following this, each header will be covering specific options to that particular
 
 - **Display Local / Server Time**.
 - **Display Lockouts**.
-- **Display Friends List**.
 - **Display Vault Options**.
 - **Display Player Keystone**.
 - **Display Party Keystone**.
