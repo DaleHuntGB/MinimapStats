@@ -94,7 +94,6 @@ MS.DefaultSettings = {
         DisplayPartyKeystones = true,
         DisplayAffixes = true,
         DisplayAffixDesc = false,
-        DisplayFriendsList = true,
         DisplayVaultOptions = true,
         DisplayRaidSlots = true,
         DisplayMythicPlusSlots = true,
@@ -139,118 +138,7 @@ function MS:SetReactionColour()
     return LocationColor
 end
 
-MS.CharacterClassColours = {
-    ["Death Knight"] = "|cFFC41E3A",
-    ["Demon Hunter"] = "|cFFA330C9",
-    ["Druid"] = "|cFFFF7C0A",
-    ["Evoker"] = "|cFF33937F",
-    ["Hunter"] = "|cFFAAD372",
-    ["Mage"] = "|cFF3FC7EB",
-    ["Monk"] = "|cFF00FF98",
-    ["Paladin"] = "|cFFF48CBA",
-    ["Priest"] = "|cFFFFFFFF",
-    ["Rogue"] = "|cFFFFF468",
-    ["Shaman"] = "|cFF0070DD",
-    ["Warlock"] = "|cFF8788EE",
-    ["Warrior"] = "|cFFC69B6D",
-}
-
-MS.ClassNameMap = {
-    -- English
-    ["Warrior"] = "Warrior",
-    ["Paladin"] = "Paladin",
-    ["Hunter"] = "Hunter",
-    ["Rogue"] = "Rogue",
-    ["Priest"] = "Priest",
-    ["Death Knight"] = "Death Knight",
-    ["Shaman"] = "Shaman",
-    ["Mage"] = "Mage",
-    ["Warlock"] = "Warlock",
-    ["Monk"] = "Monk",
-    ["Druid"] = "Druid",
-    ["Demon Hunter"] = "Demon Hunter",
-    ["Evoker"] = "Evoker",
-
-    -- German (Deutsch)
-    ["Krieger"] = "Warrior",
-    ["Paladin"] = "Paladin",
-    ["Jäger"] = "Hunter",
-    ["Schurke"] = "Rogue",
-    ["Priester"] = "Priest",
-    ["Todesritter"] = "Death Knight",
-    ["Schamane"] = "Shaman",
-    ["Magier"] = "Mage",
-    ["Hexenmeister"] = "Warlock",
-    ["Mönch"] = "Monk",
-    ["Druide"] = "Druid",
-    ["Dämonenjäger"] = "Demon Hunter",
-    ["Rufer"] = "Evoker",
-
-    -- French (Français)
-    ["Guerrier"] = "Warrior",
-    ["Paladin"] = "Paladin",
-    ["Chasseur"] = "Hunter",
-    ["Voleur"] = "Rogue",
-    ["Prêtre"] = "Priest",
-    ["Chevalier de la mort"] = "Death Knight",
-    ["Chaman"] = "Shaman",
-    ["Mage"] = "Mage",
-    ["Démoniste"] = "Warlock",
-    ["Moine"] = "Monk",
-    ["Druide"] = "Druid",
-    ["Chasseur de démons"] = "Demon Hunter",
-    ["Évocateur"] = "Evoker",
-
-    -- Spanish (Español)
-    ["Guerrero"] = "Warrior",
-    ["Paladín"] = "Paladin",
-    ["Cazador"] = "Hunter",
-    ["Pícaro"] = "Rogue",
-    ["Sacerdote"] = "Priest",
-    ["Caballero de la Muerte"] = "Death Knight",
-    ["Chamán"] = "Shaman",
-    ["Mago"] = "Mage",
-    ["Brujo"] = "Warlock",
-    ["Monje"] = "Monk",
-    ["Druida"] = "Druid",
-    ["Cazador de demonios"] = "Demon Hunter",
-    ["Evocador"] = "Evoker",
-
-    -- Russian (Русский)
-    ["Воин"] = "Warrior",
-    ["Паладин"] = "Paladin",
-    ["Охотник"] = "Hunter",
-    ["Разбойник"] = "Rogue",
-    ["Жрец"] = "Priest",
-    ["Рыцарь смерти"] = "Death Knight",
-    ["Шаман"] = "Shaman",
-    ["Маг"] = "Mage",
-    ["Чернокнижник"] = "Warlock",
-    ["Монах"] = "Monk",
-    ["Друид"] = "Druid",
-    ["Охотник на демонов"] = "Demon Hunter",
-    ["Пробудитель"] = "Evoker",
-}
-
-
-if MS.BUILDVERSION <= 110000 then
-    MS.MythicPlusGreatVaultiLvls = {
-        [2] = "509", -- +2
-        [3] = "509", -- +3
-        [4] = "512", -- +4
-        [5] = "512", -- +5
-        [6] = "515", -- +6
-        [7] = "515", -- +7
-        [8] = "519", -- +8
-        [9] = "519", -- +9
-        [10] = "522" -- +10
-    }
-    MS.RaidGreatVaultiLvls = {
-        [14] = "493",
-        [15] = "506",
-        [16] = "519",
-    }
-elseif MS.BUILDVERSION > 110000 then
+if MS.BUILDVERSION > 110000 then
     MS.MythicPlusGreatVaultiLvls = {
         [2] = "606 [Champion: 4/8]",    -- +2
         [3] = "610 [Hero: 1/6]",        -- +3
@@ -402,7 +290,6 @@ function MS:ResetTooltipOptions()
     MS.DB.global.DisplayPartyKeystones = true
     --[[MS.DB.global.DisplayAffixes = true
     MS.DB.global.DisplayAffixDesc = false]]
-    MS.DB.global.DisplayFriendsList = true
     MS.DB.global.DisplayVaultOptions = true
     MS.DB.global.TooltipTextureIconSize = 16
     MS.DB.global.DisplayTime = true
