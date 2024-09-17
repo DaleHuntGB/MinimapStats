@@ -108,7 +108,7 @@ function MS:FetchVaultOptions()
         end
     end
 
-    if (#RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 or #WorldRunsCompleted > 0) and (MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or --[[MS.DB.global.DisplayAffixes or ]]MS.DB.global.DisplayFriendsList) then
+    if (#RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 or #WorldRunsCompleted > 0) and (MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones)) --[[or [MS.DB.global.DisplayAffixes)]] then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
 end
@@ -134,10 +134,7 @@ function MS:FetchKeystones()
                 GameTooltip:AddLine(NoKeyTextureIcon .. " No Keystone", 1, 1, 1, 1)
             end
         end
-        if (IsInGroup() and not IsInRaid() and not IsInDelve and MS.DB.global.DisplayPartyKeystones)
-        or --[[(MS.DB.global.DisplayAffixes)
-        or]] MS.DB.global.DisplayFriendsList
-        then
+        if (IsInGroup() and not IsInRaid() and not IsInDelve and MS.DB.global.DisplayPartyKeystones) --[[or MS.DB.global.DisplayAffixes]] then
             GameTooltip:AddLine(" ", 1, 1, 1, 1)
         end
     end
@@ -175,11 +172,9 @@ function MS:FetchKeystones()
                     GameTooltip:AddLine(FormattedUnitName .. ": " .. WHITE_COLOUR_OVERRIDE .. NoKeyTextureIcon .. " No Keystone", UnitClassColour.r, UnitClassColour.g, UnitClassColour.b)
                 end
             end
-            if --[[(MS.DB.global.DisplayAffixes)
-            or ]]MS.DB.global.DisplayFriendsList
-            then
-                GameTooltip:AddLine(" ", 1, 1, 1, 1)
-            end
+            -- if (MS.DB.global.DisplayAffixes) then
+            --     GameTooltip:AddLine(" ", 1, 1, 1, 1)
+            -- end
         end
     end
 end
@@ -201,54 +196,7 @@ end
 --             GameTooltip:AddLine(AffixDesc, 1, 1, 1)
 --         end
 --     end
---     if MS.DB.global.DisplayFriendsList then
---         GameTooltip:AddLine(" ", 1, 1, 1, 1)
---     end
 -- end
-
-function MS:FetchFriendsList()
-    if not MS.DB.global.DisplayFriendsList then return end
-    local _, TotalFriends = BNGetNumFriends()
-    local HasOnlineFriends = false
-    for i = 1, TotalFriends do
-        local AccountInfo = C_BattleNet.GetFriendAccountInfo(i)
-        if AccountInfo and AccountInfo.gameAccountInfo and AccountInfo.gameAccountInfo.clientProgram == "WoW" and AccountInfo.gameAccountInfo.className ~= nil then
-            HasOnlineFriends = true
-            break
-        end
-    end
-
-    if HasOnlineFriends then
-        GameTooltip:AddLine("Friends |cFFFFFFFFList|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
-        for i = 1, TotalFriends do
-            local AccountInfo = C_BattleNet.GetFriendAccountInfo(i)
-            if AccountInfo then
-                local FriendInfo = AccountInfo.gameAccountInfo
-                local InGame = FriendInfo.clientProgram == "WoW"
-                local IsAFK = FriendInfo.isGameAFK or AccountInfo.isAFK
-                local IsDND = FriendInfo.isGameBusy or AccountInfo.isDND
-                local FriendBNetTag = AccountInfo.accountName
-                local CharacterName = FriendInfo.characterName
-                local CharacterClass = FriendInfo.className
-                local WoWProject = FriendInfo.wowProjectID
-                local CharacterLevel = FriendInfo.characterLevel
-                local ClassColour = MS.CharacterClassColours[MS.ClassNameMap[FriendInfo.className]] or "|cFFFFFFFF"
-                local FriendStatus;
-
-                if InGame and CharacterClass ~= nil then
-                    if IsDND then
-                        FriendStatus = "|TInterface/AddOns/MinimapStats/Media/FriendBusy:14:14:0:0|t"
-                    elseif IsAFK then
-                        FriendStatus = "|TInterface/AddOns/MinimapStats/Media/FriendAway:14:14:0:0|t"
-                    else
-                        FriendStatus = "|TInterface/AddOns/MinimapStats/Media/FriendOnline:14:14:0:0|t"
-                    end
-                    GameTooltip:AddDoubleLine(FriendStatus .. "|r" .. FriendBNetTag .. ": " .. ClassColour .. CharacterName .. "|r [L|cFFFFCC40" .. CharacterLevel .. "|r]", MS.WoWProjects[WoWProject], 1, 1, 1, 1, 1, 1)
-                end
-            end
-        end
-    end
-end
 
 function MS:FetchTimeInformation()
     local ServerHr, ServerMins = GetGameTime()
@@ -264,13 +212,9 @@ function MS:CreateSystemStatsTooltip()
     MS:FetchVaultOptions()
     if MS.OR then MS:FetchKeystones() end
     --MS:FetchAffixes()
-    MS:FetchFriendsList()
     if MS.DB.global.DisplayVaultOptions
     or MS.DB.global.DisplayPlayerKeystone
-    or (IsInGroup() and not IsInRaid() and MS.DB.global.DisplayPartyKeystones)
-    or --[[(MS.DB.global.DisplayAffixes)
-    or]] (MS.DB.global.DisplayFriendsList)
-    then
+    or (IsInGroup() and not IsInRaid() and MS.DB.global.DisplayPartyKeystones) --[[or (MS.DB.global.DisplayAffixes)]] then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
     GameTooltip:AddLine("Left-Click: " .. MS.AccentColour .. "Collect Garbage|r")
