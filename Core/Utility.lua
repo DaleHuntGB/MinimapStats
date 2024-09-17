@@ -98,7 +98,7 @@ MS.DefaultSettings = {
         DisplayVaultOptions = true,
         DisplayRaidSlots = true,
         DisplayMythicPlusSlots = true,
-        DisplayDelveSlots = true,
+        DisplayWorldSlots = true,
         DisplayTime = true,
         TooltipTextureIconSize = 16,
     }
@@ -267,7 +267,7 @@ elseif MS.BUILDVERSION > 110000 then
         [15] = "610",                   -- Heroic
         [16] = "623",                   -- Heroic
     }
-    MS.DelveGreatVaultiLvls = {
+    MS.WorldGreatVaultiLvls = {
         [1] = "584",                    -- Tier 1
         [2] = "584",                    -- Tier 2
         [3] = "587",                    -- Tier 3
@@ -408,7 +408,7 @@ function MS:ResetTooltipOptions()
     MS.DB.global.DisplayTime = true
     MS.DB.global.DisplayRaidSlots = true
     MS.DB.global.DisplayMythicPlusSlots = true
-    MS.DB.global.DisplayDelveSlots = true
+    MS.DB.global.DisplayWorldSlots = true
 end
 
 function MS:FetchMythicPlusInfo()

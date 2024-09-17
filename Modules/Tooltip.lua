@@ -49,7 +49,7 @@ function MS:FetchVaultOptions()
     if not MS.DB.global.DisplayVaultOptions then return end
     local RaidsCompleted = {}
     local MythicPlusRunsCompleted = {}
-    local DelveRunsCompleted = {}
+    local WorldRunsCompleted = {}
     if not C_AddOns.IsAddOnLoaded("Blizzard_WeeklyRewards") then C_AddOns.LoadAddOn("Blizzard_WeeklyRewards") end
     if MS.DB.global.DisplayRaidSlots then
         local RaidRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Raid)
@@ -69,15 +69,14 @@ function MS:FetchVaultOptions()
             table.insert(MythicPlusRunsCompleted, string.format("Slot #%d: " .. MS.AccentColour .. "+%d|r [%d]", i, KeyLevel, GViLvl))
         end
     end
-    if MS.DB.global.DisplayDelveSlots then
+    if MS.DB.global.DisplayWorldSlots then
         if MS.BUILDVERSION > 110000 then
-            local DelveRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.World)
-
+            local WorldRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.World)
             for i = 1, 3 do
-                local DelveLevel = DelveRuns[i].level
-                local GViLvl = MS.DelveGreatVaultiLvls[DelveRuns[i].level]
-                if DelveLevel == nil or DelveLevel == 0 then break end
-                table.insert(DelveRunsCompleted, string.format("Slot #%d: " .. MS.AccentColour .. "%d|r [%d]", i, DelveLevel, GViLvl))
+                local WorldLevel = WorldRuns[i].level
+                local GViLvl = MS.WorldGreatVaultiLvls[WorldRuns[i].level]
+                if WorldLevel == nil or WorldLevel == 0 then break end
+                table.insert(WorldRunsCompleted, string.format("Slot #%d: " .. MS.AccentColour .. "%d|r [%d]", i, WorldLevel, GViLvl))
             end
         end
     end
@@ -99,17 +98,17 @@ function MS:FetchVaultOptions()
         end
     end
 
-    if #DelveRunsCompleted > 0 then
+    if #WorldRunsCompleted > 0 then
         if #RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 then
             GameTooltip:AddLine(" ", 1, 1, 1, 1)
         end
-        GameTooltip:AddLine("Delve |cFFFFFFFFGreat Vault|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
-        for _, Delve in pairs(DelveRunsCompleted) do
+        GameTooltip:AddLine("World |cFFFFFFFFGreat Vault|r", MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB, 1)
+        for _, Delve in pairs(WorldRunsCompleted) do
             GameTooltip:AddLine(Delve, 1, 1, 1)
         end
     end
 
-    if (#RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 or #DelveRunsCompleted > 0) and (MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or --[[MS.DB.global.DisplayAffixes or ]]MS.DB.global.DisplayFriendsList) then
+    if (#RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 or #WorldRunsCompleted > 0) and (MS.DB.global.DisplayPlayerKeystone or (IsInGroup() and MS.DB.global.DisplayPartyKeystones) or --[[MS.DB.global.DisplayAffixes or ]]MS.DB.global.DisplayFriendsList) then
         GameTooltip:AddLine(" ", 1, 1, 1, 1)
     end
 end
