@@ -5,7 +5,7 @@ MS.ADDON_AUTHOR = C_AddOns.GetAddOnMetadata("MinimapStats", "Author")
 MS.BUILDVERSION = select(4, GetBuildInfo())
 MS.OR = LibStub:GetLibrary("LibOpenRaid-1.0", true)
 -- MS.NUM_OF_AFFIXES = MS.BUILDVERSION <= 110000 and 3 or 4 -- The new affixes added in 11.0.2 are not available in the API yet.
-MS.NUM_OF_AFFIXES = 3
+MS.NUM_OF_AFFIXES = 5
 MS.ANCHORS = {
     ["TOPLEFT"] = "TOPLEFT",
     ["TOP"] = "TOP",
@@ -288,8 +288,8 @@ function MS:ResetTooltipOptions()
     MS.DB.global.DisplayLockouts = true
     MS.DB.global.DisplayPlayerKeystone = true
     MS.DB.global.DisplayPartyKeystones = true
-    --[[MS.DB.global.DisplayAffixes = true
-    MS.DB.global.DisplayAffixDesc = false]]
+    MS.DB.global.DisplayAffixes = true
+    MS.DB.global.DisplayAffixDesc = false
     MS.DB.global.DisplayVaultOptions = true
     MS.DB.global.TooltipTextureIconSize = 16
     MS.DB.global.DisplayTime = true
