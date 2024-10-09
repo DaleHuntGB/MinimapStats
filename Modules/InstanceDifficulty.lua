@@ -36,7 +36,8 @@ function MS:HideInstanceDifficulty()
 end
 
 function MS:UpdateInstanceDifficultyFrame()
-    if not MS.InstanceDifficultyFrame then MS:CreateInstanceDifficultyFrame() end
+    if not MS.DB.global.ShowInstanceDifficultyFrame then return end
+    if not MS.InstanceDifficultyFrame and MS.DB.global.ShowInstanceDifficultyFrame then MS:CreateInstanceDifficultyFrame() end
     MS.InstanceDifficultyFrame:ClearAllPoints()
     MS.InstanceDifficultyFrame:SetPoint(MS.DB.global.InstanceDifficultyAnchorPosition, Minimap, MS.DB.global.InstanceDifficultyXOffset, MS.DB.global.InstanceDifficultyYOffset)
     MS.InstanceDifficultyFrameText:SetFont(MS.DB.global.FontFace, MS.DB.global.InstanceDifficultyFontSize, MS.DB.global.FontFlag)
@@ -71,35 +72,35 @@ function MS:FetchInstanceDifficulty()
     local PlayerInGarrison = MS.GarrisonInstanceIDs[InstanceID]
     local InstanceDifficulty = ""
 
-    if (DiffID == 0 or PlayerInGarrison) and MS.ShowDiffID == true then 
+    if (DiffID == 0 or PlayerInGarrison) and MS.ShowDiffID == true then
         InstanceDifficulty = "25" .. MS.AccentColour .. "N" .. "|r" -- Used for Testing Purposes
     elseif DiffID == 0 then
         InstanceDifficulty = ""
-    elseif PlayerInGarrison then 
+    elseif PlayerInGarrison then
         InstanceDifficulty = ""
-    elseif DiffID == 1 or DiffID == 3 or DiffID == 4 then 
+    elseif DiffID == 1 or DiffID == 3 or DiffID == 4 then
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "N" .. "|r"
-    elseif DiffID == 2 or DiffID == 5 or DiffID == 6 then 
+    elseif DiffID == 2 or DiffID == 5 or DiffID == 6 then
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "H" .. "|r"
-    elseif DiffID == 16 or DiffID == 23 then 
+    elseif DiffID == 16 or DiffID == 23 then
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "M" .. "|r"
-    elseif DiffID == 8 then 
+    elseif DiffID == 8 then
         InstanceDifficulty = MS.AccentColour .. "M" .. "|r" .. KeystoneLevel
-    elseif DiffID == 9 then 
+    elseif DiffID == 9 then
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "N" .. "|r"
-    elseif DiffID == 7 or DiffID == 17 then 
+    elseif DiffID == 7 or DiffID == 17 then
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "LFR" .. "|r"
-    elseif DiffID == 14 then 
+    elseif DiffID == 14 then
         InstanceDifficulty = CurrentPlayers .. MS.AccentColour .. "N" .. "|r"
-    elseif DiffID == 15 then 
+    elseif DiffID == 15 then
         InstanceDifficulty = CurrentPlayers .. MS.AccentColour .. "H" .. "|r"
-    elseif DiffID == 18 or DiffID == 19 then 
+    elseif DiffID == 18 or DiffID == 19 then
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "EVT" .. "|r"
-    elseif DiffID == 24 or DiffID == 33 then 
+    elseif DiffID == 24 or DiffID == 33 then
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "TW" .. "|r"
-    elseif DiffID == 11 or DiffID == 39 then 
+    elseif DiffID == 11 or DiffID == 39 then
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "S+" .. "|r"
-    elseif DiffID == 12 or DiffID == 38 then 
+    elseif DiffID == 12 or DiffID == 38 then
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "S" .. "|r"
     elseif DiffID == 205 then
         InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "F" .. "|r"
