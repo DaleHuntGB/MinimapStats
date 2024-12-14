@@ -66,6 +66,7 @@ function MS:FetchVaultOptions()
             local KeyLevel = MythicPlusRuns[i].level
             local GViLvl = MS.MythicPlusGreatVaultiLvls[MythicPlusRuns[i].level]
             if KeyLevel == nil or KeyLevel == 0 then break end
+            if KeyLevel > 10 then GViLvl = MS.MythicPlusGreatVaultiLvls[10] end
             table.insert(MythicPlusRunsCompleted, string.format("Slot #%d: " .. MS.AccentColour .. "+%d|r [%d]", i, KeyLevel, GViLvl))
         end
     end
