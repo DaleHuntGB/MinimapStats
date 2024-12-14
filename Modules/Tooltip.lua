@@ -191,6 +191,13 @@ function MS:FetchAffixes()
     for i = 1, MS.NUM_OF_AFFIXES do
         if MS.AffixIDs[i] == nil then break end
         local AffixName, AffixDesc, AffixIconID = C_ChallengeMode.GetAffixInfo(MS.AffixIDs[i].id)
+        if MS.DB.global.DisplayAffixThresholds then
+            if i == 1 then AffixName = AffixName .. " [+" .. MS.AccentColour .. "2|r]" end
+            if i == 2 then AffixName = AffixName .. " [+" .. MS.AccentColour .. "4|r]" end
+            if i == 3 then AffixName = AffixName .. " [+" .. MS.AccentColour .. "7|r]" end
+            if i == 4 then AffixName = AffixName .. " [+" .. MS.AccentColour .. "10|r]" end
+            if i == 5 then AffixName = AffixName .. " [+" .. MS.AccentColour .. "12|r]" end
+        end
         local AffixIcon = "|T" .. AffixIconID .. ":" .. TextureSize .. ":" .. TextureSize .. ":0|t "
         GameTooltip:AddLine(AffixIcon .. AffixName, 1, 1, 1)
         if MS.DB.global.DisplayAffixDesc then

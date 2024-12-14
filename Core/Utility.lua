@@ -4,7 +4,6 @@ MS.ADDON_VERSION = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
 MS.ADDON_AUTHOR = C_AddOns.GetAddOnMetadata("MinimapStats", "Author")
 MS.BUILDVERSION = select(4, GetBuildInfo())
 MS.OR = LibStub:GetLibrary("LibOpenRaid-1.0", true)
--- MS.NUM_OF_AFFIXES = MS.BUILDVERSION <= 110000 and 3 or 4 -- The new affixes added in 11.0.2 are not available in the API yet.
 MS.NUM_OF_AFFIXES = 5
 MS.ANCHORS = {
     ["TOPLEFT"] = "TOPLEFT",
@@ -93,6 +92,7 @@ MS.DefaultSettings = {
         DisplayPlayerKeystone = true,
         DisplayPartyKeystones = true,
         DisplayAffixes = true,
+        DisplayAffixThresholds = true,
         DisplayAffixDesc = false,
         DisplayVaultOptions = true,
         DisplayRaidSlots = true,
@@ -140,7 +140,7 @@ end
 
 if MS.BUILDVERSION > 110000 then
     MS.MythicPlusGreatVaultiLvls = {
-        [2] = "606",    -- +2
+        [2] = "606",        -- +2
         [3] = "610",        -- +3
         [4] = "610",        -- +4
         [5] = "613",        -- +5
@@ -290,6 +290,7 @@ function MS:ResetTooltipOptions()
     MS.DB.global.DisplayPartyKeystones = true
     MS.DB.global.DisplayAffixes = true
     MS.DB.global.DisplayAffixDesc = false
+    MS.DB.global.DisplayAffixThresholds = true
     MS.DB.global.DisplayVaultOptions = true
     MS.DB.global.TooltipTextureIconSize = 16
     MS.DB.global.DisplayTime = true
@@ -355,5 +356,5 @@ function MS:FetchAddOnMemoryUsage()
     end
 
     local TotalAddOnMemoryColour = GetTotalMemoryColor(TotalAddOnMemory)
-    print("|cFFFFCC00Total AddOn Memory Usage|r: ", string.format("%s%.2f|rMB", TotalAddOnMemoryColour, TotalAddOnMemory))
+    print("|cFF8080FFTotal AddOn Memory Usage|r: ", string.format("%s%.2f|rMB", TotalAddOnMemoryColour, TotalAddOnMemory))
 end
