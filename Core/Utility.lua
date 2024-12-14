@@ -4,6 +4,7 @@ MS.ADDON_VERSION = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
 MS.ADDON_AUTHOR = C_AddOns.GetAddOnMetadata("MinimapStats", "Author")
 MS.BUILDVERSION = select(4, GetBuildInfo())
 MS.OR = LibStub:GetLibrary("LibOpenRaid-1.0", true)
+MS.GUI = LibStub:GetLibrary("AceGUI-3.0")
 MS.NUM_OF_AFFIXES = 5
 MS.ANCHORS = {
     ["TOPLEFT"] = "TOPLEFT",
@@ -198,8 +199,10 @@ end
 function MS:SetupSlashCommands()
     SLASH_MINIMAPSTATS1 = "/minimapstats"
     SLASH_MINIMAPSTATS2 = "/ms"
-    SlashCmdList["MINIMAPSTATS"] = function()
-        MS:CreateGUI()
+    SlashCmdList["MINIMAPSTATS"] = function(msg)
+        if msg == "" then
+            MS:CreateGUI()
+        end
     end
 end
 
