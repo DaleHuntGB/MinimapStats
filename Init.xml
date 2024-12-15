@@ -14,6 +14,7 @@
 	<Script file="Core/Utility.lua"/>
 	<Script file="Core/Share.lua"/>
 	<Script file="Core/GUI.lua"/>
+	<Script file="Core/Debug.lua"/>
 	<!-- Modules -->
 	<Script file="Modules/Time.lua"/>
 	<Script file="Modules/SystemStats.lua"/>

@@ -202,6 +202,8 @@ function MS:SetupSlashCommands()
     SlashCmdList["MINIMAPSTATS"] = function(msg)
         if msg == "" then
             MS:CreateGUI()
+        elseif msg == "debug" then
+            MS:DebugUI()
         end
     end
 end
