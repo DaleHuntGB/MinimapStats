@@ -30,8 +30,8 @@ end
 
 function MS:CreateGUI()
     if MS.isGUIOpen then return end
-    local MSGUI_Container = MSGUI:Create("Window")
-    MSGUI_Container:SetTitle("|TInterface\\AddOns\\MinimapStats\\Media\\LogoHeader:24:120|t")
+    local MSGUI_Container = MSGUI:Create("Frame")
+    MSGUI_Container:SetTitle(MS.ADDON_NAME .. " Options")
     MSGUI_Container:SetLayout("Fill")
     MSGUI_Container:SetWidth(GUI_W)
     MSGUI_Container:SetHeight(GUI_H)
