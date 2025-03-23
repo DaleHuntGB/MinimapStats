@@ -1050,51 +1050,6 @@ function MS:CreateGUI()
 
     end
 
-    -- local function DrawLayoutContainer(MSGUI_Container)
-
-    --     local LayoutOneImage = MSGUI:Create("Icon")
-    --     LayoutOneImage:SetImage("Interface\\AddOns\\MinimapStats\\Media\\LayoutOne.tga")
-    --     LayoutOneImage:SetImageSize(200, 200)
-    --     LayoutOneImage:SetRelativeWidth(0.33)
-    --     LayoutOneImage:SetLabel("Default")
-    --     LayoutOneImage:SetCallback("OnClick", function() MS:LoadLayout(1) end)
-    --     LayoutOneImage:SetCallback("OnEnter", function() LayoutOneImage:SetLabel("|cFFFFCC00Default|r") end)
-    --     LayoutOneImage:SetCallback("OnLeave", function() LayoutOneImage:SetLabel("Default") end)
-
-    --     local LayoutTwoImage = MSGUI:Create("Icon")
-    --     LayoutTwoImage:SetImage("Interface\\AddOns\\MinimapStats\\Media\\LayoutTwo.tga")
-    --     LayoutTwoImage:SetImageSize(200, 200)
-    --     LayoutTwoImage:SetRelativeWidth(0.33)
-    --     LayoutTwoImage:SetLabel("Corners")
-    --     LayoutTwoImage:SetCallback("OnClick", function() MS:LoadLayout(2) end)
-    --     LayoutTwoImage:SetCallback("OnEnter", function() LayoutTwoImage:SetLabel("|cFFFFCC00Corners|r") end)
-    --     LayoutTwoImage:SetCallback("OnLeave", function() LayoutTwoImage:SetLabel("Corners") end)
-
-    --     local LayoutThreeImage = MSGUI:Create("Icon")
-    --     LayoutThreeImage:SetImage("Interface\\AddOns\\MinimapStats\\Media\\LayoutThree.tga")
-    --     LayoutThreeImage:SetImageSize(200, 200)
-    --     LayoutThreeImage:SetRelativeWidth(0.33)
-    --     LayoutThreeImage:SetLabel("Inverted Corners")
-    --     LayoutThreeImage:SetCallback("OnClick", function() MS:LoadLayout(3) end)
-    --     LayoutThreeImage:SetCallback("OnEnter", function() LayoutThreeImage:SetLabel("|cFFFFCC00Inverted Corners|r") end)
-    --     LayoutThreeImage:SetCallback("OnLeave", function() LayoutThreeImage:SetLabel("Inverted Corners") end)
-
-    --     local LayoutInformationContainer = MSGUI:Create("InlineGroup")
-    --     LayoutInformationContainer:SetLayout("Flow")
-    --     LayoutInformationContainer:SetFullWidth(true)
-
-    --     local LayoutInformationText = MSGUI:Create("Label")
-    --     LayoutInformationText:SetText("|cFFFFCC00Layouts are a way to quickly change the appearance of MinimapStats. This will only change the anchor position, X & Y offsets of toggled elements. All other settings will remain the same.|r")
-    --     LayoutInformationText:SetFullWidth(true)
-
-    --     MSGUI_Container:AddChild(LayoutInformationContainer)
-    --     LayoutInformationContainer:AddChild(LayoutInformationText)
-    --     MSGUI_Container:AddChild(LayoutOneImage)
-    --     MSGUI_Container:AddChild(LayoutTwoImage)
-    --     MSGUI_Container:AddChild(LayoutThreeImage)
-
-    -- end
-
     local function DrawImportExportContainer(MSGUI_Container)
         local ImportOptionsContainer = MSGUI:Create("InlineGroup")
         ImportOptionsContainer:SetTitle("Import Options")
@@ -1181,9 +1136,6 @@ function MS:CreateGUI()
         elseif Group == "Tooltip" then
             DrawTooltipContainer(MSGUI_Container)
             MS.ShowDiffID = false
-        -- elseif Group == "Layout Manager" then
-        --     DrawLayoutContainer(MSGUI_Container)
-        --     MS.ShowDiffID = false
         elseif Group == "Import/Export" then
             DrawImportExportContainer(MSGUI_Container)
             MS.ShowDiffID = false
@@ -1201,7 +1153,6 @@ function MS:CreateGUI()
         { text = "Coordinates",                         value = "Coordinates" },
         { text = "Instance Difficulty",                 value = "Instance Difficulty" },
         { text = "Tooltip",                             value = "Tooltip" },
-        -- { text = "Layout Manager",                      value = "Layout Manager" },
         { text = "Import/Export",                       value = "Import/Export" }
     })
     GUIContainerTabGroup:SetCallback("OnGroupSelected", SelectedGroup)
