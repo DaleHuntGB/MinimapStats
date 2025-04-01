@@ -1,6 +1,6 @@
 local _, MS = ...
 local MinimapStats = LibStub("AceAddon-3.0"):NewAddon("MinimapStats")
-
+MSG = MSG or {}
 function MinimapStats:OnInitialize()
     MS.DB = LibStub("AceDB-3.0"):New("MSDB", MS.DefaultSettings)
     for k, v in pairs(MS.DefaultSettings.global) do

@@ -20,3 +20,19 @@ function MS:ImportSavedVariables(EncodedInfo)
         print(MS.ADDON_NAME .. ": Failed To Import Profile!")
     end
 end
+
+function MSG:ExportSavedVariables()
+    local SerializedInfo = Serialize:Serialize(MSDB.global)
+    local CompressedInfo = Compress:CompressDeflate(SerializedInfo)
+    local EncodedInfo = Compress:EncodeForPrint(CompressedInfo)
+    return EncodedInfo
+end
+
+function MSG:ImportSavedVariables(EncodedInfo)
+    local DecodedInfo = Compress:DecodeForPrint(EncodedInfo)
+    local DecompressedInfo = Compress:DecompressDeflate(DecodedInfo)
+    local InformationDecoded, InformationTable = Serialize:Deserialize(DecompressedInfo)
+    if InformationDecoded then
+        MSDB.global = InformationTable
+    end
+end
