@@ -77,6 +77,7 @@ function MS:FetchVaultOptions()
                 local WorldLevel = WorldRuns[i].level
                 local GViLvl = MS.WorldGreatVaultiLvls[WorldRuns[i].level]
                 if WorldLevel == nil or WorldLevel == 0 then break end
+                if WorldLevel > 8 then GViLvl = MS.WorldGreatVaultiLvls[8] end
                 table.insert(WorldRunsCompleted, string.format("Slot #%d: " .. MS.AccentColour .. "%d|r [%d]", i, WorldLevel, GViLvl))
             end
         end
