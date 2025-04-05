@@ -155,6 +155,7 @@ if MS.BUILDVERSION > 110000 then
         [14] = "636",                   -- Normal
         [15] = "649",                   -- Heroic
         [16] = "623",                   -- Heroic
+        [17] = "623",                   -- LFR
     }
     MS.WorldGreatVaultiLvls = {
         [1] = "623",                    -- Tier 1
