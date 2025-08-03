@@ -1,5 +1,5 @@
 ## Title: |cFF8080FFMinimap|r|cFFFFFFFFStats|r
-## Interface: 110100
+## Interface: 110100, 110107, 110200
 ## Version: 6.2
 ## Author: Unhalted
 ## Notes: Adds highly customizable and performance friendly, toggleable UI elements to the minimap.|nElements include:|n• Time.|n• System Stats (FPS / Latency).|n• Location.|n• Coordinates.|n• Instance Difficulty.
