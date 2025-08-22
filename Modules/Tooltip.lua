@@ -61,7 +61,7 @@ function MS:FetchVaultOptions()
         end
     end
     if MS.DB.global.DisplayMythicPlusSlots then
-        local MythicPlusRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.MythicPlus)
+        local MythicPlusRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Activities)
         for i = 1, 3 do
             local KeyLevel = MythicPlusRuns[i].level
             local GViLvl = MS.MythicPlusGreatVaultiLvls[MythicPlusRuns[i].level]
@@ -243,3 +243,4 @@ function MS:CreateTimeTooltip()
     GameTooltip:AddLine("Left-Click: " .. MS.AccentColour .. "Toggle Calendar|r")
     GameTooltip:Show()
 end
+
