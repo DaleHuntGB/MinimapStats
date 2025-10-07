@@ -5,6 +5,7 @@ MS.Version = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
 MS.Author = C_AddOns.GetAddOnMetadata("MinimapStats", "Author")
 MS.LSM = LibStub("LibSharedMedia-3.0")
 MS.CLASS_COLOUR = {RAID_CLASS_COLORS[select(2, UnitClass("player"))].r * 255, RAID_CLASS_COLORS[select(2, UnitClass("player"))].g * 255, RAID_CLASS_COLORS[select(2, UnitClass("player"))].b * 255}
+
 local OptionsToDB = {
     ["General"] = "General",
     ["Time"] = "Time",
@@ -12,6 +13,7 @@ local OptionsToDB = {
     ["Location"] = "Location",
     ["Instance Difficulty"] = "InstanceDifficulty",
 }
+
 function MS:Print(MSG)
     DEFAULT_CHAT_FRAME:AddMessage(MS.AddOnName .. ":|r " .. MSG)
 end
