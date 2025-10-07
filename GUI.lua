@@ -1,0 +1,452 @@
+local _, MS = ...
+local AG = LibStub("AceGUI-3.0")
+local GUIActive = false
+local GUIFrame = nil
+local LSM = MS.LSM
+
+local Anchors = {
+    {
+        ["TOPLEFT"] = "Top Left",
+        ["TOP"] = "Top",
+        ["TOPRIGHT"] = "Top Right",
+        ["LEFT"] = "Left",
+        ["CENTER"] = "Center",
+        ["RIGHT"] = "Right",
+        ["BOTTOMLEFT"] = "Bottom Left",
+        ["BOTTOM"] = "Bottom",
+        ["BOTTOMRIGHT"] = "Bottom Right",
+    },
+    { "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT", "BOTTOMLEFT", "BOTTOM", "BOTTOMRIGHT" }
+}
+
+local function DeepDisable(widget, disabled)
+    if widget.SetDisabled then widget:SetDisabled(disabled) end
+    if widget.children then
+        for _, child in ipairs(widget.children) do
+            DeepDisable(child, disabled)
+        end
+    end
+end
+
+local function DisableElements(parentContainer, widget, value)
+    for _, child in ipairs(parentContainer.children) do
+        if child ~= widget then
+            DeepDisable(child, not value)
+        end
+    end
+end
+
+local function UpdateState(parent, dbValue)
+    local currentState = ""
+    if dbValue then
+        currentState = "|cFFFF4040Disable|r"
+    else
+        currentState = "|cFF40FF40Enable|r"
+    end
+    parent:SetLabel(currentState)
+    return currentState
+end
+
+local function SetupTabGroup(parentContainer, headingTitle)
+    local ContainerScrollFrame = AG:Create("ScrollFrame")
+    ContainerScrollFrame:SetLayout("Flow")
+    ContainerScrollFrame:SetFullHeight(true)
+    ContainerScrollFrame:SetFullWidth(true)
+    parentContainer:AddChild(ContainerScrollFrame)
+
+    return ContainerScrollFrame
+end
+
+local function CreateLayoutGroup(parentContainer, dbValue, updateFunction)
+    local AnchorFromDropdown = AG:Create("Dropdown")
+    AnchorFromDropdown:SetLabel("Anchor From")
+    AnchorFromDropdown:SetList(Anchors[1], Anchors[2])
+    AnchorFromDropdown:SetValue(dbValue[1])
+    AnchorFromDropdown:SetRelativeWidth(0.5)
+    AnchorFromDropdown:SetCallback("OnValueChanged", function(_, _, value) dbValue[1] = value updateFunction() end)
+    parentContainer:AddChild(AnchorFromDropdown)
+
+    local AnchorToDropdown = AG:Create("Dropdown")
+    AnchorToDropdown:SetLabel("Anchor To")
+    AnchorToDropdown:SetList(Anchors[1], Anchors[2])
+    AnchorToDropdown:SetValue(dbValue[2])
+    AnchorToDropdown:SetRelativeWidth(0.5)
+    AnchorToDropdown:SetCallback("OnValueChanged", function(_, _, value) dbValue[2] = value updateFunction() end)
+    parentContainer:AddChild(AnchorToDropdown)
+
+    local XOffsetSlider = AG:Create("Slider")
+    XOffsetSlider:SetLabel("X Offset")
+    XOffsetSlider:SetValue(dbValue[3])
+    XOffsetSlider:SetSliderValues(-200, 200, 1)
+    XOffsetSlider:SetRelativeWidth(0.33)
+    XOffsetSlider:SetCallback("OnValueChanged", function(_, _, value) dbValue[3] = value updateFunction() end)
+    parentContainer:AddChild(XOffsetSlider)
+
+    local YOffsetSlider = AG:Create("Slider")
+    YOffsetSlider:SetLabel("Y Offset")
+    YOffsetSlider:SetValue(dbValue[4])
+    YOffsetSlider:SetSliderValues(-200, 200, 1)
+    YOffsetSlider:SetRelativeWidth(0.33)
+    YOffsetSlider:SetCallback("OnValueChanged", function(_, _, value) dbValue[4] = value updateFunction() end)
+    parentContainer:AddChild(YOffsetSlider)
+
+    local FontSizeSlider = AG:Create("Slider")
+    FontSizeSlider:SetLabel("Font Size")
+    FontSizeSlider:SetValue(dbValue[5])
+    FontSizeSlider:SetSliderValues(6, 32, 1)
+    FontSizeSlider:SetRelativeWidth(0.33)
+    FontSizeSlider:SetCallback("OnValueChanged", function(_, _, value) dbValue[5] = value updateFunction()end)
+    parentContainer:AddChild(FontSizeSlider)
+end
+
+function MS:CreateGUI(TabToOpen)
+    local DB = MS.db.global
+    if GUIActive then return end
+    if TabToOpen == nil then TabToOpen = "General" end
+    GUIActive = true
+    GUIFrame = AG:Create("Frame")
+    GUIFrame:SetTitle(MS.AddOnName)
+    GUIFrame:SetStatusText("MinimapStats v" .. MS.Version)
+    GUIFrame:SetLayout("Flow")
+    GUIFrame:SetWidth(720)
+    GUIFrame:SetHeight(480)
+    GUIFrame:SetCallback("OnClose", function() GUIActive = false AG:Release(GUIFrame) end)
+    GUIFrame:EnableResize(false)
+    GUIFrame:Show()
+
+    function MS:CreateGeneralOptions(Container)
+        local ScrollFrame = SetupTabGroup(Container, "General Options")
+
+        local ColourContainer = AG:Create("InlineGroup")
+        ColourContainer:SetTitle("Colours")
+        ColourContainer:SetLayout("Flow")
+        ColourContainer:SetFullWidth(true)
+        ScrollFrame:AddChild(ColourContainer)
+
+        local ClassColour = AG:Create("CheckBox")
+        ClassColour:SetLabel("Class Colour Accent")
+        ClassColour:SetValue(DB.General.ClassColour)
+        ClassColour:SetRelativeWidth(0.5)
+        ClassColour:SetCallback("OnValueChanged", function(_, _, value) DB.General.ClassColour = value MS:UpdateTime() MS:UpdateSystemStats() MS.AccentColourPicker:SetDisabled(value) if value then MS.AccentColourPicker:SetColor(MS.CLASS_COLOUR[1] / 255, MS.CLASS_COLOUR[2] / 255, MS.CLASS_COLOUR[3] / 255) else MS.AccentColourPicker:SetColor(DB.General.AccentColour[1]/255, DB.General.AccentColour[2]/255, DB.General.AccentColour[3]/255) end end)
+        ColourContainer:AddChild(ClassColour)
+
+        local AccentColourPicker = AG:Create("ColorPicker")
+        AccentColourPicker:SetLabel("Accent Colour")
+        AccentColourPicker:SetColor(DB.General.ClassColour and (MS.CLASS_COLOUR[1] / 255) or (DB.General.AccentColour[1]/255), DB.General.ClassColour and (MS.CLASS_COLOUR[2] / 255) or (DB.General.AccentColour[2]/255), DB.General.ClassColour and (MS.CLASS_COLOUR[3] / 255) or (DB.General.AccentColour[3]/255))
+        AccentColourPicker:SetHasAlpha(false)
+        AccentColourPicker:SetRelativeWidth(0.5)
+        AccentColourPicker:SetCallback("OnValueChanged", function(_, _, r, g, b) DB.General.AccentColour = {r*255, g*255, b*255} MS:UpdateTime() MS:UpdateSystemStats() end)
+        AccentColourPicker:SetDisabled(DB.General.ClassColour)
+        MS.AccentColourPicker = AccentColourPicker
+        ColourContainer:AddChild(AccentColourPicker)
+
+        local FontContainer = AG:Create("InlineGroup")
+        FontContainer:SetTitle("Font")
+        FontContainer:SetLayout("Flow")
+        FontContainer:SetFullWidth(true)
+        ScrollFrame:AddChild(FontContainer)
+
+        local FontDropdown = AG:Create("LSM30_Font")
+        FontDropdown:SetLabel("Font")
+        FontDropdown:SetList(LSM:HashTable("font"))
+        FontDropdown:SetValue(DB.General.Font)
+        FontDropdown:SetRelativeWidth(0.5)
+        FontDropdown:SetCallback("OnValueChanged", function(widget, _, value) widget:SetValue(value) DB.General.Font = value MS:UpdateTime() MS:UpdateSystemStats() end)
+        FontContainer:AddChild(FontDropdown)
+
+        local FontFlagDropdown = AG:Create("Dropdown")
+        FontFlagDropdown:SetLabel("Font Outline")
+        FontFlagDropdown:SetList({ ["NONE"] = "None", ["OUTLINE"] = "Outline", ["THICKOUTLINE"] = "Thick Outline", ["MONOCHROME"] = "Monochrome" }, { "NONE", "OUTLINE", "THICKOUTLINE", "MONOCHROME" })
+        FontFlagDropdown:SetValue(DB.General.FontFlag)
+        FontFlagDropdown:SetRelativeWidth(0.5)
+        FontFlagDropdown:SetCallback("OnValueChanged", function(_, _, value) DB.General.FontFlag = value MS:UpdateTime() MS:UpdateSystemStats() end)
+        FontContainer:AddChild(FontFlagDropdown)
+
+        local FontShadowHeading = AG:Create("Heading")
+        FontShadowHeading:SetText("Font Shadow")
+        FontShadowHeading:SetFullWidth(true)
+        FontContainer:AddChild(FontShadowHeading)
+
+        local ShadowColourColourPicker = AG:Create("ColorPicker")
+        ShadowColourColourPicker:SetLabel("Font Shadow Colour")
+        ShadowColourColourPicker:SetColor(DB.General.FontShadow.Colour and (DB.General.FontShadow.Colour[1]/255) or 0, DB.General.FontShadow.Colour and (DB.General.FontShadow.Colour[2]/255) or 0, DB.General.FontShadow.Colour and (DB.General.FontShadow.Colour[3]/255) or 0)
+        ShadowColourColourPicker:SetHasAlpha(false)
+        ShadowColourColourPicker:SetRelativeWidth(0.33)
+        ShadowColourColourPicker:SetCallback("OnValueChanged", function(_, _, r, g, b) DB.General.FontShadow.Colour = {r*255, g*255, b*255} MS:UpdateTime() MS:UpdateSystemStats() end)
+        FontContainer:AddChild(ShadowColourColourPicker)
+
+        local ShadowXOffsetSlider = AG:Create("Slider")
+        ShadowXOffsetSlider:SetLabel("Font Shadow X Offset")
+        ShadowXOffsetSlider:SetValue(DB.General.FontShadow.OffsetX or 1)
+        ShadowXOffsetSlider:SetSliderValues(-5, 5, 1)
+        ShadowXOffsetSlider:SetRelativeWidth(0.33)
+        ShadowXOffsetSlider:SetCallback("OnValueChanged", function(_, _, value) DB.General.FontShadow.OffsetX = value MS:UpdateTime() MS:UpdateSystemStats() end)
+        FontContainer:AddChild(ShadowXOffsetSlider)
+
+        local ShadowYOffsetSlider = AG:Create("Slider")
+        ShadowYOffsetSlider:SetLabel("Font Shadow Y Offset")
+        ShadowYOffsetSlider:SetValue(DB.General.FontShadow.OffsetY or -1)
+        ShadowYOffsetSlider:SetSliderValues(-5, 5, 1)
+        ShadowYOffsetSlider:SetRelativeWidth(0.33)
+        ShadowYOffsetSlider:SetCallback("OnValueChanged", function(_, _, value) DB.General.FontShadow.OffsetY = value MS:UpdateTime() MS:UpdateSystemStats() end)
+        FontContainer:AddChild(ShadowYOffsetSlider)
+
+        local ResetOptionsContainer = AG:Create("InlineGroup")
+        ResetOptionsContainer:SetTitle("Reset Options")
+        ResetOptionsContainer:SetLayout("Flow")
+        ResetOptionsContainer:SetFullWidth(true)
+        ScrollFrame:AddChild(ResetOptionsContainer)
+
+        local ResetOptions = {"All", "General", "Time", "System Stats", "Location", "Instance Difficulty"}
+        local ResetSelections = {}
+        local Checkboxes = {}
+
+        for _, options in ipairs(ResetOptions) do
+            local OptionCheckBox = AG:Create("CheckBox")
+            OptionCheckBox:SetLabel(options)
+            OptionCheckBox:SetValue(false)
+            Checkboxes[options] = OptionCheckBox
+
+            OptionCheckBox:SetCallback("OnValueChanged", function(_, _, isSelected)
+                ResetSelections[options] = isSelected
+                if options == "All" then
+                    for _, otherOptions in ipairs(ResetOptions) do
+                        if otherOptions ~= "All" then
+                            ResetSelections[otherOptions] = isSelected
+                            Checkboxes[otherOptions]:SetValue(isSelected)
+                            Checkboxes[otherOptions]:SetDisabled(isSelected)
+                        end
+                    end
+                else
+                    if not isSelected then ResetSelections["All"] = false Checkboxes["All"]:SetValue(false) end
+                end
+
+                local resetButtonLabel = ""
+                if ResetSelections["All"] then resetButtonLabel = "Reset All"
+                else
+                    local selectedOptions = {}
+                    for key, value in pairs(ResetSelections) do
+                        if value and key ~= "All" then
+                            table.insert(selectedOptions, key)
+                        end
+                    end
+
+                    if #selectedOptions == 0 then
+                        resetButtonLabel = "Select Options to Reset..."
+                    elseif #selectedOptions == 1 then
+                        resetButtonLabel = "Reset " .. selectedOptions[1]
+                    elseif #selectedOptions == 2 then
+                        resetButtonLabel = "Reset " .. selectedOptions[1] .. " & " .. selectedOptions[2]
+                    else
+                        resetButtonLabel = "Reset " .. table.concat(selectedOptions, ", ", 1, #selectedOptions - 1) .. " & " .. selectedOptions[#selectedOptions]
+                    end
+                end
+
+                MS.ResetButton:SetText(resetButtonLabel .. "|r")
+            end)
+
+            ResetOptionsContainer:AddChild(OptionCheckBox)
+        end
+
+        local ResetButton = AG:Create("Button")
+        ResetButton:SetText("Select Options to Reset...")
+        ResetButton:SetRelativeWidth(1)
+        MS.ResetButton = ResetButton
+
+        ResetButton:SetCallback("OnClick", function()
+            local selectedOptions = {}
+            for key, value in pairs(ResetSelections) do
+                if value then table.insert(selectedOptions, key) end
+            end
+
+            if tContains(selectedOptions, "All") then
+                MS:Reset("All")
+                return
+            end
+
+            for _, option in ipairs(selectedOptions) do
+                MS:Reset(option)
+            end
+        end)
+
+        ResetOptionsContainer:AddChild(ResetButton)
+
+        ColourContainer:DoLayout()
+        FontContainer:DoLayout()
+        ScrollFrame:DoLayout()
+    end
+
+    function MS:CreateTimeOptions(Container)
+        local ScrollFrame = SetupTabGroup(Container, "Time Options")
+
+        local Enable = AG:Create("CheckBox")
+        Enable:SetLabel(UpdateState(Enable, DB.Time.Enable))
+        Enable:SetValue(DB.Time.Enable)
+        Enable:SetRelativeWidth(1)
+        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.Time.Enable = value MS:UpdateTime() UpdateState(Enable, DB.Time.Enable) DisableElements(ScrollFrame, Enable, value) end)
+        ScrollFrame:AddChild(Enable)
+
+        local ColourPicker = AG:Create("ColorPicker")
+        ColourPicker:SetLabel("Text Colour")
+        ColourPicker:SetColor(DB.Time.Colour[1]/255, DB.Time.Colour[2]/255, DB.Time.Colour[3]/255)
+        ColourPicker:SetHasAlpha(false)
+        ColourPicker:SetRelativeWidth(0.5)
+        ColourPicker:SetCallback("OnValueChanged", function(_, _, r, g, b) DB.Time.Colour = {r*255, g*255, b*255} MS:UpdateTime() end)
+        ScrollFrame:AddChild(ColourPicker)
+
+        local UpdateIntervalSlider = AG:Create("Slider")
+        UpdateIntervalSlider:SetLabel("Update Interval (seconds)")
+        UpdateIntervalSlider:SetValue(DB.Time.UpdateInterval)
+        UpdateIntervalSlider:SetSliderValues(0.1, 60.0, 0.1)
+        UpdateIntervalSlider:SetRelativeWidth(0.5)
+        UpdateIntervalSlider:SetCallback("OnValueChanged", function(_, _, value) DB.Time.UpdateInterval = value MS:UpdateTime() end)
+        ScrollFrame:AddChild(UpdateIntervalSlider)
+
+        local TimeZoneDropdown = AG:Create("Dropdown")
+        TimeZoneDropdown:SetLabel("Time Zone")
+        TimeZoneDropdown:SetList({ ["Local"] = "Local", ["Realm"] = "Realm" })
+        TimeZoneDropdown:SetValue(DB.Time.TimeZone)
+        TimeZoneDropdown:SetRelativeWidth(0.5)
+        TimeZoneDropdown:SetCallback("OnValueChanged", function(_, _, value) DB.Time.TimeZone = value MS:UpdateTime() end)
+        ScrollFrame:AddChild(TimeZoneDropdown)
+
+        local TimeFormatDropdown = AG:Create("Dropdown")
+        TimeFormatDropdown:SetLabel("Time Format")
+        TimeFormatDropdown:SetList({ ["12H"] = "12-Hour", ["24H"] = "24-Hour" })
+        TimeFormatDropdown:SetValue(DB.Time.Format)
+        TimeFormatDropdown:SetRelativeWidth(0.5)
+        TimeFormatDropdown:SetCallback("OnValueChanged", function(_, _, value) DB.Time.Format = value MS:UpdateTime() end)
+        ScrollFrame:AddChild(TimeFormatDropdown)
+
+        local LayoutContainer = AG:Create("InlineGroup")
+        LayoutContainer:SetTitle("Layout")
+        LayoutContainer:SetLayout("Flow")
+        LayoutContainer:SetFullWidth(true)
+        ScrollFrame:AddChild(LayoutContainer)
+
+        CreateLayoutGroup(LayoutContainer, DB.Time.Layout, function() MS:UpdateTime() end)
+
+        DisableElements(ScrollFrame, Enable, DB.Time.Enable)
+        LayoutContainer:DoLayout()
+        ScrollFrame:DoLayout()
+    end
+
+    function MS:CreateSystemStatsOptions(Container)
+        local ScrollFrame = SetupTabGroup(Container, "System Stats Options")
+
+        local Enable = AG:Create("CheckBox")
+        Enable:SetLabel(UpdateState(Enable, DB.SystemStats.Enable))
+        Enable:SetValue(DB.SystemStats.Enable)
+        Enable:SetRelativeWidth(1)
+        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.SystemStats.Enable = value MS:UpdateSystemStats() UpdateState(Enable, DB.SystemStats.Enable) DisableElements(ScrollFrame, Enable, value) end)
+        ScrollFrame:AddChild(Enable)
+
+        local ColourPicker = AG:Create("ColorPicker")
+        ColourPicker:SetLabel("Text Colour")
+        ColourPicker:SetColor(DB.SystemStats.Colour[1]/255, DB.SystemStats.Colour[2]/255, DB.SystemStats.Colour[3]/255)
+        ColourPicker:SetHasAlpha(false)
+        ColourPicker:SetRelativeWidth(0.5)
+        ColourPicker:SetCallback("OnValueChanged", function(_, _, r, g, b) DB.SystemStats.Colour = {r*255, g*255, b*255} MS:UpdateSystemStats() end)
+        ScrollFrame:AddChild(ColourPicker)
+
+        local UpdateIntervalSlider = AG:Create("Slider")
+        UpdateIntervalSlider:SetLabel("Update Interval (seconds)")
+        UpdateIntervalSlider:SetValue(DB.SystemStats.UpdateInterval)
+        UpdateIntervalSlider:SetSliderValues(0.1, 60.0, 0.1)
+        UpdateIntervalSlider:SetRelativeWidth(0.5)
+        UpdateIntervalSlider:SetCallback("OnValueChanged", function(_, _, value) DB.SystemStats.UpdateInterval = value MS:UpdateSystemStats() end)
+        ScrollFrame:AddChild(UpdateIntervalSlider)
+
+        local StringCreationContainer = AG:Create("InlineGroup")
+        StringCreationContainer:SetTitle("SystemStats Builder")
+        StringCreationContainer:SetLayout("Flow")
+        StringCreationContainer:SetFullWidth(true)
+        ScrollFrame:AddChild(StringCreationContainer)
+
+        local StringChoices = {
+            {
+                [""] = "None",
+                ["%FPS"] = "FPS",
+                ["%WORLDMS"] = "MS (World)",
+                ["%HOMEMS"] = "MS (Home)",
+                ["%BANDWIDTHDOWN"] = "Bandwidth (Down)",
+                ["%BANDWIDTHUP"] = "Bandwidth (Up)",
+            },
+            { "", "%FPS", "%HOMEMS", "%WORLDMS", "%BANDWIDTHDOWN", "%BANDWIDTHUP" }
+        }
+
+        local DisplayStringEditBox = AG:Create("EditBox")
+        DisplayStringEditBox:SetLabel("Display String")
+        DisplayStringEditBox:SetText(DB.SystemStats.String)
+        DisplayStringEditBox:SetRelativeWidth(0.5)
+        DisplayStringEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.SystemStats.String = value MS:UpdateSystemStats() end)
+        StringCreationContainer:AddChild(DisplayStringEditBox)
+
+        local StatDropdown = AG:Create("Dropdown")
+        StatDropdown:SetLabel("Add Stat")
+        StatDropdown:SetList(StringChoices[1], StringChoices[2])
+        StatDropdown:SetValue("")
+        StatDropdown:SetRelativeWidth(0.5)
+        StatDropdown:SetCallback("OnValueChanged", function(_, _, value) DisplayStringEditBox:SetText(DisplayStringEditBox:GetText() .. value) DB.SystemStats.String = DisplayStringEditBox:GetText() MS:UpdateSystemStats() end)
+        StringCreationContainer:AddChild(StatDropdown)
+
+        local LayoutContainer = AG:Create("InlineGroup")
+        LayoutContainer:SetTitle("Layout")
+        LayoutContainer:SetLayout("Flow")
+        LayoutContainer:SetFullWidth(true)
+        ScrollFrame:AddChild(LayoutContainer)
+
+        CreateLayoutGroup(LayoutContainer, DB.SystemStats.Layout, function() MS:UpdateSystemStats() end)
+
+        DisableElements(ScrollFrame, Enable, DB.SystemStats.Enable)
+
+        StringCreationContainer:DoLayout()
+        LayoutContainer:DoLayout()
+        ScrollFrame:DoLayout()
+    end
+
+    function MS:CreateLocationOptions(Container)
+        local ScrollFrame = SetupTabGroup(Container, "Location Options")
+    end
+
+    function MS:CreateInstanceDifficultyOptions(Container)
+        local ScrollFrame = SetupTabGroup(Container, "Instance Difficulty Options")
+    end
+
+    local function SelectTabGroup(GUIContainer, _, TabGroup)
+        GUIContainer:ReleaseChildren()
+        if TabGroup == "General" then
+            MS:CreateGeneralOptions(GUIContainer)
+        elseif TabGroup == "Time" then
+            MS:CreateTimeOptions(GUIContainer)
+        elseif TabGroup == "SystemStats" then
+            MS:CreateSystemStatsOptions(GUIContainer)
+        elseif TabGroup == "Location" then
+            MS:CreateLocationOptions(GUIContainer)
+        elseif TabGroup == "InstanceDifficulty" then
+            MS:CreateInstanceDifficultyOptions(GUIContainer)
+        end
+        if not MS.GUIContainer then MS.GUIContainer = GUIContainer end
+    end
+
+    local TabGroup = AG:Create("TabGroup")
+    TabGroup:SetLayout("Flow")
+    TabGroup:SetTabs({
+        { text = "General", value = "General" },
+        { text = "Time", value = "Time" },
+        { text = "System Stats", value = "SystemStats" },
+        { text = "Location", value = "Location" },
+        { text = "Instance Difficulty", value = "InstanceDifficulty" },
+    })
+
+    TabGroup:SetCallback("OnGroupSelected", SelectTabGroup)
+    TabGroup:SetFullHeight(true)
+    TabGroup:SetFullWidth(true)
+    TabGroup:SelectTab(TabToOpen)
+    GUIFrame:AddChild(TabGroup)
+end
+
+function MS:RedrawGUI()
+    MS.GUIContainer:ReleaseChildren()
+    MS:CreateGeneralOptions(MS.GUIContainer)
+end

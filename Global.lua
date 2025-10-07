@@ -1,0 +1,59 @@
+local _, MS = ...
+
+MS.AddOnName = C_AddOns.GetAddOnMetadata("MinimapStats", "Title")
+MS.Version = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
+MS.Author = C_AddOns.GetAddOnMetadata("MinimapStats", "Author")
+MS.LSM = LibStub("LibSharedMedia-3.0")
+MS.CLASS_COLOUR = {RAID_CLASS_COLORS[select(2, UnitClass("player"))].r * 255, RAID_CLASS_COLORS[select(2, UnitClass("player"))].g * 255, RAID_CLASS_COLORS[select(2, UnitClass("player"))].b * 255}
+local OptionsToDB = {
+    ["General"] = "General",
+    ["Time"] = "Time",
+    ["System Stats"] = "SystemStats",
+    ["Location"] = "Location",
+    ["Instance Difficulty"] = "InstanceDifficulty",
+}
+function MS:Print(MSG)
+    DEFAULT_CHAT_FRAME:AddMessage(MS.AddOnName .. ":|r " .. MSG)
+end
+
+function MS:SetJustification(anchorFrom)
+    if anchorFrom == "TOPLEFT" or anchorFrom == "LEFT" or anchorFrom == "BOTTOMLEFT" then
+        return "LEFT"
+    elseif anchorFrom == "TOPRIGHT" or anchorFrom == "RIGHT" or anchorFrom == "BOTTOMRIGHT" then
+        return "RIGHT"
+    else
+        return "CENTER"
+    end
+end
+
+function MS:SetupSlashCommands()
+    SLASH_MINIMAPSTATS1 = "/ms"
+    SLASH_MINIMAPSTATS2 = "/minimapstats"
+    SlashCmdList["MINIMAPSTATS"] = function(msg)
+        if msg == "" or msg == "gui" or msg == "options" then
+            MS:CreateGUI()
+        elseif msg == "time" then
+            MS:CreateGUI("Time")
+        elseif msg == "system" or msg == "systemstats" or msg == "s" then
+            MS:CreateGUI("SystemStats")
+        elseif msg == "location" or msg == "loc" or msg == "l" then
+            MS:CreateGUI("Location")
+        elseif msg == "instance" or msg == "instancedifficulty" or msg == "i"  or msg == "id" then
+            MS:CreateGUI("InstanceDifficulty")
+        end
+    end
+    MS:Print("'|cFF8080FF/ms|r' for in-game configuration.")
+end
+
+function MS:Reset(valueToReset)
+    local dbValue = OptionsToDB[valueToReset]
+    if valueToReset == "All" then
+        for key, _ in pairs(MS.db.global) do MS.db.global[key] = CopyTable(MS.Defaults.global[key]) end
+    elseif MS.db.global[dbValue] then
+        MS.db.global[dbValue] = CopyTable(MS.Defaults.global[dbValue])
+    end
+    MS:Print("Reset " .. (valueToReset == "All" and "All Settings" or valueToReset .. " Settings"))
+    MS:UpdateTime()
+    MS:UpdateSystemStats()
+    if MS.GUIContainer then MS:RedrawGUI() end
+end

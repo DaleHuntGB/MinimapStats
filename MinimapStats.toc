@@ -1,0 +1,15 @@
+## Title: |cFF8080FFMinimap|rStats
+## Version: 12.0.0
+## Author: UnhaltedGB
+## SavedVariables: MinimapStatsDB
+
+# Load Libraries
+Libs/Init.xml
+
+# Load Modules
+Global.lua
+Modules/Init.xml
+
+# Load AddOn
+GUI.lua
+Core.lua
