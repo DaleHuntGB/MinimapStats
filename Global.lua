@@ -5,7 +5,7 @@ MS.Version = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
 MS.Author = C_AddOns.GetAddOnMetadata("MinimapStats", "Author")
 MS.LSM = LibStub("LibSharedMedia-3.0")
 MS.CLASS_COLOUR = {RAID_CLASS_COLORS[select(2, UnitClass("player"))].r * 255, RAID_CLASS_COLORS[select(2, UnitClass("player"))].g * 255, RAID_CLASS_COLORS[select(2, UnitClass("player"))].b * 255}
-MS.InfoTag = "|A:glueannouncementpopup-icon-info:16:16|a "
+MS.InfoButton = "|A:glueannouncementpopup-icon-info:16:16|a "
 
 local OptionsToDB = {
     ["General"] = "General",

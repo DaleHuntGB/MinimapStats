@@ -32,11 +32,7 @@ local function FetchSystemStats()
     systemStatsString = systemStatsString:gsub("%%(%a+)", function(fmt)
         local ok, result = pcall(date, "%" .. fmt)
         if not ok then return "%" .. fmt end
-
-        if fmt == "b" or fmt == "B" then
-            return string.format("|c%s%s|r", AccentColour, result)
-        end
-
+        if fmt == "b" or fmt == "B" then return string.format("|c%s%s|r", AccentColour, result) end
         return result
     end)
 

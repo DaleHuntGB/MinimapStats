@@ -19,6 +19,17 @@ local Anchors = {
     { "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT", "BOTTOMLEFT", "BOTTOM", "BOTTOMRIGHT" }
 }
 
+local function CreateInfoTag(Description)
+    local InfoDesc = AG:Create("Label")
+    InfoDesc:SetText(MS.InfoButton .. Description)
+    InfoDesc:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
+    InfoDesc:SetFullWidth(true)
+    InfoDesc:SetJustifyH("CENTER")
+    InfoDesc:SetHeight(24)
+    InfoDesc:SetJustifyV("MIDDLE")
+    return InfoDesc
+end
+
 local function DeepDisable(widget, disabled)
     if widget.SetDisabled then widget:SetDisabled(disabled) end
     if widget.children then
@@ -301,7 +312,7 @@ function MS:CreateGUI(TabToOpen)
         ElementOptionsContainer:AddChild(ColourPicker)
 
         local UpdateIntervalSlider = AG:Create("Slider")
-        UpdateIntervalSlider:SetLabel("Update Interval (seconds)")
+        UpdateIntervalSlider:SetLabel("Update Interval (Seconds)")
         UpdateIntervalSlider:SetValue(DB.Time.UpdateInterval)
         UpdateIntervalSlider:SetSliderValues(0.1, 60.0, 0.1)
         UpdateIntervalSlider:SetRelativeWidth(0.5)
@@ -362,7 +373,7 @@ function MS:CreateGUI(TabToOpen)
         ElementOptionsContainer:AddChild(ColourPicker)
 
         local UpdateIntervalSlider = AG:Create("Slider")
-        UpdateIntervalSlider:SetLabel("Update Interval (seconds)")
+        UpdateIntervalSlider:SetLabel("Update Interval (Seconds)")
         UpdateIntervalSlider:SetValue(DB.SystemStats.UpdateInterval)
         UpdateIntervalSlider:SetSliderValues(0.1, 60.0, 0.1)
         UpdateIntervalSlider:SetRelativeWidth(0.5)
@@ -394,7 +405,7 @@ function MS:CreateGUI(TabToOpen)
         DisplayStringEditBox:SetText(DB.SystemStats.String)
         DisplayStringEditBox:SetRelativeWidth(0.5)
         DisplayStringEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.SystemStats.String = value MS:UpdateSystemStats() DisplayStringEditBox:ClearFocus() end)
-        DisplayStringEditBox:SetCallback("OnEnter", function() local tooltipText = "" for _, token in ipairs(StringChoices[2]) do if token ~= "" then tooltipText = tooltipText .. "• |cFF8080FF" .. token .. "|r - " .. StringChoices[1][token] .. "\n" end end tooltipText = tooltipText .. MS.InfoTag .. "|cFF8080FFLua Date Formats|r and |cFF8080FFNew Line ('\\n')|r Supported!|r" GameTooltip:SetOwner(DisplayStringEditBox.frame, "ANCHOR_NONE") GameTooltip:SetPoint("LEFT", DisplayStringEditBox.frame, "RIGHT", 3, 0) GameTooltip:SetText(tooltipText, 1, 1, 1, 1, false) GameTooltip:Show() end)
+        DisplayStringEditBox:SetCallback("OnEnter", function() local tooltipText = "" for _, token in ipairs(StringChoices[2]) do if token ~= "" then tooltipText = tooltipText .. "• |cFF8080FF" .. token .. "|r - " .. StringChoices[1][token] .. "\n" end end tooltipText = tooltipText .. MS.InfoButton .. "|cFF8080FFLua Date Formats|r and |cFF8080FFNew Line ('\\n')|r Supported!|r" GameTooltip:SetOwner(DisplayStringEditBox.frame, "ANCHOR_NONE") GameTooltip:SetPoint("LEFT", DisplayStringEditBox.frame, "RIGHT", 3, 0) GameTooltip:SetText(tooltipText, 1, 1, 1, 1, false) GameTooltip:Show() end)
         DisplayStringEditBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
         StringCreationContainer:AddChild(DisplayStringEditBox)
 
@@ -481,6 +492,54 @@ function MS:CreateGUI(TabToOpen)
         local ScrollFrame = SetupTabGroup(Container, "Instance Difficulty Options")
     end
 
+    function MS:CreateShareOptions(Container)
+        local ScrollFrame = SetupTabGroup(Container, "Share Options")
+
+        local ExportingHeading = AG:Create("Heading")
+        ExportingHeading:SetText("Exporting")
+        ExportingHeading:SetFullWidth(true)
+        ScrollFrame:AddChild(ExportingHeading)
+
+        local ExportingImportingDesc = CreateInfoTag("You can export your profile by pressing |cFF8080FFExport Profile|r button below & share the string with other |cFF8080FFMinimapStats|r users.")
+        ScrollFrame:AddChild(ExportingImportingDesc)
+
+        local ExportingEditBox = AG:Create("EditBox")
+        ExportingEditBox:SetLabel("Export String...")
+        ExportingEditBox:SetText("")
+        ExportingEditBox:SetFullWidth(true)
+        ExportingEditBox:DisableButton(true)
+        ExportingEditBox:SetCallback("OnEnterPressed", function() ExportingEditBox:ClearFocus() end)
+        ScrollFrame:AddChild(ExportingEditBox)
+
+        local ExportProfileButton = AG:Create("Button")
+        ExportProfileButton:SetText("Export Profile")
+        ExportProfileButton:SetFullWidth(true)
+        ExportProfileButton:SetCallback("OnClick", function() ExportingEditBox:SetText(MS:ExportSavedVariables()) ExportingEditBox:HighlightText() ExportingEditBox:SetFocus() end)
+        ScrollFrame:AddChild(ExportProfileButton)
+
+        local ImportingHeading = AG:Create("Heading")
+        ImportingHeading:SetText("Importing")
+        ImportingHeading:SetFullWidth(true)
+        ScrollFrame:AddChild(ImportingHeading)
+
+        local ImportingDesc = CreateInfoTag("If you have an exported string, paste it in the |cFF8080FFImport String|r box below & press |cFF8080FFImport Profile|r.")
+        ScrollFrame:AddChild(ImportingDesc)
+
+        local ImportingEditBox = AG:Create("EditBox")
+        ImportingEditBox:SetLabel("Import String...")
+        ImportingEditBox:SetText("")
+        ImportingEditBox:SetFullWidth(true)
+        ImportingEditBox:DisableButton(true)
+        ImportingEditBox:SetCallback("OnEnterPressed", function() ImportingEditBox:ClearFocus() end)
+        ScrollFrame:AddChild(ImportingEditBox)
+
+        local ImportProfileButton = AG:Create("Button")
+        ImportProfileButton:SetText("Import Profile")
+        ImportProfileButton:SetFullWidth(true)
+        ImportProfileButton:SetCallback("OnClick", function() MS:ImportSavedVariables(ImportingEditBox:GetText()) ImportingEditBox:SetText("") end)
+        ScrollFrame:AddChild(ImportProfileButton)
+    end
+
     local function SelectTabGroup(GUIContainer, _, TabGroup)
         GUIContainer:ReleaseChildren()
         if TabGroup == "General" then
@@ -493,6 +552,8 @@ function MS:CreateGUI(TabToOpen)
             MS:CreateLocationOptions(GUIContainer)
         elseif TabGroup == "InstanceDifficulty" then
             MS:CreateInstanceDifficultyOptions(GUIContainer)
+        elseif TabGroup == "Share" then
+            MS:CreateShareOptions(GUIContainer)
         end
         if not MS.GUIContainer then MS.GUIContainer = GUIContainer end
     end
@@ -505,8 +566,8 @@ function MS:CreateGUI(TabToOpen)
         { text = "System Stats", value = "SystemStats" },
         { text = "Location", value = "Location" },
         { text = "Instance Difficulty", value = "InstanceDifficulty" },
+        { text = "Sharing", value = "Share" },
     })
-
     TabGroup:SetCallback("OnGroupSelected", SelectTabGroup)
     TabGroup:SetFullHeight(true)
     TabGroup:SetFullWidth(true)

@@ -1,0 +1,30 @@
+local _, MS = ...
+local Serialize = LibStub:GetLibrary("AceSerializer-3.0")
+local Compress = LibStub:GetLibrary("LibDeflate")
+
+function MS:ExportSavedVariables()
+    local profileData = { global = MS.db.global, }
+    local SerializedInfo = Serialize:Serialize(profileData)
+    local CompressedInfo = Compress:CompressDeflate(SerializedInfo)
+    local EncodedInfo = Compress:EncodeForPrint(CompressedInfo)
+    return EncodedInfo
+end
+
+function MS:ImportSavedVariables(EncodedInfo)
+    local DecodedInfo = Compress:DecodeForPrint(EncodedInfo)
+    local DecompressedInfo = Compress:DecompressDeflate(DecodedInfo)
+    local success, data = Serialize:Deserialize(DecompressedInfo)
+    if not success or type(data) ~= "table" then
+        MS:Print("Import Failed. Invalid Data String.")
+        return
+    end
+
+    if type(data.global) == "table" then
+        for key, value in pairs(data.global) do
+            MS.db.global[key] = value
+        end
+    end
+
+    MS:Print("Import Successful...")
+    MS:UpdateAll()
+end

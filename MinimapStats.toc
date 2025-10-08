@@ -6,10 +6,13 @@
 # Load Libraries
 Libs/Init.xml
 
-# Load Modules
+# Load Essentials
 Global.lua
+
+# Load Modules
 Modules/Init.xml
 
 # Load AddOn
+Share.lua
 GUI.lua
 Core.lua
