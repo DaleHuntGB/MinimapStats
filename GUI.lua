@@ -383,8 +383,8 @@ function MS:CreateGUI(TabToOpen)
                 ["%home"] = "MS (Home)",
                 ["%down"] = "Bandwidth (Down)",
                 ["%up"] = "Bandwidth (Up)",
-                ["%shortdate"] = "Date (DD/MM/YYYY)",
-                ["%longdate"] = "Date (DD/MM/YY)",
+                ["%shortdate"] = "Date (01 Jan 99)",
+                ["%longdate"] = "Date (01 January 1999)",
             },
             { "", "%fps", "%home", "%world", "%down", "%up", "%shortdate", "%longdate"}
         }
@@ -393,20 +393,8 @@ function MS:CreateGUI(TabToOpen)
         DisplayStringEditBox:SetLabel("Display String")
         DisplayStringEditBox:SetText(DB.SystemStats.String)
         DisplayStringEditBox:SetRelativeWidth(0.5)
-        DisplayStringEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.SystemStats.String = value MS:UpdateSystemStats() end)
-        DisplayStringEditBox:SetCallback("OnEnter", function()
-            local tooltipText = ""
-            for _, token in ipairs(StringChoices[2]) do
-                if token ~= "" then
-                    tooltipText = tooltipText .. "• |cFF8080FF" .. token .. "|r - " .. StringChoices[1][token] .. "\n"
-                end
-            end
-            tooltipText = tooltipText .. MS.InfoTag .. "|cFF4080FFLua Date Formats Supported!|r"
-            GameTooltip:SetOwner(DisplayStringEditBox.frame, "ANCHOR_NONE")
-            GameTooltip:SetPoint("LEFT", DisplayStringEditBox.frame, "RIGHT", 3, 0)
-            GameTooltip:SetText(tooltipText, nil, nil, nil, nil, false)
-            GameTooltip:Show()
-        end)
+        DisplayStringEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.SystemStats.String = value MS:UpdateSystemStats() DisplayStringEditBox:ClearFocus() end)
+        DisplayStringEditBox:SetCallback("OnEnter", function() local tooltipText = "" for _, token in ipairs(StringChoices[2]) do if token ~= "" then tooltipText = tooltipText .. "• |cFF8080FF" .. token .. "|r - " .. StringChoices[1][token] .. "\n" end end tooltipText = tooltipText .. MS.InfoTag .. "|cFF8080FFLua Date Formats|r and |cFF8080FFNew Line ('\\n')|r Supported!|r" GameTooltip:SetOwner(DisplayStringEditBox.frame, "ANCHOR_NONE") GameTooltip:SetPoint("LEFT", DisplayStringEditBox.frame, "RIGHT", 3, 0) GameTooltip:SetText(tooltipText, 1, 1, 1, 1, false) GameTooltip:Show() end)
         DisplayStringEditBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
         StringCreationContainer:AddChild(DisplayStringEditBox)
 

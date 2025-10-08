@@ -40,6 +40,7 @@ local function FetchSystemStats()
         return result
     end)
 
+    systemStatsString = systemStatsString:gsub("\\n", "\n")
     return systemStatsString
 end
 
