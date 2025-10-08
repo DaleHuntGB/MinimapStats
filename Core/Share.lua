@@ -3,7 +3,7 @@ local Serialize = LibStub:GetLibrary("AceSerializer-3.0")
 local Compress = LibStub:GetLibrary("LibDeflate")
 
 function MS:ExportSavedVariables()
-    local profileData = { global = MS.db.global, }
+    local profileData = { global = MS.db.global }
     local SerializedInfo = Serialize:Serialize(profileData)
     local CompressedInfo = Compress:CompressDeflate(SerializedInfo)
     local EncodedInfo = Compress:EncodeForPrint(CompressedInfo)
@@ -19,12 +19,11 @@ function MS:ImportSavedVariables(EncodedInfo)
         return
     end
 
-    if type(data.global) == "table" then
+    if success and type(data.global) == "table" then
         for key, value in pairs(data.global) do
             MS.db.global[key] = value
         end
+        MS:Print("Import Successful...")
+        MS:UpdateAll()
     end
-
-    MS:Print("Import Successful...")
-    MS:UpdateAll()
 end
