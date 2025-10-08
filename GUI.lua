@@ -380,12 +380,7 @@ function MS:CreateGUI(TabToOpen)
         DisplayStringEditBox:SetText(DB.SystemStats.String)
         DisplayStringEditBox:SetRelativeWidth(0.5)
         DisplayStringEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.SystemStats.String = value MS:UpdateSystemStats() end)
-        DisplayStringEditBox:SetCallback("OnEnter",
-        function()
-            GameTooltip:SetOwner(DisplayStringEditBox.frame, "ANCHOR_CURSOR")
-            GameTooltip:SetText("Available Stats:\n• |cFF8080FF%FPS|r - Current Frames Per Second\n• |cFF8080FF%WORLDMS|r - World Latency\n• |cFF8080FF%HOMEMS|r - Home Latency\n• |cFF8080FF%BANDWIDTHDOWN|r - Download Bandwidth\n• |cFF8080FF%BANDWIDTHUP|r - Upload Bandwidth", nil, nil, nil, nil, false)
-            GameTooltip:Show()
-        end)
+        DisplayStringEditBox:SetCallback("OnEnter", function() GameTooltip:SetOwner(DisplayStringEditBox.frame, "ANCHOR_CURSOR") GameTooltip:SetText("Available Stats:\n• |cFF8080FF%FPS|r - Current Frames Per Second\n• |cFF8080FF%WORLDMS|r - World Latency\n• |cFF8080FF%HOMEMS|r - Home Latency\n• |cFF8080FF%BANDWIDTHDOWN|r - Download Bandwidth\n• |cFF8080FF%BANDWIDTHUP|r - Upload Bandwidth", nil, nil, nil, nil, false) GameTooltip:Show() end)
         DisplayStringEditBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
         StringCreationContainer:AddChild(DisplayStringEditBox)
 
