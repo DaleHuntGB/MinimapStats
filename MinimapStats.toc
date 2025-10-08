@@ -2,6 +2,8 @@
 ## Version: 12.0.0
 ## Author: UnhaltedGB
 ## SavedVariables: MinimapStatsDB
+## IconTexture: Interface\AddOns\MinimapStats\Media\MinimapStats.png
+## Category-enUS: Aesthetics
 
 # Load Libraries
 Libs/Init.xml
