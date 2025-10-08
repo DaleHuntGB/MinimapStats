@@ -59,3 +59,23 @@ function MS:Reset(valueToReset)
     MS:UpdateSystemStats()
     if MS.GUIContainer then MS:RedrawGUI() end
 end
+
+function MS:FetchReactionColour()
+    local PVPZone = C_PvP.GetZonePVPInfo()
+    if PVPZone == 'arena' then
+        ReactionColour = {0.84, 0.03, 0.03}
+    elseif PVPZone == 'friendly' then
+        ReactionColour = {0.05, 0.85, 0.03}
+    elseif PVPZone == 'contested' then
+        ReactionColour = {0.9, 0.85, 0.05}
+    elseif PVPZone == 'hostile' then
+        ReactionColour = {0.84, 0.03, 0.03}
+    elseif PVPZone == 'sanctuary' then
+        ReactionColour = {0.035, 0.58, 0.84}
+    elseif PVPZone == 'combat' then
+        ReactionColour = {0.84, 0.03, 0.03}
+    else
+        ReactionColour = {0.9, 0.85, 0.05}
+    end
+    return ReactionColour
+end

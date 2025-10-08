@@ -407,6 +407,51 @@ function MS:CreateGUI(TabToOpen)
 
     function MS:CreateLocationOptions(Container)
         local ScrollFrame = SetupTabGroup(Container, "Location Options")
+
+        local Enable = AG:Create("CheckBox")
+        Enable:SetLabel(UpdateState(Enable, DB.Location.Enable))
+        Enable:SetValue(DB.Location.Enable)
+        Enable:SetRelativeWidth(1)
+        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.Location.Enable = value MS:UpdateLocation() UpdateState(Enable, DB.Location.Enable) DisableElements(ScrollFrame, Enable, value) end)
+        ScrollFrame:AddChild(Enable)
+
+        local ColourByDropdown = AG:Create("Dropdown")
+        ColourByDropdown:SetLabel("Colour By")
+        ColourByDropdown:SetList({ ["REACTION"] = "Reaction", ["CUSTOM"] = "Custom", ["ACCENT"] = "Accent" }, { "REACTION", "ACCENT", "CUSTOM" })
+        ColourByDropdown:SetValue(DB.Location.ColourBy)
+        ColourByDropdown:SetRelativeWidth(0.5)
+        ColourByDropdown:SetCallback("OnValueChanged", function(_, _, value) DB.Location.ColourBy = value MS:UpdateLocation() if value == "CUSTOM" then MS.ColourPicker:SetDisabled(false) else MS.ColourPicker:SetDisabled(true) end end)
+        ScrollFrame:AddChild(ColourByDropdown)
+
+        local ColourPicker = AG:Create("ColorPicker")
+        ColourPicker:SetLabel("Text Colour")
+        ColourPicker:SetColor(DB.Location.Colour[1]/255, DB.Location.Colour[2]/255, DB.Location.Colour[3]/255)
+        ColourPicker:SetHasAlpha(false)
+        ColourPicker:SetRelativeWidth(0.5)
+        ColourPicker:SetCallback("OnValueChanged", function(_, _, r, g, b) DB.Location.Colour = {r*255, g*255, b*255} MS:UpdateLocation() end)
+        MS.ColourPicker = ColourPicker
+        ScrollFrame:AddChild(ColourPicker)
+        if DB.Location.ColourBy ~= "CUSTOM" then ColourPicker:SetDisabled(true) end
+
+        local ShowSubZone = AG:Create("CheckBox")
+        ShowSubZone:SetLabel("Show Sub Zone")
+        ShowSubZone:SetValue(DB.Location.SubZone)
+        ShowSubZone:SetRelativeWidth(0.5)
+        ShowSubZone:SetCallback("OnValueChanged", function(_, _, value) DB.Location.SubZone = value MS:UpdateLocation() end)
+        ScrollFrame:AddChild(ShowSubZone)
+
+        local LayoutContainer = AG:Create("InlineGroup")
+        LayoutContainer:SetTitle("Layout")
+        LayoutContainer:SetLayout("Flow")
+        LayoutContainer:SetFullWidth(true)
+        ScrollFrame:AddChild(LayoutContainer)
+
+        CreateLayoutGroup(LayoutContainer, DB.Location.Layout, function() MS:UpdateLocation() end)
+
+        DisableElements(ScrollFrame, Enable, DB.Location.Enable)
+
+        LayoutContainer:DoLayout()
+        ScrollFrame:DoLayout()
     end
 
     function MS:CreateInstanceDifficultyOptions(Container)

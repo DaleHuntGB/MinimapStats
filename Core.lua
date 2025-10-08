@@ -20,7 +20,7 @@ local Defaults = {
             Format = "24H",
             UpdateInterval = 60.0,
             Colour = {255, 255, 255},
-            Layout = {"TOPLEFT", "TOPLEFT", 3, -3, 12},
+            Layout = {"BOTTOMLEFT", "BOTTOMLEFT", 3, 17, 18},
         },
         SystemStats = {
             Enable = true,
@@ -29,7 +29,13 @@ local Defaults = {
             String = "%FPS | %HOMEMS",
             Colour = {255, 255, 255},
         },
-        Location = {},
+        Location = {
+            Enable = true,
+            Layout = {"TOPRIGHT", "TOPRIGHT", 3, -3, 12},
+            ColourBy = "REACTION",
+            Colour = {255, 255, 255},
+            SubZone = false,
+        },
         InstanceDifficulty = {},
     },
 }

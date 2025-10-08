@@ -58,8 +58,8 @@ function MS:CreateSystemStats()
 end
 
 function MS:UpdateSystemStats()
-    local DB = MS.db.global.SystemStats
     local GeneralDB = MS.db.global.General
+    local DB = MS.db.global.SystemStats
     if MS.SystemStatsFrame then
         MS.SystemStatsFrame.Text:SetFont(LSM:Fetch("font", GeneralDB.Font), DB.Layout[5], GeneralDB.FontFlag)
         MS.SystemStatsFrame.Text:SetTextColor(DB.Colour[1]/255, DB.Colour[2]/255, DB.Colour[3]/255, 1)

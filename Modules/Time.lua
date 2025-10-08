@@ -56,8 +56,8 @@ function MS:CreateTime()
 end
 
 function MS:UpdateTime()
-    local DB = MS.db.global.Time
     local GeneralDB = MS.db.global.General
+    local DB = MS.db.global.Time
     if MS.TimeFrame then
         MS.TimeFrame.Text:SetFont(LSM:Fetch("font", GeneralDB.Font), DB.Layout[5], GeneralDB.FontFlag)
         MS.TimeFrame.Text:SetText(FetchTime())
