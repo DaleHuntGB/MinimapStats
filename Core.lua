@@ -26,7 +26,7 @@ local Defaults = {
             Enable = true,
             Layout = {"BOTTOMLEFT", "BOTTOMLEFT", 3, 3, 12},
             UpdateInterval = 1.0,
-            String = "%FPS | %HOMEMS",
+            String = "%fps | %home",
             Colour = {255, 255, 255},
         },
         Location = {

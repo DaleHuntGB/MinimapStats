@@ -378,13 +378,15 @@ function MS:CreateGUI(TabToOpen)
         local StringChoices = {
             {
                 [""] = "None",
-                ["%FPS"] = "FPS",
-                ["%WORLDMS"] = "MS (World)",
-                ["%HOMEMS"] = "MS (Home)",
-                ["%BANDWIDTHDOWN"] = "Bandwidth (Down)",
-                ["%BANDWIDTHUP"] = "Bandwidth (Up)",
+                ["%fps"] = "FPS",
+                ["%world"] = "MS (World)",
+                ["%home"] = "MS (Home)",
+                ["%down"] = "Bandwidth (Down)",
+                ["%up"] = "Bandwidth (Up)",
+                ["%shortdate"] = "Date (DD/MM/YYYY)",
+                ["%longdate"] = "Date (DD/MM/YY)",
             },
-            { "", "%FPS", "%HOMEMS", "%WORLDMS", "%BANDWIDTHDOWN", "%BANDWIDTHUP" }
+            { "", "%fps", "%home", "%world", "%down", "%up", "%shortdate", "%longdate"}
         }
 
         local DisplayStringEditBox = AG:Create("EditBox")
@@ -392,7 +394,19 @@ function MS:CreateGUI(TabToOpen)
         DisplayStringEditBox:SetText(DB.SystemStats.String)
         DisplayStringEditBox:SetRelativeWidth(0.5)
         DisplayStringEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.SystemStats.String = value MS:UpdateSystemStats() end)
-        DisplayStringEditBox:SetCallback("OnEnter", function() GameTooltip:SetOwner(DisplayStringEditBox.frame, "ANCHOR_CURSOR") GameTooltip:SetText("Available Stats:\n• |cFF8080FF%FPS|r - Current Frames Per Second\n• |cFF8080FF%WORLDMS|r - World Latency\n• |cFF8080FF%HOMEMS|r - Home Latency\n• |cFF8080FF%BANDWIDTHDOWN|r - Download Bandwidth\n• |cFF8080FF%BANDWIDTHUP|r - Upload Bandwidth", nil, nil, nil, nil, false) GameTooltip:Show() end)
+        DisplayStringEditBox:SetCallback("OnEnter", function()
+            local tooltipText = ""
+            for _, token in ipairs(StringChoices[2]) do
+                if token ~= "" then
+                    tooltipText = tooltipText .. "• |cFF8080FF" .. token .. "|r - " .. StringChoices[1][token] .. "\n"
+                end
+            end
+            tooltipText = tooltipText .. MS.InfoTag .. "|cFF4080FFLua Date Formats Supported!|r"
+            GameTooltip:SetOwner(DisplayStringEditBox.frame, "ANCHOR_NONE")
+            GameTooltip:SetPoint("LEFT", DisplayStringEditBox.frame, "RIGHT", 3, 0)
+            GameTooltip:SetText(tooltipText, nil, nil, nil, nil, false)
+            GameTooltip:Show()
+        end)
         DisplayStringEditBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
         StringCreationContainer:AddChild(DisplayStringEditBox)
 

@@ -5,20 +5,40 @@ local function FetchSystemStats()
     local GeneralDB = MS.db.global.General
     local DB = MS.db.global.SystemStats
     local systemStatsString = DB.String
+
     local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
+
     local bandWidthUpTexture = "|TInterface\\AddOns\\MinimapStats\\Media\\BandwidthUp.png:" .. DB.Layout[5] .. ":" .. DB.Layout[5] .. "|t"
     local bandWidthDownTexture = "|TInterface\\AddOns\\MinimapStats\\Media\\BandwidthDown.png:" .. DB.Layout[5] .. ":" .. DB.Layout[5] .. "|t"
+
     local FPS = string.format("%s|c%sFPS|r", math.floor(GetFramerate()), AccentColour)
     local bandWidthDown = string.format("%s%s", math.floor(select(1, GetNetStats())), bandWidthDownTexture)
     local bandWidthUp = string.format("%s%s", math.floor(select(2, GetNetStats())), bandWidthUpTexture)
     local latencyHome = string.format("%s|c%sMS|r", math.floor(select(3, GetNetStats())), AccentColour)
     local latencyWorld = string.format("%s|c%sMS|r", math.floor(select(4, GetNetStats())), AccentColour)
 
-    systemStatsString = systemStatsString:gsub("%%FPS", tostring(FPS))
-    systemStatsString = systemStatsString:gsub("%%HOMEMS", tostring(latencyHome))
-    systemStatsString = systemStatsString:gsub("%%WORLDMS", tostring(latencyWorld))
-    systemStatsString = systemStatsString:gsub("%%BANDWIDTHDOWN", tostring(bandWidthDown))
-    systemStatsString = systemStatsString:gsub("%%BANDWIDTHUP", tostring(bandWidthUp))
+    local Replacements = {
+        ["%%fps"] = FPS,
+        ["%%home"] = latencyHome,
+        ["%%world"] = latencyWorld,
+        ["%%down"] = bandWidthDown,
+        ["%%up"] = bandWidthUp,
+        ["%%shortdate"] = string.format("%s |c%s%s|r %s", date("%d"), AccentColour, date("%b"), date("%y")),
+        ["%%longdate"] = string.format("%s |c%s%s|r %s", date("%d"), AccentColour, date("%B"), date("%Y")),
+    }
+
+    for token, value in pairs(Replacements) do systemStatsString = systemStatsString:gsub(token, value) end
+
+    systemStatsString = systemStatsString:gsub("%%(%a+)", function(fmt)
+        local ok, result = pcall(date, "%" .. fmt)
+        if not ok then return "%" .. fmt end
+
+        if fmt == "b" or fmt == "B" then
+            return string.format("|c%s%s|r", AccentColour, result)
+        end
+
+        return result
+    end)
 
     return systemStatsString
 end
