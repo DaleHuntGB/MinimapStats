@@ -55,27 +55,32 @@ function MS:Reset(valueToReset)
         MS.db.global[dbValue] = CopyTable(MS.Defaults.global[dbValue])
     end
     MS:Print("Reset " .. (valueToReset == "All" and "All Settings" or valueToReset .. " Settings"))
-    MS:UpdateTime()
-    MS:UpdateSystemStats()
+    MS:UpdateAll()
     if MS.GUIContainer then MS:RedrawGUI() end
 end
 
 function MS:FetchReactionColour()
     local PVPZone = C_PvP.GetZonePVPInfo()
     if PVPZone == 'arena' then
-        ReactionColour = {0.84, 0.03, 0.03}
+        ReactionColour = {0.84 * 255, 0.03 * 255, 0.03 * 255}
     elseif PVPZone == 'friendly' then
-        ReactionColour = {0.05, 0.85, 0.03}
+        ReactionColour = {0.05 * 255, 0.85 * 255, 0.03 * 255}
     elseif PVPZone == 'contested' then
-        ReactionColour = {0.9, 0.85, 0.05}
+        ReactionColour = {0.9 * 255, 0.85 * 255, 0.05 * 255}
     elseif PVPZone == 'hostile' then
-        ReactionColour = {0.84, 0.03, 0.03}
+        ReactionColour = {0.84 * 255, 0.03 * 255, 0.03 * 255}
     elseif PVPZone == 'sanctuary' then
-        ReactionColour = {0.035, 0.58, 0.84}
+        ReactionColour = {0.035 * 255, 0.58 * 255, 0.84 * 255}
     elseif PVPZone == 'combat' then
-        ReactionColour = {0.84, 0.03, 0.03}
+        ReactionColour = {0.84 * 255, 0.03 * 255, 0.03 * 255}
     else
-        ReactionColour = {0.9, 0.85, 0.05}
+        ReactionColour = {0.9 * 255, 0.85 * 255, 0.05 * 255}
     end
     return ReactionColour
+end
+
+function MS:UpdateAll()
+    MS:UpdateTime()
+    MS:UpdateSystemStats()
+    MS:UpdateLocation()
 end

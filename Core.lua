@@ -31,7 +31,7 @@ local Defaults = {
         },
         Location = {
             Enable = true,
-            Layout = {"TOPRIGHT", "TOPRIGHT", 3, -3, 12},
+            Layout = {"TOPLEFT", "TOPLEFT", 3, -3, 12},
             ColourBy = "REACTION",
             Colour = {255, 255, 255},
             SubZone = false,
@@ -55,4 +55,5 @@ function MinimapStats:OnEnable()
     MS:SetupSlashCommands()
     MS:CreateTime()
     MS:CreateSystemStats()
+    MS:CreateLocation()
 end
