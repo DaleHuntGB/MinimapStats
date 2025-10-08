@@ -43,6 +43,10 @@ function MS:SetupSlashCommands()
             MS:CreateGUI("Location")
         elseif msg == "instance" or msg == "instancedifficulty" or msg == "i"  or msg == "id" then
             MS:CreateGUI("InstanceDifficulty")
+        elseif msg == "reset" then
+            MS:Reset("All")
+        elseif msg == "share" then
+            MS:CreateGUI("Share")
         end
     end
     MS:Print("'|cFF8080FF/ms|r' for in-game configuration.")
@@ -55,7 +59,7 @@ function MS:Reset(valueToReset)
     elseif MS.db.global[dbValue] then
         MS.db.global[dbValue] = CopyTable(MS.Defaults.global[dbValue])
     end
-    MS:Print("Reset " .. (valueToReset == "All" and "All Settings" or valueToReset .. " Settings"))
+    MS:Print("Reset " .. (valueToReset == "All" and "All Settings." or valueToReset .. " Settings."))
     MS:UpdateAll()
     if MS.GUIContainer then MS:RedrawGUI() end
 end
