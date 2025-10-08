@@ -7,12 +7,12 @@
 Libs/Init.xml
 
 # Load Essentials
-Global.lua
+Core/Global.lua
 
 # Load Modules
 Modules/Init.xml
 
 # Load AddOn
-Share.lua
-GUI.lua
-Core.lua
+Core/Share.lua
+Core/GUI.lua
+Core/Core.lua
