@@ -452,6 +452,8 @@ function MS:CreateGUI(TabToOpen)
         ShowSubZone:SetLabel("Display Sub Zone")
         ShowSubZone:SetValue(DB.Location.SubZone)
         ShowSubZone:SetRelativeWidth(0.33)
+        ShowSubZone:SetCallback("OnEnter", function() GameTooltip:SetOwner(ShowSubZone.frame, "ANCHOR_NONE") GameTooltip:SetPoint("LEFT", ShowSubZone.text, "LEFT", 120, 0) GameTooltip:SetText(MS.InfoButton .. "This will show your sub-zone rather than the overarching zone.", 1, 1, 1, 1, false) GameTooltip:Show() end)
+        ShowSubZone:SetCallback("OnLeave", function() GameTooltip:Hide() end)
         ShowSubZone:SetCallback("OnValueChanged", function(_, _, value) DB.Location.SubZone = value MS:UpdateLocation() end)
         ElementOptionsContainer:AddChild(ShowSubZone)
 
