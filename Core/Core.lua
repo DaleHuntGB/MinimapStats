@@ -36,7 +36,12 @@ local Defaults = {
             Colour = {255, 255, 255},
             SubZone = false,
         },
-        InstanceDifficulty = {},
+        InstanceDifficulty = {
+            Enable = true,
+            Layout = {"TOPLEFT", "TOPLEFT", 3, -17, 12},
+            Colour = {255, 255, 255},
+            Abbreviate = true,
+        },
     },
 }
 
@@ -56,4 +61,5 @@ function MinimapStats:OnEnable()
     MS:CreateTime()
     MS:CreateSystemStats()
     MS:CreateLocation()
+    MS:CreateInstanceDifficulty()
 end

@@ -51,6 +51,7 @@ function MS:CreateTime()
         end)
     else
         TimeFrame:Hide()
+        TimeFrame:SetScript("OnUpdate", nil)
     end
     MS.TimeFrame = TimeFrame
 end

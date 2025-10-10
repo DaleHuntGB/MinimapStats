@@ -114,6 +114,7 @@ function MS:CreateGUI(TabToOpen)
     local DB = MS.db.global
     if GUIActive then return end
     if TabToOpen == nil then TabToOpen = "General" end
+    MS.TestInstanceDifficulty = true
     GUIActive = true
     GUIFrame = AG:Create("Frame")
     GUIFrame:SetTitle(MS.AddOnName)
@@ -121,9 +122,10 @@ function MS:CreateGUI(TabToOpen)
     GUIFrame:SetLayout("Flow")
     GUIFrame:SetWidth(720)
     GUIFrame:SetHeight(480)
-    GUIFrame:SetCallback("OnClose", function() GUIActive = false AG:Release(GUIFrame) end)
+    GUIFrame:SetCallback("OnClose", function() MS.TestInstanceDifficulty = false MS:UpdateInstanceDifficulty() GUIActive = false AG:Release(GUIFrame) end)
     GUIFrame:EnableResize(false)
     GUIFrame:Show()
+    MS:UpdateInstanceDifficulty()
 
     function MS:CreateGeneralOptions(Container)
         local ScrollFrame = SetupTabGroup(Container, "General Options")
@@ -492,6 +494,47 @@ function MS:CreateGUI(TabToOpen)
 
     function MS:CreateInstanceDifficultyOptions(Container)
         local ScrollFrame = SetupTabGroup(Container, "Instance Difficulty Options")
+
+        local Enable = AG:Create("CheckBox")
+        Enable:SetLabel(UpdateState(Enable, DB.InstanceDifficulty.Enable))
+        Enable:SetValue(DB.InstanceDifficulty.Enable)
+        Enable:SetRelativeWidth(1)
+        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.InstanceDifficulty.Enable = value MS:UpdateInstanceDifficulty() UpdateState(Enable, DB.InstanceDifficulty.Enable) DisableElements(ScrollFrame, Enable, value) end)
+        ScrollFrame:AddChild(Enable)
+
+        local ElementOptionsContainer = AG:Create("InlineGroup")
+        ElementOptionsContainer:SetTitle("Element Options")
+        ElementOptionsContainer:SetLayout("Flow")
+        ElementOptionsContainer:SetFullWidth(true)
+        ScrollFrame:AddChild(ElementOptionsContainer)
+
+        local ColourPicker = AG:Create("ColorPicker")
+        ColourPicker:SetLabel("Text Colour")
+        ColourPicker:SetColor(DB.InstanceDifficulty.Colour[1]/255, DB.InstanceDifficulty.Colour[2]/255, DB.InstanceDifficulty.Colour[3]/255)
+        ColourPicker:SetHasAlpha(false)
+        ColourPicker:SetRelativeWidth(0.5)
+        ColourPicker:SetCallback("OnValueChanged", function(_, _, r, g, b) DB.InstanceDifficulty.Colour = {r*255, g*255, b*255} MS:UpdateInstanceDifficulty() end)
+        ElementOptionsContainer:AddChild(ColourPicker)
+
+        local AbbreviatedCheckbox = AG:Create("CheckBox")
+        AbbreviatedCheckbox:SetLabel("Abbreviated Difficulty")
+        AbbreviatedCheckbox:SetValue(DB.InstanceDifficulty.Abbreviate)
+        AbbreviatedCheckbox:SetRelativeWidth(0.5)
+        AbbreviatedCheckbox:SetCallback("OnValueChanged", function(_, _, value) DB.InstanceDifficulty.Abbreviate = value MS:UpdateInstanceDifficulty() end)
+        ElementOptionsContainer:AddChild(AbbreviatedCheckbox)
+
+        local LayoutContainer = AG:Create("InlineGroup")
+        LayoutContainer:SetTitle("Layout")
+        LayoutContainer:SetLayout("Flow")
+        LayoutContainer:SetFullWidth(true)
+        ScrollFrame:AddChild(LayoutContainer)
+
+        CreateLayoutGroup(LayoutContainer, DB.InstanceDifficulty.Layout, function() MS:UpdateInstanceDifficulty() end)
+
+        DisableElements(ScrollFrame, Enable, DB.InstanceDifficulty.Enable)
+
+        LayoutContainer:DoLayout()
+        ScrollFrame:DoLayout()
     end
 
     function MS:CreateShareOptions(Container)
@@ -558,6 +601,7 @@ function MS:CreateGUI(TabToOpen)
             MS:CreateShareOptions(GUIContainer)
         end
         if not MS.GUIContainer then MS.GUIContainer = GUIContainer end
+        MS:UpdateInstanceDifficulty()
     end
 
     local TabGroup = AG:Create("TabGroup")

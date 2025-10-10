@@ -70,6 +70,7 @@ function MS:CreateSystemStats()
         end)
     else
         SystemStatsFrame:Hide()
+        SystemStatsFrame:SetScript("OnUpdate", nil)
     end
     MS.SystemStatsFrame = SystemStatsFrame
 end

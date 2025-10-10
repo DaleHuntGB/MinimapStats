@@ -45,6 +45,10 @@ function MS:CreateLocation()
         end)
     else
         LocationFrame:Hide()
+        LocationFrame:UnregisterEvent("ZONE_CHANGED")
+        LocationFrame:UnregisterEvent("ZONE_CHANGED_INDOORS")
+        LocationFrame:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
+        LocationFrame:SetScript("OnEvent", nil)
     end
     MS.LocationFrame = LocationFrame
 end
