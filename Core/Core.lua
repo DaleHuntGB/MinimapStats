@@ -41,6 +41,7 @@ local Defaults = {
             Layout = {"TOPLEFT", "TOPLEFT", 3, -17, 12},
             Colour = {255, 255, 255},
             Abbreviate = true,
+            HideBlizzardInstanceBanner = true,
         },
     },
 }

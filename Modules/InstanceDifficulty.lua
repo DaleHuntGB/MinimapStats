@@ -10,6 +10,18 @@ local GarrisonInstanceIDs = {
     [1160] = true,
 }
 
+local function HideInstanceDifficulty()
+    if not MS.db.global.InstanceDifficulty.HideBlizzardInstanceBanner then return end
+    local InstanceDifficultyIndicator = MinimapCluster.InstanceDifficulty
+    local InstanceIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Instance or _G["MiniMapInstanceDifficulty"]
+    local GuildIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Guild or _G["GuildInstanceDifficulty"]
+    local ChallengeIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.ChallengeMode or _G["MiniMapChallengeMode"]
+    if InstanceDifficultyIndicator then InstanceDifficultyIndicator:ClearAllPoints() InstanceDifficultyIndicator:SetAlpha(0) end
+    if InstanceIndicator then InstanceIndicator:ClearAllPoints() InstanceIndicator:SetAlpha(0) end
+    if GuildIndicator then GuildIndicator:ClearAllPoints() GuildIndicator:SetAlpha(0) end
+    if ChallengeIndicator then ChallengeIndicator:ClearAllPoints() ChallengeIndicator:SetAlpha(0) end
+end
+
 function MS:FetchDelveTierDifficulty(WidgetID)
     if not WidgetID or WidgetID == nil then return end
     local DelveTier = C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(WidgetID).tierText
@@ -81,6 +93,7 @@ function MS:CreateInstanceDifficulty()
     InstanceDifficultyFrame:SetWidth(InstanceDifficultyFrame.Text:GetWidth())
     InstanceDifficultyFrame:SetHeight(InstanceDifficultyFrame.Text:GetHeight())
     if DB.Enable then
+        HideInstanceDifficulty()
         InstanceDifficultyFrame:Show()
         InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED")
         InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
@@ -119,6 +132,7 @@ function MS:UpdateInstanceDifficulty()
         MS.InstanceDifficultyFrame:SetWidth(MS.InstanceDifficultyFrame.Text:GetWidth())
         MS.InstanceDifficultyFrame:SetHeight(MS.InstanceDifficultyFrame.Text:GetHeight())
         if DB.Enable then
+            HideInstanceDifficulty()
             MS.InstanceDifficultyFrame:Show()
             MS.InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED")
             MS.InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_INDOORS")

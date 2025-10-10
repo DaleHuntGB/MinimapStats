@@ -91,3 +91,18 @@ function MS:UpdateAll()
     MS:UpdateLocation()
     MS:UpdateInstanceDifficulty()
 end
+
+function MS:ReloadPrompt(text, onAcceptText, onCancelText, onAcceptFn, onCancelFn)
+    StaticPopupDialogs["MINIMAPSTATS_RELOAD"] = {
+        text = text or "Reload Required to Apply Changes. Reload Now?",
+        button1 = onAcceptText or "Yes, reload now!",
+        button2 = onCancelText or "No, I will do it later.",
+        OnAccept = onAcceptFn or function() ReloadUI() end,
+        OnCancel = onCancelFn or function() end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3,
+    }
+    StaticPopup_Show("MINIMAPSTATS_RELOAD")
+end
