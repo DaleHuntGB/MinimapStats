@@ -1,5 +1,5 @@
 local _, MS = ...
-
+MSG = MSG or {}
 MS.AddOnName = C_AddOns.GetAddOnMetadata("MinimapStats", "Title")
 MS.Version = C_AddOns.GetAddOnMetadata("MinimapStats", "Version")
 MS.Author = C_AddOns.GetAddOnMetadata("MinimapStats", "Author")

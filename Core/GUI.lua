@@ -632,3 +632,7 @@ function MS:RedrawGUI()
     MS.GUIContainer:ReleaseChildren()
     MS:CreateGeneralOptions(MS.GUIContainer)
 end
+
+function MSG:CreateGUI()
+    MS:CreateGUI("General")
+end
