@@ -49,9 +49,11 @@ function MS:CreateTime()
                 self.TimeSinceLastUpdate = 0
             end
         end)
+        TimeFrame:SetScript("OnMouseDown", function(_, btn) if btn == "LeftButton" then ToggleCalendar() end end)
     else
         TimeFrame:Hide()
         TimeFrame:SetScript("OnUpdate", nil)
+        TimeFrame:SetScript("OnMouseDown", nil)
     end
     MS.TimeFrame = TimeFrame
 end
@@ -82,12 +84,14 @@ function MS:UpdateTime()
                     self.TimeSinceLastUpdate = 0
                 end
             end)
+            MS.TimeFrame:SetScript("OnMouseDown", function(_, btn) if btn == "LeftButton" then ToggleCalendar() end end)
             MS.TimeFrame.Text:SetText(FetchTime())
             MS.TimeFrame:SetWidth(MS.TimeFrame.Text:GetWidth())
             MS.TimeFrame:SetHeight(MS.TimeFrame.Text:GetHeight())
         else
             MS.TimeFrame:Hide()
             MS.TimeFrame:SetScript("OnUpdate", nil)
+            MS.TimeFrame:SetScript("OnMouseDown", nil)
         end
     end
 end
