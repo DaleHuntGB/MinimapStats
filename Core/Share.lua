@@ -27,3 +27,29 @@ function MS:ImportSavedVariables(EncodedInfo)
         MS:UpdateAll()
     end
 end
+
+function MSG:ExportSavedVariables()
+    local profileData = { global = MSG.db.global }
+    local SerializedInfo = Serialize:Serialize(profileData)
+    local CompressedInfo = Compress:CompressDeflate(SerializedInfo)
+    local EncodedInfo = Compress:EncodeForPrint(CompressedInfo)
+    return EncodedInfo
+end
+
+function MSG:ImportSavedVariables(EncodedInfo)
+    local DecodedInfo = Compress:DecodeForPrint(EncodedInfo)
+    local DecompressedInfo = Compress:DecompressDeflate(DecodedInfo)
+    local success, data = Serialize:Deserialize(DecompressedInfo)
+    if not success or type(data) ~= "table" then
+        MSG:Print("Import Failed. Invalid Data String.")
+        return
+    end
+
+    if success and type(data.global) == "table" then
+        for key, value in pairs(data.global) do
+            MSG.db.global[key] = value
+        end
+        MSG:Print("Import Successful...")
+        MSG:UpdateAll()
+    end
+end
