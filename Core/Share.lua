@@ -29,7 +29,7 @@ function MS:ImportSavedVariables(EncodedInfo)
 end
 
 function MSG:ExportSavedVariables()
-    local profileData = { global = MSG.db.global }
+    local profileData = { global = MS.db.global }
     local SerializedInfo = Serialize:Serialize(profileData)
     local CompressedInfo = Compress:CompressDeflate(SerializedInfo)
     local EncodedInfo = Compress:EncodeForPrint(CompressedInfo)
@@ -47,9 +47,9 @@ function MSG:ImportSavedVariables(EncodedInfo)
 
     if success and type(data.global) == "table" then
         for key, value in pairs(data.global) do
-            MSG.db.global[key] = value
+            MS.db.global[key] = value
         end
-        MSG:Print("Import Successful...")
-        MSG:UpdateAll()
+        MS:Print("Import Successful...")
+        MS:UpdateAll()
     end
 end
