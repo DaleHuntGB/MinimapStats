@@ -77,7 +77,13 @@ local function CreateTimeTooltip(displayDate, displayLockouts)
     GameTooltip:Show()
 end
 
+local function CreateSystemStatsTooltip()
+end
+
 function MS:AssignTooltipScripts()
-    MS.TimeFrame:SetScript("OnEnter", function() CreateTimeTooltip(MS.db.global.Tooltip.Time.Date, MS.db.global.Tooltip.Time.Lockouts) end)
-    MS.TimeFrame:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    MS.TimeFrame:SetScript("OnEnter", function(self) CreateTimeTooltip(MS.db.global.Tooltip.Time.Date, MS.db.global.Tooltip.Time.Lockouts) end)
+    MS.TimeFrame:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+
+    MS.SystemStatsFrame:SetScript("OnEnter", function(self) CreateSystemStatsTooltip() end)
+    MS.SystemStatsFrame:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
 end

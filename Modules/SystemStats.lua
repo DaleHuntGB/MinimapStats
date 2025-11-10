@@ -68,9 +68,11 @@ function MS:CreateSystemStats()
                 self.TimeSinceLastUpdate = 0
             end
         end)
+        SystemStatsFrame:SetScript("OnMouseDown", function(self, button) if button == "RightButton" then MS:CreateGUI() end end)
     else
         SystemStatsFrame:Hide()
         SystemStatsFrame:SetScript("OnUpdate", nil)
+        SystemStatsFrame:SetScript("OnMouseDown", nil)
     end
     MS.SystemStatsFrame = SystemStatsFrame
 end
@@ -103,9 +105,11 @@ function MS:UpdateSystemStats()
             MS.SystemStatsFrame.Text:SetText(FetchSystemStats())
             MS.SystemStatsFrame:SetWidth(MS.SystemStatsFrame.Text:GetWidth())
             MS.SystemStatsFrame:SetHeight(MS.SystemStatsFrame.Text:GetHeight())
+            MS.SystemStatsFrame:SetScript("OnMouseDown", function(self, button) if button == "RightButton" then MS:CreateGUI() end end)
         else
             MS.SystemStatsFrame:Hide()
             MS.SystemStatsFrame:SetScript("OnUpdate", nil)
+            MS.SystemStatsFrame:SetScript("OnMouseDown", nil)
         end
     end
 end
