@@ -150,6 +150,7 @@ local function FetchVaultOptions()
     FetchRaidData()
     FetchMythicPlusData()
     FetchWorldData()
+    if #RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 or #WorldRunsCompleted > 0 then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
 end
 
 local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateTime)
@@ -174,7 +175,7 @@ local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateT
 
     if displayLockouts then FetchPlayerLockouts() end
 
-    GameTooltip:AddLine(" ", 1, 1, 1, 1)
+    if displayLockouts or displayDate or displayAlternateTime then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
     GameTooltip:AddDoubleLine(MS.LEFT_CLICK_BUTTON .. "|c" .. AccentColour .. "Left-Click|r", "Open Calendar", 1, 1, 1, 1, 1, 1)
 
     GameTooltip:Show()
@@ -192,7 +193,6 @@ local function CreateSystemStatsTooltip(displayVaultOptions)
         FetchVaultOptions()
     end
 
-    GameTooltip:AddLine(" ", 1, 1, 1, 1)
     GameTooltip:AddDoubleLine(MS.RIGHT_CLICK_BUTTON .. "|c" .. AccentColour .. "Right-Click|r", "Open Configuration", 1, 1, 1, 1, 1, 1)
     GameTooltip:AddDoubleLine(MS.MIDDLE_CLICK_BUTTON .. "|c" .. AccentColour .. "Middle-Click|r", "Reload UI", 1, 1, 1, 1, 1, 1)
 
