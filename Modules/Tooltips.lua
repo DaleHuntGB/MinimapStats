@@ -62,7 +62,7 @@ end
 
 local function CreateTimeTooltip(displayDate, displayLockouts)
     GameTooltip:SetOwner(Minimap, "ANCHOR_NONE")
-    GameTooltip:SetPoint("BOTTOMRIGHT", Minimap, "BOTTOMLEFT", -2, -1)
+    GameTooltip:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", 0, -2)
     GameTooltip:ClearLines()
 
     if displayDate then

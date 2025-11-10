@@ -14,6 +14,7 @@ local OptionsToDB = {
     ["System Stats"] = "SystemStats",
     ["Location"] = "Location",
     ["Instance Difficulty"] = "InstanceDifficulty",
+    ["Tooltip"] = "Tooltip",
 }
 
 function MS:Print(MSG)

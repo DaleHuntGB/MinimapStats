@@ -236,7 +236,7 @@ function MS:CreateGUI(TabToOpen)
         ResetOptionsContainer:SetFullWidth(true)
         ScrollFrame:AddChild(ResetOptionsContainer)
 
-        local ResetOptions = {"All", "General", "Time", "System Stats", "Location", "Instance Difficulty"}
+        local ResetOptions = {"All", "General", "Time", "System Stats", "Location", "Instance Difficulty", "Tooltip"}
         local ResetSelections = {}
         local Checkboxes = {}
 
@@ -628,20 +628,36 @@ function MS:CreateGUI(TabToOpen)
         ScrollFrame:AddChild(TimeTooltipOptions)
 
         local ShowDateInTooltip = AG:Create("CheckBox")
+        local DateStringEditBox = AG:Create("EditBox")
+        local DateStringOutputExample = AG:Create("Label")
+
+        local function PositionDateStringExample()
+            DateStringOutputExample:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
+            DateStringOutputExample:SetJustifyH("LEFT")
+            DateStringOutputExample:SetJustifyV("MIDDLE")
+            TimeTooltipOptions:DoLayout() 
+            ScrollFrame:DoLayout()
+        end
+
         ShowDateInTooltip:SetLabel("Show Date in Time Tooltip")
         ShowDateInTooltip:SetValue(DB.Tooltip.Time.Date)
         ShowDateInTooltip:SetRelativeWidth(0.5)
-        ShowDateInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.Time.Date = value end)
+        ShowDateInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.Time.Date = value DateStringEditBox:SetDisabled(not value) DateStringOutputExample:SetText(value and " |cFF8080FFOutput|r: " .. date(DB.Tooltip.Time.DateString) or "") PositionDateStringExample() end)
         TimeTooltipOptions:AddChild(ShowDateInTooltip)
 
-        local DateStringEditBox = AG:Create("EditBox")
         DateStringEditBox:SetLabel("Date Format")
         DateStringEditBox:SetText(DB.Tooltip.Time.DateString)
-        DateStringEditBox:SetRelativeWidth(0.5)
-        DateStringEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.Tooltip.Time.DateString = value DateStringEditBox:ClearFocus() end)
-        DateStringEditBox:SetCallback("OnEnter", function() local tooltipText = "" local Formats = LuaDateFormats[1] local Order = LuaDateFormats[2] tooltipText = tooltipText .. "|cFFFFFFFFSupported Date Tokens:|r\n" for _, identifier in ipairs(Order) do tooltipText = tooltipText .. "• |cFF8080FF" .. identifier .. "|r - " .. Formats[identifier] .. "\n" end GameTooltip:SetOwner(DateStringEditBox.frame, "ANCHOR_NONE") GameTooltip:SetPoint("LEFT", DateStringEditBox.frame, "RIGHT", 3, 0) GameTooltip:SetText(tooltipText, 1, 1, 1, 1, false) GameTooltip:Show() end)
+        DateStringEditBox:SetRelativeWidth(0.25)
+        DateStringEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.Tooltip.Time.DateString = value DateStringEditBox:ClearFocus() DateStringOutputExample:SetText(" |cFF8080FFOutput|r: " .. date(DB.Tooltip.Time.DateString)) end)
+        DateStringEditBox:SetCallback("OnEnter", function() local tooltipText = "" local Formats = LuaDateFormats[1] local Order = LuaDateFormats[2] tooltipText = tooltipText .. "|cFFFFFFFFSupported Date Tokens:|r\n" for _, identifier in ipairs(Order) do tooltipText = tooltipText .. "• |cFF8080FF" .. identifier .. "|r - " .. Formats[identifier] .. "\n" end GameTooltip:SetOwner(DateStringEditBox.frame, "ANCHOR_NONE") GameTooltip:SetPoint("TOPLEFT", DateStringEditBox.frame, "BOTTOMLEFT", 0, -3) GameTooltip:SetText(tooltipText, 1, 1, 1, 1, false) GameTooltip:Show() end)
         DateStringEditBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
+        DateStringEditBox:SetDisabled(not DB.Tooltip.Time.Date)
         TimeTooltipOptions:AddChild(DateStringEditBox)
+
+        DateStringOutputExample:SetText(DB.Tooltip.Time.Date and " |cFF8080FFOutput|r: " .. date(DB.Tooltip.Time.DateString) or "")
+        PositionDateStringExample()
+        DateStringOutputExample:SetRelativeWidth(0.25)
+        TimeTooltipOptions:AddChild(DateStringOutputExample)
         
         local ShowLockoutsInTooltip = AG:Create("CheckBox")
         ShowLockoutsInTooltip:SetLabel("Show Instance Lockouts in Location Tooltip")
