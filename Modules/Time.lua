@@ -1,6 +1,12 @@
 local _, MS = ...
 local LSM = MS.LSM
 
+local function Time_OnClick(self, button)
+    if button == "LeftButton" then
+        ToggleCalendar()
+    end
+end
+
 local function FetchTime()
     local GeneralDB = MS.db.global.General
     local DB = MS.db.global.Time
@@ -49,7 +55,7 @@ function MS:CreateTime()
                 self.TimeSinceLastUpdate = 0
             end
         end)
-        TimeFrame:SetScript("OnMouseDown", function(_, btn) if btn == "LeftButton" then ToggleCalendar() end end)
+        TimeFrame:SetScript("OnMouseDown", Time_OnClick)
     else
         TimeFrame:Hide()
         TimeFrame:SetScript("OnUpdate", nil)
@@ -84,7 +90,7 @@ function MS:UpdateTime()
                     self.TimeSinceLastUpdate = 0
                 end
             end)
-            MS.TimeFrame:SetScript("OnMouseDown", function(_, btn) if btn == "LeftButton" then ToggleCalendar() end end)
+            MS.TimeFrame:SetScript("OnMouseDown", Time_OnClick)
             MS.TimeFrame.Text:SetText(FetchTime())
             MS.TimeFrame:SetWidth(MS.TimeFrame.Text:GetWidth())
             MS.TimeFrame:SetHeight(MS.TimeFrame.Text:GetHeight())

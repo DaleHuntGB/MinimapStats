@@ -1,6 +1,15 @@
 local _, MS = ...
 local LSM = MS.LSM
 
+local function SystemStats_OnClick(self, button)
+    if button == "RightButton" then
+        MS:CreateGUI()
+    elseif button == "MiddleButton" then
+        ReloadUI()
+    end
+end
+
+
 local function FetchSystemStats()
     local GeneralDB = MS.db.global.General
     local DB = MS.db.global.SystemStats
@@ -68,7 +77,7 @@ function MS:CreateSystemStats()
                 self.TimeSinceLastUpdate = 0
             end
         end)
-        SystemStatsFrame:SetScript("OnMouseDown", function(self, button) if button == "RightButton" then MS:CreateGUI() end end)
+        SystemStatsFrame:SetScript("OnMouseDown", SystemStats_OnClick)
     else
         SystemStatsFrame:Hide()
         SystemStatsFrame:SetScript("OnUpdate", nil)
@@ -105,7 +114,7 @@ function MS:UpdateSystemStats()
             MS.SystemStatsFrame.Text:SetText(FetchSystemStats())
             MS.SystemStatsFrame:SetWidth(MS.SystemStatsFrame.Text:GetWidth())
             MS.SystemStatsFrame:SetHeight(MS.SystemStatsFrame.Text:GetHeight())
-            MS.SystemStatsFrame:SetScript("OnMouseDown", function(self, button) if button == "RightButton" then MS:CreateGUI() elseif button == "MiddleButton" then ReloadUI() end end)
+            MS.SystemStatsFrame:SetScript("OnMouseDown", SystemStats_OnClick)
         else
             MS.SystemStatsFrame:Hide()
             MS.SystemStatsFrame:SetScript("OnUpdate", nil)

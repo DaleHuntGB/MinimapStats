@@ -6,9 +6,9 @@ MS.Author = C_AddOns.GetAddOnMetadata("MinimapStats", "Author")
 MS.LSM = LibStub("LibSharedMedia-3.0")
 MS.CLASS_COLOUR = {RAID_CLASS_COLORS[select(2, UnitClass("player"))].r * 255, RAID_CLASS_COLORS[select(2, UnitClass("player"))].g * 255, RAID_CLASS_COLORS[select(2, UnitClass("player"))].b * 255}
 MS.InfoButton = "|A:glueannouncementpopup-icon-info:16:16|a "
-MS.LEFT_CLICK_BUTTON = "|A:newplayertutorial-icon-mouse-leftbutton:18:18|a"
-MS.RIGHT_CLICK_BUTTON = "|A:newplayertutorial-icon-mouse-rightbutton:18:18|a"
-MS.MIDDLE_CLICK_BUTTON = "|A:newplayertutorial-icon-mouse-middlebutton:18:18|a"
+MS.LEFT_CLICK_BUTTON = "|A:newplayertutorial-icon-mouse-leftbutton:20.7:15.6|a"
+MS.RIGHT_CLICK_BUTTON = "|A:newplayertutorial-icon-mouse-rightbutton:20.7:15.6|a"
+MS.MIDDLE_CLICK_BUTTON = "|A:newplayertutorial-icon-mouse-middlebutton:20.7:15.6|a"
 MS.TestInstanceDifficulty = false
 
 local OptionsToDB = {
