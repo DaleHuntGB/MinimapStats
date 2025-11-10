@@ -79,6 +79,9 @@ local function FetchAlternateTime()
 end
 
 local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateTime)
+    local GeneralDB = MS.db.global.General
+    local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
+
     GameTooltip:SetOwner(Minimap, "ANCHOR_NONE")
     GameTooltip:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", 0, -2)
     GameTooltip:ClearLines()
@@ -88,10 +91,10 @@ local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateT
         GameTooltip:AddLine(dateString, 1, 1, 1)
     elseif displayDate and displayAlternateTime then
         local dateString = date(FetchDateString())
-        local alternateTimeString = string.format("|cFF8080FF%s|r Time: %s", MS.db.global.Time.TimeZone == "Local" and "Server" or "Local", FetchAlternateTime())
+        local alternateTimeString = string.format("|c%s%s|r Time: %s", AccentColour, MS.db.global.Time.TimeZone == "Local" and "Server" or "Local", FetchAlternateTime())
         GameTooltip:AddDoubleLine(dateString, alternateTimeString, 1, 1, 1, 1, 1, 1)
     elseif not displayDate and displayAlternateTime then
-        local alternateTimeString = string.format("|cFF8080FF%s|r Time: %s", MS.db.global.Time.TimeZone == "Local" and "Server" or "Local", FetchAlternateTime())
+        local alternateTimeString = string.format("|c%s%s|r Time: %s", AccentColour, MS.db.global.Time.TimeZone == "Local" and "Server" or "Local", FetchAlternateTime())
         GameTooltip:AddLine(alternateTimeString, 1, 1, 1)
     end
 
