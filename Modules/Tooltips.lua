@@ -98,9 +98,7 @@ local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateT
         GameTooltip:AddLine(alternateTimeString, 1, 1, 1)
     end
 
-    if displayLockouts then
-        FetchPlayerLockouts()
-    end
+    if displayLockouts then FetchPlayerLockouts() end
 
     GameTooltip:Show()
 end
