@@ -622,7 +622,7 @@ function MS:CreateGUI(TabToOpen)
         local ScrollFrame = SetupTabGroup(Container, "Tooltip Options")
 
         local TimeTooltipOptions = AG:Create("InlineGroup")
-        TimeTooltipOptions:SetTitle("Time Tooltip Options")
+        TimeTooltipOptions:SetTitle("|cFF8080FFTime Frame|r Options")
         TimeTooltipOptions:SetLayout("Flow")
         TimeTooltipOptions:SetFullWidth(true)
         ScrollFrame:AddChild(TimeTooltipOptions)
@@ -639,30 +639,36 @@ function MS:CreateGUI(TabToOpen)
             ScrollFrame:DoLayout()
         end
 
+        local DateInlineGroup = AG:Create("InlineGroup")
+        DateInlineGroup:SetTitle("Date Options")
+        DateInlineGroup:SetLayout("Flow")
+        DateInlineGroup:SetFullWidth(true)
+        TimeTooltipOptions:AddChild(DateInlineGroup)
+
         ShowDateInTooltip:SetLabel("Show Date")
         ShowDateInTooltip:SetValue(DB.Tooltip.Time.Date)
         ShowDateInTooltip:SetRelativeWidth(0.33)
-        ShowDateInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.Time.Date = value DateStringEditBox:SetDisabled(not value) DateStringOutputExample:SetText(value and " |cFF8080FFOutput|r: " .. date(DB.Tooltip.Time.DateString) or "") PositionDateStringExample() end)
-        TimeTooltipOptions:AddChild(ShowDateInTooltip)
+        ShowDateInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.Time.Date = value DateStringEditBox:SetDisabled(not value) DateStringOutputExample:SetText(value and " " .. date(DB.Tooltip.Time.DateString) or "") PositionDateStringExample() end)
+        DateInlineGroup:AddChild(ShowDateInTooltip)
 
         DateStringEditBox:SetLabel("Date Format")
         DateStringEditBox:SetText(DB.Tooltip.Time.DateString)
         DateStringEditBox:SetRelativeWidth(0.33)
-        DateStringEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.Tooltip.Time.DateString = value DateStringEditBox:ClearFocus() DateStringOutputExample:SetText(" |cFF8080FFOutput|r: " .. date(DB.Tooltip.Time.DateString)) end)
+        DateStringEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.Tooltip.Time.DateString = value DateStringEditBox:ClearFocus() DateStringOutputExample:SetText(" " .. date(DB.Tooltip.Time.DateString)) end)
         DateStringEditBox:SetCallback("OnEnter", function() local tooltipText = "" local Formats = LuaDateFormats[1] local Order = LuaDateFormats[2] tooltipText = tooltipText .. "|cFFFFFFFFSupported Date Tokens:|r\n" for _, identifier in ipairs(Order) do tooltipText = tooltipText .. "• |cFF8080FF" .. identifier .. "|r - " .. Formats[identifier] .. "\n" end GameTooltip:SetOwner(DateStringEditBox.frame, "ANCHOR_NONE") GameTooltip:SetPoint("TOPLEFT", DateStringEditBox.frame, "BOTTOMLEFT", 0, -3) GameTooltip:SetText(tooltipText, 1, 1, 1, 1, false) GameTooltip:Show() end)
         DateStringEditBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
         DateStringEditBox:SetDisabled(not DB.Tooltip.Time.Date)
-        TimeTooltipOptions:AddChild(DateStringEditBox)
+        DateInlineGroup:AddChild(DateStringEditBox)
 
-        DateStringOutputExample:SetText(DB.Tooltip.Time.Date and " |cFF8080FFOutput|r: " .. date(DB.Tooltip.Time.DateString) or "")
+        DateStringOutputExample:SetText(DB.Tooltip.Time.Date and " " .. date(DB.Tooltip.Time.DateString) or "")
         PositionDateStringExample()
         DateStringOutputExample:SetRelativeWidth(0.33)
-        TimeTooltipOptions:AddChild(DateStringOutputExample)
+        DateInlineGroup:AddChild(DateStringOutputExample)
 
         local ShowAlternateTimeInTooltip = AG:Create("CheckBox")
         ShowAlternateTimeInTooltip:SetLabel("Show Alternate Time Zone")
         ShowAlternateTimeInTooltip:SetValue(DB.Tooltip.Time.AlternateTime)
-        ShowAlternateTimeInTooltip:SetRelativeWidth(1)
+        ShowAlternateTimeInTooltip:SetRelativeWidth(0.5)
         ShowAlternateTimeInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.Time.AlternateTime = value end)
         ShowAlternateTimeInTooltip:SetCallback("OnEnter", function() GameTooltip:SetOwner(ShowAlternateTimeInTooltip.frame, "ANCHOR_NONE") GameTooltip:SetPoint("LEFT", ShowAlternateTimeInTooltip.text, "LEFT", 200, 0) GameTooltip:SetText(MS.InfoButton .. "This will show you the alternate time zone from your selection in the |cFF8080FFTime|r Tab.", 1, 1, 1, 1, false) GameTooltip:Show() end)
         ShowAlternateTimeInTooltip:SetCallback("OnLeave", function() GameTooltip:Hide() end)
@@ -671,10 +677,51 @@ function MS:CreateGUI(TabToOpen)
         local ShowLockoutsInTooltip = AG:Create("CheckBox")
         ShowLockoutsInTooltip:SetLabel("Show Instance Lockouts")
         ShowLockoutsInTooltip:SetValue(DB.Tooltip.Time.Lockouts)
-        ShowLockoutsInTooltip:SetRelativeWidth(1)
+        ShowLockoutsInTooltip:SetRelativeWidth(0.5)
         ShowLockoutsInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.Time.Lockouts = value end)
         TimeTooltipOptions:AddChild(ShowLockoutsInTooltip)
+
+        local SystemStatsTooltipOptions = AG:Create("InlineGroup")
+        SystemStatsTooltipOptions:SetTitle("|cFF8080FFSystemStats|r Frame Options")
+        SystemStatsTooltipOptions:SetLayout("Flow")
+        SystemStatsTooltipOptions:SetFullWidth(true)
+        ScrollFrame:AddChild(SystemStatsTooltipOptions)
+
+        local VaultOptionsInlineGroup = AG:Create("InlineGroup")
+        VaultOptionsInlineGroup:SetTitle("Vault Options")
+        VaultOptionsInlineGroup:SetLayout("Flow")
+        VaultOptionsInlineGroup:SetFullWidth(true)
+        SystemStatsTooltipOptions:AddChild(VaultOptionsInlineGroup)
+
+        local VaultDisplayOptionsInlineGroup = AG:Create("InlineGroup")
+        VaultDisplayOptionsInlineGroup:SetTitle("Vault Display Options")
+        VaultDisplayOptionsInlineGroup:SetLayout("Flow")
+        VaultDisplayOptionsInlineGroup:SetFullWidth(true)
         
+        local ShowVaultInfoInTooltip = AG:Create("CheckBox")
+        ShowVaultInfoInTooltip:SetLabel("Show Vault Information")
+        ShowVaultInfoInTooltip:SetValue(DB.Tooltip.SystemStats.Vault.Enable)
+        ShowVaultInfoInTooltip:SetRelativeWidth(1)
+        ShowVaultInfoInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.SystemStats.Vault.Enable = value DeepDisable(VaultDisplayOptionsInlineGroup, not value) end)
+        VaultOptionsInlineGroup:AddChild(ShowVaultInfoInTooltip)
+        VaultOptionsInlineGroup:AddChild(VaultDisplayOptionsInlineGroup)
+        
+        local VaultOptions = {
+            ["Raid"] = "Raid",
+            ["MythicPlus"] = "Mythic Plus",
+            ["World"] = "World",
+        }
+        
+        for key, label in pairs(VaultOptions) do
+            local OptionCheckBox = AG:Create("CheckBox")
+            OptionCheckBox:SetLabel(label)
+            OptionCheckBox:SetValue(DB.Tooltip.SystemStats.Vault.Options[key])
+            OptionCheckBox:SetRelativeWidth(0.33)
+            OptionCheckBox:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.SystemStats.Vault.Options[key] = value end)
+            OptionCheckBox:SetDisabled(not DB.Tooltip.SystemStats.Vault.Enable)
+            VaultDisplayOptionsInlineGroup:AddChild(OptionCheckBox)
+        end
+
         ScrollFrame:DoLayout()
     end
 

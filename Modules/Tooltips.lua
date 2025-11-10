@@ -1,5 +1,12 @@
 local _, MS = ...
 
+local RaidDifficultyIDs = {
+    [14] = "Normal",
+    [15] = "Heroic",
+    [16] = "Mythic",
+    [17] = "LFR",
+}
+
 local function FetchPlayerLockouts()
     local GeneralDB = MS.db.global.General
     local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
@@ -21,7 +28,7 @@ local function FetchPlayerLockouts()
             end
         end
     end
-    if #DungeonLockouts > 0 or #RaidLockouts > 0 and MS.db.global.Tooltip.Time.Date then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
+    if #DungeonLockouts > 0 or #RaidLockouts > 0 and (MS.db.global.Tooltip.Time.Date or MS.db.global.Tooltip.Time.AlternateTime) then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
     if #DungeonLockouts > 0 then
         GameTooltip:AddLine("|c" .. AccentColour .. "Dungeon|r |cFFFFFFFFLockouts|r", 1, 1, 1, 1)
         for _, Lockout in pairs(DungeonLockouts) do
@@ -78,6 +85,74 @@ local function FetchAlternateTime()
     )
 end
 
+local function FetchVaultOptions()
+    local GeneralDB = MS.db.global.General
+    local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
+    local RaidsCompleted = {}
+    local MythicPlusRunsCompleted = {}
+    local WorldRunsCompleted = {}
+    if not C_AddOns.IsAddOnLoaded("Blizzard_WeeklyRewards") then C_AddOns.LoadAddOn("Blizzard_WeeklyRewards") end
+
+    local function FetchRaidData()
+        if not MS.db.global.Tooltip.SystemStats.Vault.Options.Raid then return end
+        local RaidRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Raid)
+        for i = 1, 3 do
+            local DifficultyName = RaidDifficultyIDs[RaidRuns[i].level]
+            if DifficultyName == nil then break end
+            table.insert(RaidsCompleted, string.format("Slot #%d: |c" .. AccentColour .. "%s|r", i, DifficultyName))
+        end
+
+        if #RaidsCompleted > 0 then
+            GameTooltip:AddLine("|c" .. AccentColour .. "Raid|r |cFFFFFFFFGreat Vault|r", 1, 1, 1, 1)
+            for _, Raid in pairs(RaidsCompleted) do
+                GameTooltip:AddLine(Raid, 1, 1, 1)
+            end
+        end
+    end
+
+    local function FetchMythicPlusData()
+        if not MS.db.global.Tooltip.SystemStats.Vault.Options.MythicPlus then return end
+        local MythicPlusRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Activities)
+        for i = 1, 3 do
+            local KeyLevel = MythicPlusRuns[i].level
+            if KeyLevel == nil or KeyLevel == 0 then break end
+            table.insert(MythicPlusRunsCompleted, string.format("Slot #%d: |c" .. AccentColour .. "+%d|r", i, KeyLevel))
+        end
+
+        if #MythicPlusRunsCompleted > 0 then
+            if #RaidsCompleted > 0 then
+                GameTooltip:AddLine(" ", 1, 1, 1, 1)
+            end
+            GameTooltip:AddLine("|c" .. AccentColour .. "Mythic+|r |cFFFFFFFFGreat Vault|r", 1, 1, 1, 1)
+            for _, Key in pairs(MythicPlusRunsCompleted) do
+                GameTooltip:AddLine(Key, 1, 1, 1)
+            end
+        end
+    end
+
+    local function FetchWorldData()
+        if not MS.db.global.Tooltip.SystemStats.Vault.Options.World then return end
+        local WorldRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.World)
+        for i = 1, 3 do
+            local WorldLevel = WorldRuns[i].level
+            if WorldLevel == nil or WorldLevel == 0 then break end
+            table.insert(WorldRunsCompleted, string.format("Slot #%d: Tier |c" .. AccentColour .. "%d|r", i, WorldLevel))
+        end
+
+        if #WorldRunsCompleted > 0 then
+            if #RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
+            GameTooltip:AddLine("|c" .. AccentColour .. "World|r |cFFFFFFFFGreat Vault|r", 1, 1, 1, 1)
+            for _, Delve in pairs(WorldRunsCompleted) do
+                GameTooltip:AddLine(Delve, 1, 1, 1)
+            end
+        end
+    end
+    FetchRaidData()
+    FetchMythicPlusData()
+    FetchWorldData()
+end
+
+
 local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateTime)
     local GeneralDB = MS.db.global.General
     local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
@@ -103,13 +178,22 @@ local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateT
     GameTooltip:Show()
 end
 
-local function CreateSystemStatsTooltip()
+local function CreateSystemStatsTooltip(displayVaultOptions)
+    GameTooltip:SetOwner(Minimap, "ANCHOR_NONE")
+    GameTooltip:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", 0, -2)
+    GameTooltip:ClearLines()
+
+    if displayVaultOptions then
+        FetchVaultOptions()
+    end
+
+    GameTooltip:Show()
 end
 
 function MS:AssignTooltipScripts()
     MS.TimeFrame:SetScript("OnEnter", function(self) CreateTimeTooltip(MS.db.global.Tooltip.Time.Date, MS.db.global.Tooltip.Time.Lockouts, MS.db.global.Tooltip.Time.AlternateTime) end)
     MS.TimeFrame:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
 
-    MS.SystemStatsFrame:SetScript("OnEnter", function(self) CreateSystemStatsTooltip() end)
+    MS.SystemStatsFrame:SetScript("OnEnter", function(self) CreateSystemStatsTooltip(MS.db.global.Tooltip.SystemStats.Vault.Enable) end)
     MS.SystemStatsFrame:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
 end

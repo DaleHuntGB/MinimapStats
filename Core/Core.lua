@@ -50,6 +50,16 @@ local Defaults = {
                 AlternateTime = true,
                 Lockouts = true,
             },
+            SystemStats = {
+                Vault = {
+                    Enable = true,
+                    Options = {
+                        Raid = true,
+                        MythicPlus = true,
+                        World = true,
+                    }
+                }
+            }
         }
     },
 }
