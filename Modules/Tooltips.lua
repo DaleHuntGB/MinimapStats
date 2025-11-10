@@ -174,10 +174,16 @@ local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateT
 
     if displayLockouts then FetchPlayerLockouts() end
 
+    GameTooltip:AddLine(" ", 1, 1, 1, 1)
+    GameTooltip:AddDoubleLine(MS.LEFT_CLICK_BUTTON .. "|c" .. AccentColour .. "Left-Click|r", "Open Calendar", 1, 1, 1, 1, 1, 1)
+
     GameTooltip:Show()
 end
 
 local function CreateSystemStatsTooltip(displayVaultOptions)
+    local GeneralDB = MS.db.global.General
+    local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
+    
     GameTooltip:SetOwner(Minimap, "ANCHOR_NONE")
     GameTooltip:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", 0, -2)
     GameTooltip:ClearLines()
@@ -185,6 +191,10 @@ local function CreateSystemStatsTooltip(displayVaultOptions)
     if displayVaultOptions then
         FetchVaultOptions()
     end
+
+    GameTooltip:AddLine(" ", 1, 1, 1, 1)
+    GameTooltip:AddDoubleLine(MS.RIGHT_CLICK_BUTTON .. "|c" .. AccentColour .. "Right-Click|r", "Open Configuration", 1, 1, 1, 1, 1, 1)
+    GameTooltip:AddDoubleLine(MS.MIDDLE_CLICK_BUTTON .. "|c" .. AccentColour .. "Middle-Click|r", "Reload UI", 1, 1, 1, 1, 1, 1)
 
     GameTooltip:Show()
 end

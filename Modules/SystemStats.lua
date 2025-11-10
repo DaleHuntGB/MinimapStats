@@ -105,7 +105,7 @@ function MS:UpdateSystemStats()
             MS.SystemStatsFrame.Text:SetText(FetchSystemStats())
             MS.SystemStatsFrame:SetWidth(MS.SystemStatsFrame.Text:GetWidth())
             MS.SystemStatsFrame:SetHeight(MS.SystemStatsFrame.Text:GetHeight())
-            MS.SystemStatsFrame:SetScript("OnMouseDown", function(self, button) if button == "RightButton" then MS:CreateGUI() end end)
+            MS.SystemStatsFrame:SetScript("OnMouseDown", function(self, button) if button == "RightButton" then MS:CreateGUI() elseif button == "MiddleButton" then ReloadUI() end end)
         else
             MS.SystemStatsFrame:Hide()
             MS.SystemStatsFrame:SetScript("OnUpdate", nil)
