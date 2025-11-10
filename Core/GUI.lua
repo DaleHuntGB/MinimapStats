@@ -658,7 +658,16 @@ function MS:CreateGUI(TabToOpen)
         PositionDateStringExample()
         DateStringOutputExample:SetRelativeWidth(0.33)
         TimeTooltipOptions:AddChild(DateStringOutputExample)
-        
+
+        local ShowAlternateTimeInTooltip = AG:Create("CheckBox")
+        ShowAlternateTimeInTooltip:SetLabel("Show Alternate Time Zone")
+        ShowAlternateTimeInTooltip:SetValue(DB.Tooltip.Time.AlternateTime)
+        ShowAlternateTimeInTooltip:SetRelativeWidth(1)
+        ShowAlternateTimeInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.Time.AlternateTime = value end)
+        ShowAlternateTimeInTooltip:SetCallback("OnEnter", function() GameTooltip:SetOwner(ShowAlternateTimeInTooltip.frame, "ANCHOR_NONE") GameTooltip:SetPoint("LEFT", ShowAlternateTimeInTooltip.text, "LEFT", 200, 0) GameTooltip:SetText(MS.InfoButton .. "This will show you the alternate time zone from your selection in the |cFF8080FFTime|r Tab.", 1, 1, 1, 1, false) GameTooltip:Show() end)
+        ShowAlternateTimeInTooltip:SetCallback("OnLeave", function() GameTooltip:Hide() end)
+        TimeTooltipOptions:AddChild(ShowAlternateTimeInTooltip)
+
         local ShowLockoutsInTooltip = AG:Create("CheckBox")
         ShowLockoutsInTooltip:SetLabel("Show Instance Lockouts")
         ShowLockoutsInTooltip:SetValue(DB.Tooltip.Time.Lockouts)

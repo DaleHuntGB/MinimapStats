@@ -60,14 +60,39 @@ local function FetchDateString()
     return dateString
 end
 
-local function CreateTimeTooltip(displayDate, displayLockouts)
+local function FetchAlternateTime()
+    local GeneralDB = MS.db.global.General
+    local DB = MS.db.global.Time
+    local CurrHr, CurrMin = nil, nil
+    local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
+    if DB.TimeZone == "Local" then
+        CurrHr, CurrMin = GetGameTime()
+    elseif DB.TimeZone == "Realm" then
+        CurrHr, CurrMin = date("%H"), date("%M")
+    end
+    return string.format(
+        (DB.Format == "12H" and "%02d:%02d %s") or "%02d:%02d",
+        (DB.Format == "12H" and ((CurrHr % 12 == 0) and 12 or (CurrHr % 12))) or CurrHr,
+        CurrMin,
+        (DB.Format == "12H" and ((tonumber(CurrHr) >= 12) and "|c" .. AccentColour .. "PM" .. "|r" or "|c" .. AccentColour .. "AM" .. "|r")) or ""
+    )
+end
+
+local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateTime)
     GameTooltip:SetOwner(Minimap, "ANCHOR_NONE")
     GameTooltip:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", 0, -2)
     GameTooltip:ClearLines()
 
-    if displayDate then
+    if displayDate and not displayAlternateTime then
         local dateString = date(FetchDateString())
         GameTooltip:AddLine(dateString, 1, 1, 1)
+    elseif displayDate and displayAlternateTime then
+        local dateString = date(FetchDateString())
+        local alternateTimeString = string.format("|cFF8080FF%s|r Time: %s", MS.db.global.Time.TimeZone == "Local" and "Server" or "Local", FetchAlternateTime())
+        GameTooltip:AddDoubleLine(dateString, alternateTimeString, 1, 1, 1, 1, 1, 1)
+    elseif not displayDate and displayAlternateTime then
+        local alternateTimeString = string.format("|cFF8080FF%s|r Time: %s", MS.db.global.Time.TimeZone == "Local" and "Server" or "Local", FetchAlternateTime())
+        GameTooltip:AddLine(alternateTimeString, 1, 1, 1)
     end
 
     if displayLockouts then
@@ -81,7 +106,7 @@ local function CreateSystemStatsTooltip()
 end
 
 function MS:AssignTooltipScripts()
-    MS.TimeFrame:SetScript("OnEnter", function(self) CreateTimeTooltip(MS.db.global.Tooltip.Time.Date, MS.db.global.Tooltip.Time.Lockouts) end)
+    MS.TimeFrame:SetScript("OnEnter", function(self) CreateTimeTooltip(MS.db.global.Tooltip.Time.Date, MS.db.global.Tooltip.Time.Lockouts, MS.db.global.Tooltip.Time.AlternateTime) end)
     MS.TimeFrame:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
 
     MS.SystemStatsFrame:SetScript("OnEnter", function(self) CreateSystemStatsTooltip() end)

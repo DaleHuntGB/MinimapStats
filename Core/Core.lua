@@ -47,6 +47,7 @@ local Defaults = {
             Time = {
                 Date = true,
                 DateString = "%A, %B %d, %Y",
+                AlternateTime = true,
                 Lockouts = true,
             },
         }
