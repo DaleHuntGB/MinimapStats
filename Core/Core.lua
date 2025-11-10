@@ -43,6 +43,13 @@ local Defaults = {
             Abbreviate = true,
             HideBlizzardInstanceBanner = true,
         },
+        Tooltip = {
+            Time = {
+                Date = true,
+                DateString = "%A, %B %d, %Y",
+                Lockouts = true,
+            },
+        }
     },
 }
 
@@ -63,4 +70,5 @@ function MinimapStats:OnEnable()
     MS:CreateSystemStats()
     MS:CreateLocation()
     MS:CreateInstanceDifficulty()
+    MS:AssignTooltipScripts()
 end

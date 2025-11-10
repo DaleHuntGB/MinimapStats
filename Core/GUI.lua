@@ -19,6 +19,32 @@ local Anchors = {
     { "TOPLEFT", "TOP", "TOPRIGHT", "LEFT", "CENTER", "RIGHT", "BOTTOMLEFT", "BOTTOM", "BOTTOMRIGHT" }
 }
 
+local LuaDateFormats = {
+    {
+        ["%a"] = "Abbreviated Week Day (Eg. Mon)",
+        ["%A"] = "Full Week Day (Eg. Monday)",
+        ["%b"] = "Abbreviated Month (Eg. Jan)",
+        ["%B"] = "Full Month (Eg. January)",
+        ["%d"] = "Numerical Day (Eg. 01–31)",
+        ["%m"] = "Numerical Month (Eg. 01–12)",
+        ["%y"] = "Two-Digit Year (Eg. 25)",
+        ["%Y"] = "Four-Digit Year (Eg. 2024)",
+        ["%H"] = "Military Hour (Eg. 00–24)",
+        ["%I"] = "Standard Hour (Eg. 01–12)",
+        ["%M"] = "Minute (Eg. 00–59)",
+        ["%p"] = "AM/PM",
+        ["%j"] = "Day of the Year (Eg. 001–366)",
+        ["%W"] = "Week Number (Eg. 01–52)",
+        ["%Z"] = "Time Zone (Eg. UTC)",
+    },
+    {
+        "%a", "%A", "%b", "%B",
+        "%d", "%m", "%y", "%Y",
+        "%H", "%I", "%M", "%p",
+        "%j", "%W", "%Z",
+    }
+}
+
 local function CreateInfoTag(Description)
     local InfoDesc = AG:Create("Label")
     InfoDesc:SetText(MS.InfoButton .. Description)
@@ -407,7 +433,7 @@ function MS:CreateGUI(TabToOpen)
         DisplayStringEditBox:SetText(DB.SystemStats.String)
         DisplayStringEditBox:SetRelativeWidth(0.5)
         DisplayStringEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.SystemStats.String = value MS:UpdateSystemStats() DisplayStringEditBox:ClearFocus() end)
-        DisplayStringEditBox:SetCallback("OnEnter", function() local tooltipText = "" for _, token in ipairs(StringChoices[2]) do if token ~= "" then tooltipText = tooltipText .. "• |cFF8080FF" .. token .. "|r - " .. StringChoices[1][token] .. "\n" end end tooltipText = tooltipText .. MS.InfoButton .. "|cFF8080FFLua Date Formats|r and |cFF8080FFNew Line ('\\n')|r Supported!|r" GameTooltip:SetOwner(DisplayStringEditBox.frame, "ANCHOR_NONE") GameTooltip:SetPoint("LEFT", DisplayStringEditBox.frame, "RIGHT", 3, 0) GameTooltip:SetText(tooltipText, 1, 1, 1, 1, false) GameTooltip:Show() end)
+        DisplayStringEditBox:SetCallback("OnEnter", function() local tooltipText = "" for _, token in ipairs(StringChoices[2]) do if token ~= "" then tooltipText = tooltipText .. "• |cFF8080FF" .. token .. "|r - " .. StringChoices[1][token] .. "\n" end end tooltipText = tooltipText .. "\n|cFFFFFFFFSupported Date Tokens:|r\n" for _, code in ipairs(LuaDateFormats[2]) do tooltipText = tooltipText .. "• |cFF8080FF" .. code .. "|r - " .. LuaDateFormats[1][code] .. "\n" end tooltipText = tooltipText .. "\n" .. MS.InfoButton .. "|cFF8080FFNew Line ('\\n')|r is also supported!|r" GameTooltip:SetOwner(DisplayStringEditBox.frame, "ANCHOR_NONE") GameTooltip:SetPoint("LEFT", DisplayStringEditBox.frame, "RIGHT", 3, 0) GameTooltip:SetText(tooltipText, 1, 1, 1, 1, false) GameTooltip:Show() end)
         DisplayStringEditBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
         StringCreationContainer:AddChild(DisplayStringEditBox)
 
@@ -592,6 +618,41 @@ function MS:CreateGUI(TabToOpen)
         ScrollFrame:AddChild(ImportProfileButton)
     end
 
+    function MS:CreateTooltipOptions(Container)
+        local ScrollFrame = SetupTabGroup(Container, "Tooltip Options")
+
+        local TimeTooltipOptions = AG:Create("InlineGroup")
+        TimeTooltipOptions:SetTitle("Time Tooltip Options")
+        TimeTooltipOptions:SetLayout("Flow")
+        TimeTooltipOptions:SetFullWidth(true)
+        ScrollFrame:AddChild(TimeTooltipOptions)
+
+        local ShowDateInTooltip = AG:Create("CheckBox")
+        ShowDateInTooltip:SetLabel("Show Date in Time Tooltip")
+        ShowDateInTooltip:SetValue(DB.Tooltip.Time.Date)
+        ShowDateInTooltip:SetRelativeWidth(0.5)
+        ShowDateInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.Time.Date = value end)
+        TimeTooltipOptions:AddChild(ShowDateInTooltip)
+
+        local DateStringEditBox = AG:Create("EditBox")
+        DateStringEditBox:SetLabel("Date Format")
+        DateStringEditBox:SetText(DB.Tooltip.Time.DateString)
+        DateStringEditBox:SetRelativeWidth(0.5)
+        DateStringEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.Tooltip.Time.DateString = value DateStringEditBox:ClearFocus() end)
+        DateStringEditBox:SetCallback("OnEnter", function() local tooltipText = "" local Formats = LuaDateFormats[1] local Order = LuaDateFormats[2] tooltipText = tooltipText .. "|cFFFFFFFFSupported Date Tokens:|r\n" for _, identifier in ipairs(Order) do tooltipText = tooltipText .. "• |cFF8080FF" .. identifier .. "|r - " .. Formats[identifier] .. "\n" end GameTooltip:SetOwner(DateStringEditBox.frame, "ANCHOR_NONE") GameTooltip:SetPoint("LEFT", DateStringEditBox.frame, "RIGHT", 3, 0) GameTooltip:SetText(tooltipText, 1, 1, 1, 1, false) GameTooltip:Show() end)
+        DateStringEditBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
+        TimeTooltipOptions:AddChild(DateStringEditBox)
+        
+        local ShowLockoutsInTooltip = AG:Create("CheckBox")
+        ShowLockoutsInTooltip:SetLabel("Show Instance Lockouts in Location Tooltip")
+        ShowLockoutsInTooltip:SetValue(DB.Tooltip.Time.Lockouts)
+        ShowLockoutsInTooltip:SetRelativeWidth(1)
+        ShowLockoutsInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.Time.Lockouts = value end)
+        TimeTooltipOptions:AddChild(ShowLockoutsInTooltip)
+        
+        ScrollFrame:DoLayout()
+    end
+
     local function SelectTabGroup(GUIContainer, _, TabGroup)
         GUIContainer:ReleaseChildren()
         if TabGroup == "General" then
@@ -604,6 +665,8 @@ function MS:CreateGUI(TabToOpen)
             MS:CreateLocationOptions(GUIContainer)
         elseif TabGroup == "InstanceDifficulty" then
             MS:CreateInstanceDifficultyOptions(GUIContainer)
+        elseif TabGroup == "Tooltips" then
+            MS:CreateTooltipOptions(GUIContainer)
         elseif TabGroup == "Share" then
             MS:CreateShareOptions(GUIContainer)
         end
@@ -619,6 +682,7 @@ function MS:CreateGUI(TabToOpen)
         { text = "System Stats", value = "SystemStats" },
         { text = "Location", value = "Location" },
         { text = "Instance Difficulty", value = "InstanceDifficulty" },
+        { text = "Tooltips", value = "Tooltips" },
         { text = "Sharing", value = "Share" },
     })
     TabGroup:SetCallback("OnGroupSelected", SelectTabGroup)
