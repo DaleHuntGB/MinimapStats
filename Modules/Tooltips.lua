@@ -152,7 +152,6 @@ local function FetchVaultOptions()
     FetchWorldData()
 end
 
-
 local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateTime)
     local GeneralDB = MS.db.global.General
     local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
