@@ -7,11 +7,12 @@ function MS:ExportSavedVariables()
     local SerializedInfo = Serialize:Serialize(profileData)
     local CompressedInfo = Compress:CompressDeflate(SerializedInfo)
     local EncodedInfo = Compress:EncodeForPrint(CompressedInfo)
+    EncodedInfo = "!MS" .. EncodedInfo
     return EncodedInfo
 end
 
 function MS:ImportSavedVariables(EncodedInfo)
-    local DecodedInfo = Compress:DecodeForPrint(EncodedInfo)
+    local DecodedInfo = Compress:DecodeForPrint(EncodedInfo:sub(4))
     local DecompressedInfo = Compress:DecompressDeflate(DecodedInfo)
     local success, data = Serialize:Deserialize(DecompressedInfo)
     if not success or type(data) ~= "table" then
@@ -33,11 +34,12 @@ function MSG:ExportSavedVariables()
     local SerializedInfo = Serialize:Serialize(profileData)
     local CompressedInfo = Compress:CompressDeflate(SerializedInfo)
     local EncodedInfo = Compress:EncodeForPrint(CompressedInfo)
+    EncodedInfo = "!MS" .. EncodedInfo
     return EncodedInfo
 end
 
 function MSG:ImportSavedVariables(EncodedInfo)
-    local DecodedInfo = Compress:DecodeForPrint(EncodedInfo)
+    local DecodedInfo = Compress:DecodeForPrint(EncodedInfo:sub(4))
     local DecompressedInfo = Compress:DecompressDeflate(DecodedInfo)
     local success, data = Serialize:Deserialize(DecompressedInfo)
     if not success or type(data) ~= "table" then
