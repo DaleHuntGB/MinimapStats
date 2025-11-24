@@ -110,3 +110,22 @@ function MS:ReloadPrompt(text, onAcceptText, onCancelText, onAcceptFn, onCancelF
     }
     StaticPopup_Show("MINIMAPSTATS_RELOAD")
 end
+
+function MS:CreateCoordinatesPopup(text)
+    if not text or text == "" then return end
+    StaticPopupDialogs["COPY_DIALOG"] = {
+        button1 = "Okay",
+        OnAccept = function() end,
+        hasEditBox = true,
+        maxLetters = 255,
+        editBoxWidth = 300,
+        OnShow = function(self)
+            self.EditBox:SetText(text)
+            self.EditBox:SetFocus()
+            self.EditBox:HighlightText()
+        end,
+        timeout = 0,
+        whileDead = true,
+    }
+    StaticPopup_Show("COPY_DIALOG")
+end

@@ -34,6 +34,23 @@ local function FetchCoordinates()
 end
 
 local function Coordinates_CopyCoordinates()
+    local currentCoordinates = FetchCoordinates():gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    StaticPopupDialogs["COPY_DIALOG"] = {
+        text = "Current Coordinates:",
+        button1 = "Okay",
+        OnAccept = function() end,
+        hasEditBox = true,
+        maxLetters = 255,
+        editBoxWidth = 300,
+        OnShow = function(self)
+            self.EditBox:SetText(currentCoordinates)
+            self.EditBox:SetFocus()
+            self.EditBox:HighlightText()
+        end,
+        timeout = 0,
+        whileDead = true,
+    }
+    StaticPopup_Show("COPY_DIALOG")
 end
 
 function MS:CreateCoordinates()
