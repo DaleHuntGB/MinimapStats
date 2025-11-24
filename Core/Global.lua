@@ -21,7 +21,7 @@ local OptionsToDB = {
 }
 
 function MS:Print(MSG)
-    DEFAULT_CHAT_FRAME:AddMessage(MS.AddOnName .. ":|r " .. MSG)
+    print(MS.AddOnName .. ":|r " .. MSG)
 end
 
 function MS:SetJustification(anchorFrom)
