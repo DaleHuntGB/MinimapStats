@@ -25,7 +25,7 @@ local Defaults = {
         SystemStats = {
             Enable = true,
             Layout = {"BOTTOMLEFT", "BOTTOMLEFT", 3, 3, 12},
-            UpdateInterval = 1.0,
+            UpdateInterval = 3.0,
             String = "%fps | %home",
             Colour = {255, 255, 255},
         },
@@ -48,7 +48,7 @@ local Defaults = {
             Layout = {"TOPRIGHT", "TOPRIGHT", -3, -3, 12},
             ColourBy = "CUSTOM",
             Colour = {255, 255, 255},
-            UpdateInterval = 0.5,
+            UpdateInterval = 1.0,
             Format = "SINGLE",
         },
         Tooltip = {

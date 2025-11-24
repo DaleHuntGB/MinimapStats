@@ -84,6 +84,16 @@ local function UpdateState(parent, dbValue)
     return currentState
 end
 
+local function UpdateRateWarning(rate, defaultRate)
+    local currentText = ""
+    if rate < (defaultRate) then
+        currentText = "Update Interval (Seconds) - |cFFFF4040High CPU Usage|r"
+    elseif rate >= (defaultRate) then
+        currentText = "Update Interval (Seconds)"
+    end
+    return currentText
+end
+
 local function SetupTabGroup(parentContainer, headingTitle)
     local ContainerScrollFrame = AG:Create("ScrollFrame")
     ContainerScrollFrame:SetLayout("Flow")
@@ -341,11 +351,11 @@ function MS:CreateGUI(TabToOpen)
         ElementOptionsContainer:AddChild(ColourPicker)
 
         local UpdateIntervalSlider = AG:Create("Slider")
-        UpdateIntervalSlider:SetLabel("Update Interval (Seconds)")
+        UpdateIntervalSlider:SetLabel(UpdateRateWarning(DB.Time.UpdateInterval, 30.0))
         UpdateIntervalSlider:SetValue(DB.Time.UpdateInterval)
         UpdateIntervalSlider:SetSliderValues(0.1, 60.0, 0.1)
         UpdateIntervalSlider:SetRelativeWidth(0.5)
-        UpdateIntervalSlider:SetCallback("OnValueChanged", function(_, _, value) DB.Time.UpdateInterval = value MS:UpdateTime() end)
+        UpdateIntervalSlider:SetCallback("OnValueChanged", function(_, _, value) DB.Time.UpdateInterval = value MS:UpdateTime() UpdateIntervalSlider:SetLabel(UpdateRateWarning(value, 30.0)) end)
         ElementOptionsContainer:AddChild(UpdateIntervalSlider)
 
         local TimeZoneDropdown = AG:Create("Dropdown")
@@ -402,11 +412,11 @@ function MS:CreateGUI(TabToOpen)
         ElementOptionsContainer:AddChild(ColourPicker)
 
         local UpdateIntervalSlider = AG:Create("Slider")
-        UpdateIntervalSlider:SetLabel("Update Interval (Seconds)")
+        UpdateIntervalSlider:SetLabel(UpdateRateWarning(DB.SystemStats.UpdateInterval, 3.0))
         UpdateIntervalSlider:SetValue(DB.SystemStats.UpdateInterval)
         UpdateIntervalSlider:SetSliderValues(0.1, 60.0, 0.1)
         UpdateIntervalSlider:SetRelativeWidth(0.5)
-        UpdateIntervalSlider:SetCallback("OnValueChanged", function(_, _, value) DB.SystemStats.UpdateInterval = value MS:UpdateSystemStats() end)
+        UpdateIntervalSlider:SetCallback("OnValueChanged", function(_, _, value) DB.SystemStats.UpdateInterval = value MS:UpdateSystemStats() UpdateIntervalSlider:SetLabel(UpdateRateWarning(value, 3.0)) end)
         ElementOptionsContainer:AddChild(UpdateIntervalSlider)
 
         local StringCreationContainer = AG:Create("InlineGroup")
@@ -613,11 +623,11 @@ function MS:CreateGUI(TabToOpen)
         ElementOptionsContainer:AddChild(FormatDropdown)
 
         local UpdateIntervalSlider = AG:Create("Slider")
-        UpdateIntervalSlider:SetLabel("Update Interval (Seconds)")
+        UpdateIntervalSlider:SetLabel(UpdateRateWarning(DB.Coordinates.UpdateInterval, 1.0))
         UpdateIntervalSlider:SetValue(DB.Coordinates.UpdateInterval)
         UpdateIntervalSlider:SetSliderValues(0.1, 60.0, 0.1)
         UpdateIntervalSlider:SetRelativeWidth(0.5)
-        UpdateIntervalSlider:SetCallback("OnValueChanged", function(_, _, value) DB.Coordinates.UpdateInterval = value MS:UpdateCoordinates() end)
+        UpdateIntervalSlider:SetCallback("OnValueChanged", function(_, _, value) DB.Coordinates.UpdateInterval = value MS:UpdateCoordinates() UpdateRateWarning(value, 1.0) end)
         ElementOptionsContainer:AddChild(UpdateIntervalSlider)
 
         local LayoutContainer = AG:Create("InlineGroup")
