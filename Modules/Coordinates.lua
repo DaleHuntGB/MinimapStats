@@ -20,11 +20,11 @@ local function FetchCoordinates()
             PositionXActual = PositionX * 100
             PositionYActual = PositionY * 100
             if MS.db.global.Coordinates.Format == "NONE" then
-                CoordinatesString = format("|c%s%.0f|r, |c%s%.0f|r", AccentColour, PositionXActual, AccentColour, PositionYActual)
+                CoordinatesString = format("|c%s%.0f|r|cFFFFFFFF,|r |c%s%.0f|r", AccentColour, PositionXActual, AccentColour, PositionYActual)
             elseif MS.db.global.Coordinates.Format == "SINGLE" then
-                CoordinatesString = format("|c%s%.1f|r, |c%s%.1f|r", AccentColour, PositionXActual, AccentColour, PositionYActual)
+                CoordinatesString = format("|c%s%.1f|r|cFFFFFFFF,|r |c%s%.1f|r", AccentColour, PositionXActual, AccentColour, PositionYActual)
             elseif MS.db.global.Coordinates.Format == "DOUBLE" then
-                CoordinatesString = format("|c%s%.2f|r, |c%s%.2f|r", AccentColour, PositionXActual, AccentColour, PositionYActual)
+                CoordinatesString = format("|c%s%.2f|r|cFFFFFFFF,|r |c%s%.2f|r", AccentColour, PositionXActual, AccentColour, PositionYActual)
             end
         else
             CoordinatesString = ""
@@ -85,16 +85,16 @@ function MS:UpdateCoordinates()
         MS.CoordinatesFrame.Text:SetShadowOffset(GeneralDB.FontShadow.OffsetX, GeneralDB.FontShadow.OffsetY)
         MS.CoordinatesFrame.Text:SetPoint(DB.Layout[1], MS.CoordinatesFrame, DB.Layout[1], 0, 0)
         MS.CoordinatesFrame.Text:SetJustifyH(MS:SetJustification(DB.Layout[1]))
-        MS.CoordinatesFrame:SetWidth(MS.CoordinatesFrame.Text:GetWidth())
-        MS.CoordinatesFrame:SetHeight(MS.CoordinatesFrame.Text:GetHeight())
+        MS.CoordinatesFrame:SetWidth(MS.CoordinatesFrame.Text:GetStringWidth())
+        MS.CoordinatesFrame:SetHeight(MS.CoordinatesFrame.Text:GetStringHeight())
         if DB.Enable then
             MS.CoordinatesFrame:Show()
             MS.CoordinatesFrame:SetScript("OnUpdate", function(self, elapsed)
                 self.TimeSinceLastUpdate = (self.TimeSinceLastUpdate or 0) + elapsed
                 if self.TimeSinceLastUpdate >= DB.UpdateInterval then
                     self.Text:SetText(FetchCoordinates())
-                    self:SetWidth(self.Text:GetWidth())
-                    self:SetHeight(self.Text:GetHeight())
+                    self:SetWidth(self.Text:GetStringWidth())
+                    self:SetHeight(self.Text:GetStringHeight())
                     self.TimeSinceLastUpdate = 0
                 end
             end)

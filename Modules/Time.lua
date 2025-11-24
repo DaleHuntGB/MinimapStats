@@ -42,16 +42,16 @@ function MS:CreateTime()
     TimeFrame.Text:SetShadowOffset(GeneralDB.FontShadow.OffsetX, GeneralDB.FontShadow.OffsetY)
     TimeFrame.Text:SetPoint(DB.Layout[1], TimeFrame, DB.Layout[1], 0, 0)
     TimeFrame.Text:SetJustifyH(MS:SetJustification(DB.Layout[1]))
-    TimeFrame:SetWidth(TimeFrame.Text:GetWidth())
-    TimeFrame:SetHeight(TimeFrame.Text:GetHeight())
+    TimeFrame:SetWidth(TimeFrame.Text:GetStringWidth())
+    TimeFrame:SetHeight(TimeFrame.Text:GetStringHeight())
     if DB.Enable then
         TimeFrame:Show()
         TimeFrame:SetScript("OnUpdate", function(self, elapsed)
             self.TimeSinceLastUpdate = (self.TimeSinceLastUpdate or 0) + elapsed
             if self.TimeSinceLastUpdate >= DB.UpdateInterval then
                 self.Text:SetText(FetchTime())
-                self:SetWidth(self.Text:GetWidth())
-                self:SetHeight(self.Text:GetHeight())
+                self:SetWidth(self.Text:GetStringWidth())
+                self:SetHeight(self.Text:GetStringHeight())
                 self.TimeSinceLastUpdate = 0
             end
         end)
@@ -77,23 +77,23 @@ function MS:UpdateTime()
         MS.TimeFrame.Text:SetShadowOffset(GeneralDB.FontShadow.OffsetX, GeneralDB.FontShadow.OffsetY)
         MS.TimeFrame.Text:SetPoint(DB.Layout[1], MS.TimeFrame, DB.Layout[1], 0, 0)
         MS.TimeFrame.Text:SetJustifyH(MS:SetJustification(DB.Layout[1]))
-        MS.TimeFrame:SetWidth(MS.TimeFrame.Text:GetWidth())
-        MS.TimeFrame:SetHeight(MS.TimeFrame.Text:GetHeight())
+        MS.TimeFrame:SetWidth(MS.TimeFrame.Text:GetStringWidth())
+        MS.TimeFrame:SetHeight(MS.TimeFrame.Text:GetStringHeight())
         if DB.Enable then
             MS.TimeFrame:Show()
             MS.TimeFrame:SetScript("OnUpdate", function(self, elapsed)
                 self.TimeSinceLastUpdate = (self.TimeSinceLastUpdate or 0) + elapsed
                 if self.TimeSinceLastUpdate >= DB.UpdateInterval then
                     self.Text:SetText(FetchTime())
-                    self:SetWidth(self.Text:GetWidth())
-                    self:SetHeight(self.Text:GetHeight())
+                    self:SetWidth(self.Text:GetStringWidth())
+                    self:SetHeight(self.Text:GetStringHeight())
                     self.TimeSinceLastUpdate = 0
                 end
             end)
             MS.TimeFrame:SetScript("OnMouseDown", Time_OnClick)
             MS.TimeFrame.Text:SetText(FetchTime())
-            MS.TimeFrame:SetWidth(MS.TimeFrame.Text:GetWidth())
-            MS.TimeFrame:SetHeight(MS.TimeFrame.Text:GetHeight())
+            MS.TimeFrame:SetWidth(MS.TimeFrame.Text:GetStringWidth())
+            MS.TimeFrame:SetHeight(MS.TimeFrame.Text:GetStringHeight())
         else
             MS.TimeFrame:Hide()
             MS.TimeFrame:SetScript("OnUpdate", nil)

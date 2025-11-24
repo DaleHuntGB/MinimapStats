@@ -64,16 +64,16 @@ function MS:CreateSystemStats()
     SystemStatsFrame.Text:SetShadowOffset(GeneralDB.FontShadow.OffsetX, GeneralDB.FontShadow.OffsetY)
     SystemStatsFrame.Text:SetPoint(DB.Layout[1], SystemStatsFrame, DB.Layout[1], 0, 0)
     SystemStatsFrame.Text:SetJustifyH(MS:SetJustification(DB.Layout[1]))
-    SystemStatsFrame:SetWidth(SystemStatsFrame.Text:GetWidth())
-    SystemStatsFrame:SetHeight(SystemStatsFrame.Text:GetHeight())
+    SystemStatsFrame:SetWidth(SystemStatsFrame.Text:GetStringWidth())
+    SystemStatsFrame:SetHeight(SystemStatsFrame.Text:GetStringHeight())
     if DB.Enable then
         SystemStatsFrame:Show()
         SystemStatsFrame:SetScript("OnUpdate", function(self, elapsed)
             self.TimeSinceLastUpdate = (self.TimeSinceLastUpdate or 0) + elapsed
             if self.TimeSinceLastUpdate >= DB.UpdateInterval then
                 self.Text:SetText(FetchSystemStats())
-                self:SetWidth(self.Text:GetWidth())
-                self:SetHeight(self.Text:GetHeight())
+                self:SetWidth(self.Text:GetStringWidth())
+                self:SetHeight(self.Text:GetStringHeight())
                 self.TimeSinceLastUpdate = 0
             end
         end)
@@ -98,22 +98,22 @@ function MS:UpdateSystemStats()
         MS.SystemStatsFrame.Text:SetShadowOffset(GeneralDB.FontShadow.OffsetX, GeneralDB.FontShadow.OffsetY)
         MS.SystemStatsFrame.Text:SetPoint(DB.Layout[1], MS.SystemStatsFrame, DB.Layout[1], 0, 0)
         MS.SystemStatsFrame.Text:SetJustifyH(MS:SetJustification(DB.Layout[1]))
-        MS.SystemStatsFrame:SetWidth(MS.SystemStatsFrame.Text:GetWidth())
-        MS.SystemStatsFrame:SetHeight(MS.SystemStatsFrame.Text:GetHeight())
+        MS.SystemStatsFrame:SetWidth(MS.SystemStatsFrame.Text:GetStringWidth())
+        MS.SystemStatsFrame:SetHeight(MS.SystemStatsFrame.Text:GetStringHeight())
         if DB.Enable then
             MS.SystemStatsFrame:Show()
             MS.SystemStatsFrame:SetScript("OnUpdate", function(self, elapsed)
                 self.TimeSinceLastUpdate = (self.TimeSinceLastUpdate or 0) + elapsed
                 if self.TimeSinceLastUpdate >= DB.UpdateInterval then
                     self.Text:SetText(FetchSystemStats())
-                    self:SetWidth(self.Text:GetWidth())
-                    self:SetHeight(self.Text:GetHeight())
+                    self:SetWidth(self.Text:GetStringWidth())
+                    self:SetHeight(self.Text:GetStringHeight())
                     self.TimeSinceLastUpdate = 0
                 end
             end)
             MS.SystemStatsFrame.Text:SetText(FetchSystemStats())
-            MS.SystemStatsFrame:SetWidth(MS.SystemStatsFrame.Text:GetWidth())
-            MS.SystemStatsFrame:SetHeight(MS.SystemStatsFrame.Text:GetHeight())
+            MS.SystemStatsFrame:SetWidth(MS.SystemStatsFrame.Text:GetStringWidth())
+            MS.SystemStatsFrame:SetHeight(MS.SystemStatsFrame.Text:GetStringHeight())
             MS.SystemStatsFrame:SetScript("OnMouseDown", SystemStats_OnClick)
         else
             MS.SystemStatsFrame:Hide()
