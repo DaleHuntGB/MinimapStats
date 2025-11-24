@@ -17,6 +17,7 @@ local OptionsToDB = {
     ["System Stats"] = "SystemStats",
     ["Location"] = "Location",
     ["Instance Difficulty"] = "InstanceDifficulty",
+    ["Coordinates"] = "Coordinates",
     ["Tooltip"] = "Tooltip",
 }
 
@@ -48,6 +49,8 @@ function MS:SetupSlashCommands()
             MS:CreateGUI("Location")
         elseif msg == "instance" or msg == "instancedifficulty" or msg == "i"  or msg == "id" then
             MS:CreateGUI("InstanceDifficulty")
+        elseif msg == "coordinates" or msg == "coord" or msg == "c" then
+            MS:CreateGUI("Coordinates")
         elseif msg == "reset" then
             MS:Reset("All")
         elseif msg == "share" then
@@ -94,6 +97,7 @@ function MS:UpdateAll()
     MS:UpdateSystemStats()
     MS:UpdateLocation()
     MS:UpdateInstanceDifficulty()
+    MS:UpdateCoordinates()
 end
 
 function MS:ReloadPrompt(text, onAcceptText, onCancelText, onAcceptFn, onCancelFn)

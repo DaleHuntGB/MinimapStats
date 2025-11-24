@@ -236,7 +236,7 @@ function MS:CreateGUI(TabToOpen)
         ResetOptionsContainer:SetFullWidth(true)
         ScrollFrame:AddChild(ResetOptionsContainer)
 
-        local ResetOptions = {"All", "General", "Time", "System Stats", "Location", "Instance Difficulty", "Tooltip"}
+        local ResetOptions = {"All", "General", "Time", "System Stats", "Coordinates", "Location", "Instance Difficulty", "Tooltip"}
         local ResetSelections = {}
         local Checkboxes = {}
 
@@ -244,6 +244,7 @@ function MS:CreateGUI(TabToOpen)
             local OptionCheckBox = AG:Create("CheckBox")
             OptionCheckBox:SetLabel(options)
             OptionCheckBox:SetValue(false)
+            OptionCheckBox:SetRelativeWidth(0.25)
             Checkboxes[options] = OptionCheckBox
 
             OptionCheckBox:SetCallback("OnValueChanged", function(_, _, isSelected)
