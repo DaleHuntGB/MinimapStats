@@ -34,7 +34,6 @@ local function FetchCoordinates()
 end
 
 local function Coordinates_CopyCoordinates()
-    print("Coordinates copied to clipboard.")
 end
 
 function MS:CreateCoordinates()
