@@ -1,6 +1,9 @@
 package-as: MinimapStats
-
+release-type: beta
 enable-nolib-creation: yes
+
+curse-id: 695388
+wago-id: qGYM7vGg
 
 externals:
     Libs/Ace3:
@@ -29,5 +32,4 @@ ignore:
     - .github/
     - .vscode/
     - .pkgmeta
-    - .gitignore
     - release.sh
