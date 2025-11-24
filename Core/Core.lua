@@ -43,6 +43,14 @@ local Defaults = {
             Abbreviate = true,
             HideBlizzardInstanceBanner = true,
         },
+        Coordinates = {
+            Enable = true,
+            Layout = {"TOPRIGHT", "TOPRIGHT", -3, -3, 12},
+            ColourBy = "CUSTOM",
+            Colour = {255, 255, 255},
+            UpdateInterval = 0.5,
+            Format = "SINGLE",
+        },
         Tooltip = {
             Time = {
                 Date = true,
@@ -80,6 +88,7 @@ function MinimapStats:OnEnable()
     MS:CreateTime()
     MS:CreateSystemStats()
     MS:CreateLocation()
+    MS:CreateCoordinates()
     MS:CreateInstanceDifficulty()
     MS:AssignTooltipScripts()
 end

@@ -570,6 +570,71 @@ function MS:CreateGUI(TabToOpen)
         ScrollFrame:DoLayout()
     end
 
+    function MS:CreateCoordinatesOptions(Container)
+        local ScrollFrame = SetupTabGroup(Container, "Coordinates Options")
+
+        local Enable = AG:Create("CheckBox")
+        Enable:SetLabel(UpdateState(Enable, DB.Coordinates.Enable))
+        Enable:SetValue(DB.Coordinates.Enable)
+        Enable:SetRelativeWidth(1)
+        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.Coordinates.Enable = value MS:UpdateCoordinates() UpdateState(Enable, DB.Coordinates.Enable) DisableElements(ScrollFrame, Enable, value) end)
+        ScrollFrame:AddChild(Enable)
+
+        local ElementOptionsContainer = AG:Create("InlineGroup")
+        ElementOptionsContainer:SetTitle("Element Options")
+        ElementOptionsContainer:SetLayout("Flow")
+        ElementOptionsContainer:SetFullWidth(true)
+        ScrollFrame:AddChild(ElementOptionsContainer)
+
+        local ColourByDropdown = AG:Create("Dropdown")
+        ColourByDropdown:SetLabel("Colour By")
+        ColourByDropdown:SetList({ ["CUSTOM"] = "Custom", ["ACCENT"] = "Accent" }, { "CUSTOM", "ACCENT" })
+        ColourByDropdown:SetValue(DB.Coordinates.ColourBy)
+        ColourByDropdown:SetRelativeWidth(0.5)
+        ColourByDropdown:SetCallback("OnValueChanged", function(_, _, value) DB.Coordinates.ColourBy = value MS:UpdateCoordinates() if value == "CUSTOM" then MS.ColourPicker:SetDisabled(false) else MS.ColourPicker:SetDisabled(true) end end)
+        ElementOptionsContainer:AddChild(ColourByDropdown)
+
+        local ColourPicker = AG:Create("ColorPicker")
+        ColourPicker:SetLabel("Text Colour")
+        ColourPicker:SetColor(DB.Coordinates.Colour[1]/255, DB.Coordinates.Colour[2]/255, DB.Coordinates.Colour[3]/255)
+        ColourPicker:SetHasAlpha(false)
+        ColourPicker:SetRelativeWidth(0.5)
+        ColourPicker:SetCallback("OnValueChanged", function(_, _, r, g, b) DB.Coordinates.Colour = {r*255, g*255, b*255} MS:UpdateCoordinates() end)
+        MS.ColourPicker = ColourPicker
+        ElementOptionsContainer:AddChild(ColourPicker)
+
+        local FormatDropdown = AG:Create("Dropdown")
+        FormatDropdown:SetLabel("Coordinate Format")
+        FormatDropdown:SetList({ ["NONE"] = "0, 0", ["SINGLE"] = "0.0, 0.0", ["DOUBLE"] = "0.00, 0.00" }, { "NONE", "SINGLE", "DOUBLE" })
+        FormatDropdown:SetValue(DB.Coordinates.Format)
+        FormatDropdown:SetRelativeWidth(0.5)
+        FormatDropdown:SetCallback("OnValueChanged", function(_, _, value) DB.Coordinates.Format = value MS:UpdateCoordinates() end)
+        ElementOptionsContainer:AddChild(FormatDropdown)
+
+        local UpdateIntervalSlider = AG:Create("Slider")
+        UpdateIntervalSlider:SetLabel("Update Interval (Seconds)")
+        UpdateIntervalSlider:SetValue(DB.Coordinates.UpdateInterval)
+        UpdateIntervalSlider:SetSliderValues(0.1, 60.0, 0.1)
+        UpdateIntervalSlider:SetRelativeWidth(0.5)
+        UpdateIntervalSlider:SetCallback("OnValueChanged", function(_, _, value) DB.Coordinates.UpdateInterval = value MS:UpdateCoordinates() end)
+        ElementOptionsContainer:AddChild(UpdateIntervalSlider)
+
+        local LayoutContainer = AG:Create("InlineGroup")
+        LayoutContainer:SetTitle("Layout")
+        LayoutContainer:SetLayout("Flow")
+        LayoutContainer:SetFullWidth(true)
+        ScrollFrame:AddChild(LayoutContainer)
+
+        CreateLayoutGroup(LayoutContainer, DB.Coordinates.Layout, function() MS:UpdateCoordinates() end)
+
+        DisableElements(ScrollFrame, Enable, DB.Coordinates.Enable)
+
+        if DB.Coordinates.ColourBy == "CUSTOM" then ColourPicker:SetDisabled(false) else ColourPicker:SetDisabled(true) end
+
+        LayoutContainer:DoLayout()
+        ScrollFrame:DoLayout()
+    end
+
     function MS:CreateShareOptions(Container)
         local ScrollFrame = SetupTabGroup(Container, "Share Options")
 
@@ -737,6 +802,8 @@ function MS:CreateGUI(TabToOpen)
             MS:CreateLocationOptions(GUIContainer)
         elseif TabGroup == "InstanceDifficulty" then
             MS:CreateInstanceDifficultyOptions(GUIContainer)
+        elseif TabGroup == "Coordinates" then
+            MS:CreateCoordinatesOptions(GUIContainer)
         elseif TabGroup == "Tooltips" then
             MS:CreateTooltipOptions(GUIContainer)
         elseif TabGroup == "Share" then
@@ -753,6 +820,7 @@ function MS:CreateGUI(TabToOpen)
         { text = "Time", value = "Time" },
         { text = "System Stats", value = "SystemStats" },
         { text = "Location", value = "Location" },
+        { text = "Coordinates", value = "Coordinates" },
         { text = "Instance Difficulty", value = "InstanceDifficulty" },
         { text = "Tooltips", value = "Tooltips" },
         { text = "Sharing", value = "Share" },

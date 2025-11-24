@@ -3,5 +3,6 @@
     <Script file="SystemStats.lua"/>
     <Script file="Location.lua"/>
     <Script file="InstanceDifficulty.lua"/>
+    <Script file="Coordinates.lua"/>
     <Script file="Tooltips.lua"/>
 </Ui>
