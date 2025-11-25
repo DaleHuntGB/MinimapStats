@@ -690,7 +690,7 @@ function MS:CreateGUI(TabToOpen)
         local ImportProfileButton = AG:Create("Button")
         ImportProfileButton:SetText("Import Profile")
         ImportProfileButton:SetFullWidth(true)
-        ImportProfileButton:SetCallback("OnClick", function() MS:ImportSavedVariables(ImportingEditBox:GetText()) ImportingEditBox:SetText("") end)
+        ImportProfileButton:SetCallback("OnClick", function() if ImportingEditBox:GetText() ~= "" then MS:ImportSavedVariables(ImportingEditBox:GetText()) ImportingEditBox:SetText("") end end)
         ScrollFrame:AddChild(ImportProfileButton)
     end
 
