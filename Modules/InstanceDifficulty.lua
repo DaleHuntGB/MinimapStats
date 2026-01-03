@@ -1,30 +1,17 @@
 local _, MS = ...
-function MS:CreateInstanceDifficultyFrame()
-    if not MS.DB.global.ShowInstanceDifficultyFrame then return end
-    MS.InstanceDifficultyFrame = CreateFrame("Frame", "MinimapStats_InstanceDifficultyFrame", Minimap)
-    MS.InstanceDifficultyFrame:ClearAllPoints()
-    MS.InstanceDifficultyFrame:SetPoint(MS.DB.global.InstanceDifficultyAnchorPosition, Minimap, MS.DB.global.InstanceDifficultyXOffset, MS.DB.global.InstanceDifficultyYOffset)
-    MS.InstanceDifficultyFrameText = MS.InstanceDifficultyFrame:CreateFontString("MinimapStats_InstanceDifficultyFrameText", "BACKGROUND")
-    MS.InstanceDifficultyFrameText:SetFont(MS.DB.global.FontFace, MS.DB.global.InstanceDifficultyFontSize, MS.DB.global.FontFlag)
-    MS.InstanceDifficultyFrameText:SetTextColor(MS.DB.global.FontColourR, MS.DB.global.FontColourG, MS.DB.global.FontColourB)
-    if MS.DB.global.FontShadow then
-        MS.InstanceDifficultyFrameText:SetShadowColor(MS.DB.global.ShadowColorR, MS.DB.global.ShadowColorG, MS.DB.global.ShadowColorB, 1)
-        MS.InstanceDifficultyFrameText:SetShadowOffset(MS.DB.global.ShadowOffsetX, MS.DB.global.ShadowOffsetY)
-    else
-        MS.InstanceDifficultyFrameText:SetShadowColor(0, 0, 0, 0)
-        MS.InstanceDifficultyFrameText:SetShadowOffset(0, 0)
-    end
-    MS.InstanceDifficultyFrameText:SetText(MS:FetchInstanceDifficulty())
-    MS.InstanceDifficultyFrameText:ClearAllPoints()
-    MS.InstanceDifficultyFrameText:SetPoint(MS.DB.global.InstanceDifficultyAnchorPosition, MS.InstanceDifficultyFrame, 0, 0)
-    MS.InstanceDifficultyFrame:SetHeight(MS.InstanceDifficultyFrameText:GetStringHeight() or 12)
-    MS.InstanceDifficultyFrame:SetWidth(MS.InstanceDifficultyFrameText:GetStringWidth() or 220)
-    MS.InstanceDifficultyFrame:SetFrameStrata(MS.DB.global.ElementFrameStrata)
-    MS:HideInstanceDifficulty()
-    MS:SetupInstanceDifficultyScripts()
-end
+local LSM = MS.LSM
 
-function MS:HideInstanceDifficulty()
+local GarrisonInstanceIDs = {
+    [1152] = true,
+    [1153] = true,
+    [1154] = true,
+    [1158] = true,
+    [1159] = true,
+    [1160] = true,
+}
+
+local function HideInstanceDifficulty()
+    if not MS.db.global.InstanceDifficulty.HideBlizzardInstanceBanner then return end
     local InstanceDifficultyIndicator = MinimapCluster.InstanceDifficulty
     local InstanceIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Instance or _G["MiniMapInstanceDifficulty"]
     local GuildIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Guild or _G["GuildInstanceDifficulty"]
@@ -35,101 +22,139 @@ function MS:HideInstanceDifficulty()
     if ChallengeIndicator then ChallengeIndicator:ClearAllPoints() ChallengeIndicator:SetAlpha(0) end
 end
 
-function MS:UpdateInstanceDifficultyFrame()
-    if not MS.DB.global.ShowInstanceDifficultyFrame then return end
-    if not MS.InstanceDifficultyFrame and MS.DB.global.ShowInstanceDifficultyFrame then MS:CreateInstanceDifficultyFrame() end
-    MS.InstanceDifficultyFrame:ClearAllPoints()
-    MS.InstanceDifficultyFrame:SetPoint(MS.DB.global.InstanceDifficultyAnchorPosition, Minimap, MS.DB.global.InstanceDifficultyXOffset, MS.DB.global.InstanceDifficultyYOffset)
-    MS.InstanceDifficultyFrameText:SetFont(MS.DB.global.FontFace, MS.DB.global.InstanceDifficultyFontSize, MS.DB.global.FontFlag)
-    MS.InstanceDifficultyFrameText:SetTextColor(MS.DB.global.FontColourR, MS.DB.global.FontColourG, MS.DB.global.FontColourB)
-    if MS.DB.global.FontShadow then
-        MS.InstanceDifficultyFrameText:SetShadowColor(MS.DB.global.ShadowColorR, MS.DB.global.ShadowColorG, MS.DB.global.ShadowColorB, 1)
-        MS.InstanceDifficultyFrameText:SetShadowOffset(MS.DB.global.ShadowOffsetX, MS.DB.global.ShadowOffsetY)
-    else
-        MS.InstanceDifficultyFrameText:SetShadowColor(0, 0, 0, 0)
-        MS.InstanceDifficultyFrameText:SetShadowOffset(0, 0)
-    end
-    MS.InstanceDifficultyFrameText:SetText(MS:FetchInstanceDifficulty())
-    MS.InstanceDifficultyFrameText:ClearAllPoints()
-    MS.InstanceDifficultyFrameText:SetPoint(MS.DB.global.InstanceDifficultyAnchorPosition, MS.InstanceDifficultyFrame, 0, 0)
-    MS.InstanceDifficultyFrame:SetHeight(MS.InstanceDifficultyFrameText:GetStringHeight() or 12)
-    MS.InstanceDifficultyFrame:SetWidth(MS.InstanceDifficultyFrameText:GetStringWidth() or 220)
-    MS.InstanceDifficultyFrame:SetFrameStrata(MS.DB.global.ElementFrameStrata)
-    MS:SetupInstanceDifficultyScripts()
-end
-
 function MS:FetchDelveTierDifficulty(WidgetID)
-    -- TODO: Check if WidgetID is consistent
     if not WidgetID or WidgetID == nil then return end
     local DelveTier = C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(WidgetID).tierText
 
     return string.format("%s", DelveTier)
 end
 
-function MS:FetchInstanceDifficulty()
+local function FetchInstanceDifficulty()
+    local GeneralDB = MS.db.global.General
+    local DB = MS.db.global.InstanceDifficulty
+    local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
     local _, _, DiffID, _, MaxPlayers, _, _, InstanceID, CurrentPlayers = GetInstanceInfo()
     local KeystoneLevel = C_ChallengeMode.GetActiveKeystoneInfo()
-    local PlayerInGarrison = MS.GarrisonInstanceIDs[InstanceID]
+    local PlayerInGarrison = GarrisonInstanceIDs[InstanceID]
     local InstanceDifficulty = ""
 
-    if (DiffID == 0 or PlayerInGarrison) and MS.ShowDiffID == true then
-        InstanceDifficulty = "25" .. MS.AccentColour .. "N" .. "|r" -- Used for Testing Purposes
-    elseif DiffID == 0 then
-        InstanceDifficulty = ""
-    elseif PlayerInGarrison then
+    if (DiffID == 0 or PlayerInGarrison) and MS.TestInstanceDifficulty == true then
+        InstanceDifficulty = "25" .. "|c" .. AccentColour .. (DB.Abbreviate and "N" or " Normal") .. "|r"
+    elseif DiffID == 0 or PlayerInGarrison then
         InstanceDifficulty = ""
     elseif DiffID == 1 or DiffID == 3 or DiffID == 4 then
-        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "N" .. "|r"
+        InstanceDifficulty = MaxPlayers .. "|c" .. AccentColour .. (DB.Abbreviate and "N" or " Normal") .. "|r"
     elseif DiffID == 2 or DiffID == 5 or DiffID == 6 then
-        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "H" .. "|r"
+        InstanceDifficulty = MaxPlayers .. "|c" .. AccentColour .. (DB.Abbreviate and "H" or " Heroic") .. "|r"
     elseif DiffID == 16 or DiffID == 23 then
-        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "M" .. "|r"
+        InstanceDifficulty = MaxPlayers .. "|c" .. AccentColour .. (DB.Abbreviate and "M" or " Mythic") .. "|r"
     elseif DiffID == 8 then
-        InstanceDifficulty = MS.AccentColour .. "M" .. "|r" .. KeystoneLevel
+        InstanceDifficulty = "|c" .. AccentColour .. (DB.Abbreviate and "M" or "Mythic ") .. "|r" .. KeystoneLevel
     elseif DiffID == 9 then
-        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "N" .. "|r"
+        InstanceDifficulty = MaxPlayers .. "|c" .. AccentColour .. (DB.Abbreviate and "N" or " Normal") .. "|r"
     elseif DiffID == 7 or DiffID == 17 then
-        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "LFR" .. "|r"
+        InstanceDifficulty = MaxPlayers .. "|c" .. AccentColour .. (DB.Abbreviate and "LFR" or " Looking For Raid") .. "|r"
     elseif DiffID == 14 then
-        InstanceDifficulty = CurrentPlayers .. MS.AccentColour .. "N" .. "|r"
+        InstanceDifficulty = CurrentPlayers .. "|c" .. AccentColour .. (DB.Abbreviate and "N" or " Normal") .. "|r"
     elseif DiffID == 15 then
-        InstanceDifficulty = CurrentPlayers .. MS.AccentColour .. "H" .. "|r"
+        InstanceDifficulty = CurrentPlayers .. "|c" .. AccentColour .. (DB.Abbreviate and "H" or " Heroic") .. "|r"
     elseif DiffID == 18 or DiffID == 19 then
-        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "EVT" .. "|r"
+        InstanceDifficulty = MaxPlayers .. "|c" .. AccentColour .. (DB.Abbreviate and "EVT" or " Event") .. "|r"
     elseif DiffID == 24 or DiffID == 33 then
-        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "TW" .. "|r"
+        InstanceDifficulty = MaxPlayers .. "|c" .. AccentColour .. (DB.Abbreviate and "TW" or " Timewalking") .. "|r"
     elseif DiffID == 11 or DiffID == 39 then
-        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "S+" .. "|r"
+        InstanceDifficulty = MaxPlayers .. "|c" .. AccentColour .. (DB.Abbreviate and "S+" or " Heroic Scenario") .. "|r"
     elseif DiffID == 12 or DiffID == 38 then
-        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "S" .. "|r"
+        InstanceDifficulty = MaxPlayers .. "|c" .. AccentColour .. (DB.Abbreviate and "S" or " Scenario") .. "|r"
     elseif DiffID == 205 then
-        InstanceDifficulty = MaxPlayers .. MS.AccentColour .. "F" .. "|r"
+        InstanceDifficulty = MaxPlayers .. "|c" .. AccentColour .. (DB.Abbreviate and "F" or " Follower") .. "|r"
     elseif DiffID == 208 then
-        -- InstanceDifficulty = "T" .. MS.AccentColour .. MS:FetchDelveTierDifficulty(6183) .. "|r"
-        InstanceDifficulty = "D"
+        InstanceDifficulty = "|c" .. AccentColour .. (DB.Abbreviate and "T" or "Tier ") .. "|r" .. MS:FetchDelveTierDifficulty(6183)
     end
 
-    return string.format("%s", InstanceDifficulty)
+    return InstanceDifficulty
 end
 
-function MS:SetupInstanceDifficultyScripts()
-    if MS.DB.global.ShowInstanceDifficultyFrame then
-        MS.InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED")
-        MS.InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
-        MS.InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-        MS.InstanceDifficultyFrame:RegisterEvent("WORLD_STATE_TIMER_START")
-        MS.InstanceDifficultyFrame:RegisterEvent("CHALLENGE_MODE_START")
-        MS.InstanceDifficultyFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-        MS.InstanceDifficultyFrame:RegisterEvent("PLAYER_DIFFICULTY_CHANGED")
-        MS.InstanceDifficultyFrame:SetScript("OnEvent", function(self, event, ...)
-            if InCombatLockdown() then return end
-            MS.InstanceDifficultyFrameText:SetText(MS:FetchInstanceDifficulty())
-            self:SetHeight(MS.InstanceDifficultyFrameText:GetStringHeight() or 12)
-            self:SetWidth(MS.InstanceDifficultyFrameText:GetStringWidth() or 220)
+function MS:CreateInstanceDifficulty()
+    local GeneralDB = MS.db.global.General
+    local DB = MS.db.global.InstanceDifficulty
+
+    local InstanceDifficultyFrame = CreateFrame("Frame", "MinimapStats_InstanceDifficultyFrame", Minimap)
+    InstanceDifficultyFrame:SetPoint(DB.Layout[1], Minimap, DB.Layout[2], DB.Layout[3], DB.Layout[4])
+    InstanceDifficultyFrame:SetFrameStrata("MEDIUM")
+    InstanceDifficultyFrame.Text = InstanceDifficultyFrame:CreateFontString(nil, "OVERLAY")
+    InstanceDifficultyFrame.Text:SetFont(LSM:Fetch("font", GeneralDB.Font), DB.Layout[5], GeneralDB.FontFlag)
+    InstanceDifficultyFrame.Text:SetText(FetchInstanceDifficulty())
+    InstanceDifficultyFrame.Text:SetTextColor(DB.Colour[1]/255, DB.Colour[2]/255, DB.Colour[3]/255, 1)
+    InstanceDifficultyFrame.Text:SetShadowColor(GeneralDB.FontShadow.Colour[1]/255, GeneralDB.FontShadow.Colour[2]/255, GeneralDB.FontShadow.Colour[3]/255, 1)
+    InstanceDifficultyFrame.Text:SetShadowOffset(GeneralDB.FontShadow.OffsetX, GeneralDB.FontShadow.OffsetY)
+    InstanceDifficultyFrame.Text:SetPoint(DB.Layout[1], InstanceDifficultyFrame, DB.Layout[1], 0, 0)
+    InstanceDifficultyFrame.Text:SetJustifyH(MS:SetJustification(DB.Layout[1]))
+    InstanceDifficultyFrame:SetWidth(InstanceDifficultyFrame.Text:GetStringWidth())
+    InstanceDifficultyFrame:SetHeight(InstanceDifficultyFrame.Text:GetStringHeight())
+    if DB.Enable then
+        HideInstanceDifficulty()
+        InstanceDifficultyFrame:Show()
+        InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED")
+        InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
+        InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+        InstanceDifficultyFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+        InstanceDifficultyFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+        InstanceDifficultyFrame:SetScript("OnEvent", function(self, event, ...)
+            self.Text:SetText(FetchInstanceDifficulty())
+            self:SetWidth(self.Text:GetStringWidth())
+            self:SetHeight(self.Text:GetStringHeight())
         end)
-        MS.InstanceDifficultyFrame:Show()
     else
-        MS.InstanceDifficultyFrame:SetScript("OnEvent", nil)
-        MS.InstanceDifficultyFrame:Hide()
+        InstanceDifficultyFrame:Hide()
+        InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED")
+        InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED_INDOORS")
+        InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
+        InstanceDifficultyFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+        InstanceDifficultyFrame:UnregisterEvent("GROUP_ROSTER_UPDATE")
+        InstanceDifficultyFrame:SetScript("OnEvent", nil)
+    end
+    MS.InstanceDifficultyFrame = InstanceDifficultyFrame
+end
+
+function MS:UpdateInstanceDifficulty()
+    local GeneralDB = MS.db.global.General
+    local DB = MS.db.global.InstanceDifficulty
+    if MS.InstanceDifficultyFrame then
+        MS.InstanceDifficultyFrame:ClearAllPoints()
+        MS.InstanceDifficultyFrame:SetPoint(DB.Layout[1], Minimap, DB.Layout[2], DB.Layout[3], DB.Layout[4])
+        MS.InstanceDifficultyFrame.Text:SetFont(LSM:Fetch("font", GeneralDB.Font), DB.Layout[5], GeneralDB.FontFlag)
+        MS.InstanceDifficultyFrame.Text:SetTextColor(DB.Colour[1]/255, DB.Colour[2]/255, DB.Colour[3]/255, 1)
+        MS.InstanceDifficultyFrame.Text:SetShadowColor(GeneralDB.FontShadow.Colour[1]/255, GeneralDB.FontShadow.Colour[2]/255, GeneralDB.FontShadow.Colour[3]/255, 1)
+        MS.InstanceDifficultyFrame.Text:SetShadowOffset(GeneralDB.FontShadow.OffsetX, GeneralDB.FontShadow.OffsetY)
+        MS.InstanceDifficultyFrame.Text:SetPoint(DB.Layout[1], MS.InstanceDifficultyFrame, DB.Layout[1], 0, 0)
+        MS.InstanceDifficultyFrame.Text:SetJustifyH(MS:SetJustification(DB.Layout[1]))
+        MS.InstanceDifficultyFrame:SetWidth(MS.InstanceDifficultyFrame.Text:GetStringWidth())
+        MS.InstanceDifficultyFrame:SetHeight(MS.InstanceDifficultyFrame.Text:GetStringHeight())
+        if DB.Enable then
+            HideInstanceDifficulty()
+            MS.InstanceDifficultyFrame:Show()
+            MS.InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED")
+            MS.InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
+            MS.InstanceDifficultyFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+            MS.InstanceDifficultyFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+            MS.InstanceDifficultyFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+            MS.InstanceDifficultyFrame:SetScript("OnEvent", function(self, event, ...)
+                self.Text:SetText(FetchInstanceDifficulty())
+                self:SetWidth(self.Text:GetStringWidth())
+                self:SetHeight(self.Text:GetStringHeight())
+            end)
+            MS.InstanceDifficultyFrame.Text:SetText(FetchInstanceDifficulty())
+            MS.InstanceDifficultyFrame:SetWidth(MS.InstanceDifficultyFrame.Text:GetStringWidth())
+            MS.InstanceDifficultyFrame:SetHeight(MS.InstanceDifficultyFrame.Text:GetStringHeight())
+        else
+            MS.InstanceDifficultyFrame:Hide()
+            MS.InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED")
+            MS.InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED_INDOORS")
+            MS.InstanceDifficultyFrame:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
+            MS.InstanceDifficultyFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+            MS.InstanceDifficultyFrame:UnregisterEvent("GROUP_ROSTER_UPDATE")
+            MS.InstanceDifficultyFrame:SetScript("OnEvent", nil)
+        end
     end
 end

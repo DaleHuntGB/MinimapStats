@@ -1,78 +1,91 @@
 local _, MS = ...
-function MS:CreateLocationFrame()
-    if not MS.DB.global.ShowLocationFrame then return end
-    MS.LocationFrame = CreateFrame("Frame", "MinimapStats_LocationFrame", Minimap)
-    MS.LocationFrame:ClearAllPoints()
-    MS.LocationFrame:SetPoint(MS.DB.global.LocationAnchorPosition, Minimap, MS.DB.global.LocationXOffset, MS.DB.global.LocationYOffset)
-    MS.LocationFrameText = MS.LocationFrame:CreateFontString("MinimapStats_LocationFrameText", "BACKGROUND")
-    MS.LocationFrameText:SetFont(MS.DB.global.FontFace, MS.DB.global.LocationFontSize, MS.DB.global.FontFlag)
-    MS.LocationFrameText:SetTextColor(MS.DB.global.FontColourR, MS.DB.global.FontColourG, MS.DB.global.FontColourB)
-    if MS.DB.global.FontShadow then
-        MS.LocationFrameText:SetShadowColor(MS.DB.global.ShadowColorR, MS.DB.global.ShadowColorG, MS.DB.global.ShadowColorB, 1)
-        MS.LocationFrameText:SetShadowOffset(MS.DB.global.ShadowOffsetX, MS.DB.global.ShadowOffsetY)
-    else
-        MS.LocationFrameText:SetShadowColor(0, 0, 0, 0)
-        MS.LocationFrameText:SetShadowOffset(0, 0)
+local LSM = MS.LSM
+
+local function FetchLocation()
+    local GeneralDB = MS.db.global.General
+    local DB = MS.db.global.Location
+    local ReactionColour = string.format("FF%02x%02x%02x", MS:FetchReactionColour()[1], MS:FetchReactionColour()[2], MS:FetchReactionColour()[3])
+    local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
+
+    if DB.ColourBy == "REACTION" then
+        return string.format("|c%s%s|r", ReactionColour, DB.SubZone and (GetSubZoneText() ~= "" and GetSubZoneText() or GetZoneText()) or GetZoneText())
+    elseif DB.ColourBy == "ACCENT" then
+        return string.format("|c%s%s|r", AccentColour, DB.SubZone and (GetSubZoneText() ~= "" and GetSubZoneText() or GetZoneText()) or GetZoneText())
+    elseif DB.ColourBy == "CUSTOM" then
+        return string.format("|cFF%02x%02x%02x%s|r", DB.Colour[1], DB.Colour[2], DB.Colour[3], DB.SubZone and (GetSubZoneText() ~= "" and GetSubZoneText() or GetZoneText()) or GetZoneText())
     end
-    MS.LocationFrameText:SetText(MS:FetchLocation())
-    MS.LocationFrameText:ClearAllPoints()
-    MS.LocationFrameText:SetPoint(MS.DB.global.LocationAnchorPosition, MS.LocationFrame, 0, 0)
-    MS.LocationFrame:SetHeight(MS.LocationFrameText:GetStringHeight() or 12)
-    MS.LocationFrame:SetWidth(MS.LocationFrameText:GetStringWidth() or 220)
-    MS.LocationFrame:SetFrameStrata(MS.DB.global.ElementFrameStrata)
-    MS:SetupLocationScripts()
 end
 
-function MS:UpdateLocationFrame()
-    if not MS.LocationFrame and MS.DB.global.ShowLocationFrame then MS:CreateLocationFrame() end
-    MS.LocationFrame:ClearAllPoints()
-    MS.LocationFrame:SetPoint(MS.DB.global.LocationAnchorPosition, Minimap, MS.DB.global.LocationXOffset, MS.DB.global.LocationYOffset)
-    MS.LocationFrameText:SetFont(MS.DB.global.FontFace, MS.DB.global.LocationFontSize, MS.DB.global.FontFlag)
-    MS.LocationFrameText:SetTextColor(MS.DB.global.FontColourR, MS.DB.global.FontColourG, MS.DB.global.FontColourB)
-    if MS.DB.global.FontShadow then
-        MS.LocationFrameText:SetShadowColor(MS.DB.global.ShadowColorR, MS.DB.global.ShadowColorG, MS.DB.global.ShadowColorB, 1)
-        MS.LocationFrameText:SetShadowOffset(MS.DB.global.ShadowOffsetX, MS.DB.global.ShadowOffsetY)
-    else
-        MS.LocationFrameText:SetShadowColor(0, 0, 0, 0)
-        MS.LocationFrameText:SetShadowOffset(0, 0)
-    end
-    MS.LocationFrameText:SetText(MS:FetchLocation())
-    MS.LocationFrameText:ClearAllPoints()
-    MS.LocationFrameText:SetPoint(MS.DB.global.LocationAnchorPosition, MS.LocationFrame, 0, 0)
-    MS.LocationFrame:SetHeight(MS.LocationFrameText:GetStringHeight() or 12)
-    MS.LocationFrame:SetWidth(MS.LocationFrameText:GetStringWidth() or 220)
-    MS.LocationFrame:SetFrameStrata(MS.DB.global.ElementFrameStrata)
-    MS:SetupLocationScripts()
-end
+function MS:CreateLocation()
+    local GeneralDB = MS.db.global.General
+    local DB = MS.db.global.Location
 
-function MS:FetchLocation()
-    local ZoneName = GetMinimapZoneText()
-    local ColourHighlight = MS:CalculateHexColour(MS.DB.global.FontColourR, MS.DB.global.FontColourG, MS.DB.global.FontColourB)
-    if MS.DB.global.LocationColourFormat == "Primary" then
-        ColourHighlight = MS:CalculateHexColour(MS.DB.global.FontColourR, MS.DB.global.FontColourG, MS.DB.global.FontColourB)
-    elseif MS.DB.global.LocationColourFormat == "Reaction" then
-        ColourHighlight = MS:SetReactionColour()
-    elseif MS.DB.global.LocationColourFormat == "Accent" then
-        ColourHighlight = MS:CalculateHexColour(MS.DB.global.AccentColourR, MS.DB.global.AccentColourG, MS.DB.global.AccentColourB)
-    elseif MS.DB.global.LocationColourFormat == "Custom" then
-        ColourHighlight = MS:CalculateHexColour(MS.DB.global.LocationColourR, MS.DB.global.LocationColourG, MS.DB.global.LocationColourB)
-    end
-    return string.format("%s%s|r", ColourHighlight, ZoneName)
-end
-
-function MS:SetupLocationScripts()
-    if MS.DB.global.ShowLocationFrame then
-        MS.LocationFrame:RegisterEvent("ZONE_CHANGED")
-        MS.LocationFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
-        MS.LocationFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-        MS.LocationFrame:SetScript("OnEvent", function(self, event, ...)
-            MS.LocationFrameText:SetText(MS:FetchLocation())
-            self:SetHeight(MS.LocationFrameText:GetStringHeight() or 12)
-            self:SetWidth(MS.LocationFrameText:GetStringWidth() or 220)
+    local LocationFrame = CreateFrame("Frame", "MinimapStats_LocationFrame", Minimap)
+    LocationFrame:SetPoint(DB.Layout[1], Minimap, DB.Layout[2], DB.Layout[3], DB.Layout[4])
+    LocationFrame:SetFrameStrata("MEDIUM")
+    LocationFrame.Text = LocationFrame:CreateFontString(nil, "OVERLAY")
+    LocationFrame.Text:SetFont(LSM:Fetch("font", GeneralDB.Font), DB.Layout[5], GeneralDB.FontFlag)
+    LocationFrame.Text:SetText(FetchLocation())
+    LocationFrame.Text:SetTextColor(DB.Colour[1]/255, DB.Colour[2]/255, DB.Colour[3]/255, 1)
+    LocationFrame.Text:SetShadowColor(GeneralDB.FontShadow.Colour[1]/255, GeneralDB.FontShadow.Colour[2]/255, GeneralDB.FontShadow.Colour[3]/255, 1)
+    LocationFrame.Text:SetShadowOffset(GeneralDB.FontShadow.OffsetX, GeneralDB.FontShadow.OffsetY)
+    LocationFrame.Text:SetPoint(DB.Layout[1], LocationFrame, DB.Layout[1], 0, 0)
+    LocationFrame.Text:SetJustifyH(MS:SetJustification(DB.Layout[1]))
+    LocationFrame:SetWidth(LocationFrame.Text:GetStringWidth())
+    LocationFrame:SetHeight(LocationFrame.Text:GetStringHeight())
+    if DB.Enable then
+        LocationFrame:Show()
+        LocationFrame:RegisterEvent("ZONE_CHANGED")
+        LocationFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
+        LocationFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+        LocationFrame:SetScript("OnEvent", function(self, event, ...)
+            self.Text:SetText(FetchLocation())
+            self:SetWidth(self.Text:GetStringWidth())
+            self:SetHeight(self.Text:GetStringHeight())
         end)
-        MS.LocationFrame:Show()
     else
-        MS.LocationFrame:Hide()
-        MS.LocationFrame:SetScript("OnEvent", nil)
+        LocationFrame:Hide()
+        LocationFrame:UnregisterEvent("ZONE_CHANGED")
+        LocationFrame:UnregisterEvent("ZONE_CHANGED_INDOORS")
+        LocationFrame:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
+        LocationFrame:SetScript("OnEvent", nil)
+    end
+    MS.LocationFrame = LocationFrame
+end
+
+function MS:UpdateLocation()
+    local GeneralDB = MS.db.global.General
+    local DB = MS.db.global.Location
+    if MS.LocationFrame then
+        MS.LocationFrame:ClearAllPoints()
+        MS.LocationFrame:SetPoint(DB.Layout[1], Minimap, DB.Layout[2], DB.Layout[3], DB.Layout[4])
+        MS.LocationFrame.Text:SetFont(LSM:Fetch("font", GeneralDB.Font), DB.Layout[5], GeneralDB.FontFlag)
+        MS.LocationFrame.Text:SetTextColor(DB.Colour[1]/255, DB.Colour[2]/255, DB.Colour[3]/255, 1)
+        MS.LocationFrame.Text:SetShadowColor(GeneralDB.FontShadow.Colour[1]/255, GeneralDB.FontShadow.Colour[2]/255, GeneralDB.FontShadow.Colour[3]/255, 1)
+        MS.LocationFrame.Text:SetShadowOffset(GeneralDB.FontShadow.OffsetX, GeneralDB.FontShadow.OffsetY)
+        MS.LocationFrame.Text:SetPoint(DB.Layout[1], MS.LocationFrame, DB.Layout[1], 0, 0)
+        MS.LocationFrame.Text:SetJustifyH(MS:SetJustification(DB.Layout[1]))
+        MS.LocationFrame:SetWidth(MS.LocationFrame.Text:GetStringWidth())
+        MS.LocationFrame:SetHeight(MS.LocationFrame.Text:GetStringHeight())
+        if DB.Enable then
+            MS.LocationFrame:Show()
+            MS.LocationFrame:RegisterEvent("ZONE_CHANGED")
+            MS.LocationFrame:RegisterEvent("ZONE_CHANGED_INDOORS")
+            MS.LocationFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+            MS.LocationFrame:SetScript("OnEvent", function(self, event, ...)
+                self.Text:SetText(FetchLocation())
+                self:SetWidth(self.Text:GetStringWidth())
+                self:SetHeight(self.Text:GetStringHeight())
+            end)
+            MS.LocationFrame.Text:SetText(FetchLocation())
+            MS.LocationFrame:SetWidth(MS.LocationFrame.Text:GetStringWidth())
+            MS.LocationFrame:SetHeight(MS.LocationFrame.Text:GetStringHeight())
+        else
+            MS.LocationFrame:Hide()
+            MS.LocationFrame:UnregisterEvent("ZONE_CHANGED")
+            MS.LocationFrame:UnregisterEvent("ZONE_CHANGED_INDOORS")
+            MS.LocationFrame:UnregisterEvent("ZONE_CHANGED_NEW_AREA")
+            MS.LocationFrame:SetScript("OnEvent", nil)
+        end
     end
 end

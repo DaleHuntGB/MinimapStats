@@ -1,0 +1,8 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlGUIS:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+    <Script file="Time.lua"/>
+    <Script file="SystemStats.lua"/>
+    <Script file="Location.lua"/>
+    <Script file="InstanceDifficulty.lua"/>
+    <Script file="Coordinates.lua"/>
+    <Script file="Tooltips.lua"/>
+</Ui>

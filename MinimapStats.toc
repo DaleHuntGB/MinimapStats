@@ -1,11 +1,23 @@
-## Title: |cFF8080FFMinimap|r|cFFFFFFFFStats|r
-## Interface: 110100, 110107, 110200
-## Version: 6.3
-## Author: Unhalted
-## Notes: Adds highly customizable and performance friendly, toggleable UI elements to the minimap.|nElements include:|n• Time.|n• System Stats (FPS / Latency).|n• Location.|n• Coordinates.|n• Instance Difficulty.
-## SavedVariables: MSDB
-## IconTexture: Interface\AddOns\MinimapStats\Media\Logo
-## OptionalDeps: LibOpenRaid-1.0, LibSharedMedia-3.0, LibDeflate
+## Title: |cFF8080FFMinimap|rStats
+## Version: @project-version@
+## Interface: 120000
+## Author: UnhaltedGB
+## SavedVariables: MinimapStatsDB
+## IconTexture: Interface\AddOns\MinimapStats\Media\MinimapStats.png
+## Category-enUS: Aesthetics
+## X-Curse-Project-ID: 695388
 ## X-Wago-ID: qGYM7vGg
 
-Init.xml
+# Load Libraries
+Libs/Init.xml
+
+# Load Essentials
+Core/Global.lua
+
+# Load Modules
+Modules/Init.xml
+
+# Load AddOn
+Core/Share.lua
+Core/GUI.lua
+Core/Core.lua
