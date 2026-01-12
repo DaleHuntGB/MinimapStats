@@ -16,10 +16,10 @@ local function HideInstanceDifficulty()
     local InstanceIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Instance or _G["MiniMapInstanceDifficulty"]
     local GuildIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Guild or _G["GuildInstanceDifficulty"]
     local ChallengeIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.ChallengeMode or _G["MiniMapChallengeMode"]
-    -- if InstanceDifficultyIndicator then InstanceDifficultyIndicator:ClearAllPoints() InstanceDifficultyIndicator:SetAlpha(0) end
-    if InstanceIndicator then InstanceIndicator:ClearAllPoints() InstanceIndicator:SetAlpha(0) end
-    if GuildIndicator then GuildIndicator:ClearAllPoints() GuildIndicator:SetAlpha(0) end
-    if ChallengeIndicator then ChallengeIndicator:ClearAllPoints() ChallengeIndicator:SetAlpha(0) end
+    if InstanceDifficultyIndicator then InstanceDifficultyIndicator:SetAlpha(0) end
+    if InstanceIndicator then InstanceIndicator:SetAlpha(0) end
+    if GuildIndicator then GuildIndicator:SetAlpha(0) end
+    if ChallengeIndicator then ChallengeIndicator:SetAlpha(0) end
 end
 
 function MS:FetchDelveTierDifficulty(WidgetID)
