@@ -4,7 +4,7 @@
 ## Author: UnhaltedGB
 ## SavedVariables: MinimapStatsDB
 ## IconTexture: Interface\AddOns\MinimapStats\Media\MinimapStats.png
-## Category-enUS: Aesthetics
+## Category-enUS: |cFF8080FFUnhalted|r Development
 ## X-Curse-Project-ID: 695388
 ## X-Wago-ID: qGYM7vGg
 
