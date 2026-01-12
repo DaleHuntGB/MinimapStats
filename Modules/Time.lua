@@ -31,7 +31,7 @@ function MS:CreateTime()
     local GeneralDB = MS.db.global.General
     local DB = MS.db.global.Time
 
-    local TimeFrame = CreateFrame("Frame", "MinimapStats_TimeFrame", Minimap)
+    local TimeFrame = CreateFrame("Frame", "MinimapStats_TimeFrame", UIParent)
     TimeFrame:SetPoint(DB.Layout[1], Minimap, DB.Layout[2], DB.Layout[3], DB.Layout[4])
     TimeFrame:SetFrameStrata("MEDIUM")
     TimeFrame.Text = TimeFrame:CreateFontString(nil, "OVERLAY")

@@ -20,7 +20,7 @@ function MS:CreateLocation()
     local GeneralDB = MS.db.global.General
     local DB = MS.db.global.Location
 
-    local LocationFrame = CreateFrame("Frame", "MinimapStats_LocationFrame", Minimap)
+    local LocationFrame = CreateFrame("Frame", "MinimapStats_LocationFrame", UIParent)
     LocationFrame:SetPoint(DB.Layout[1], Minimap, DB.Layout[2], DB.Layout[3], DB.Layout[4])
     LocationFrame:SetFrameStrata("MEDIUM")
     LocationFrame.Text = LocationFrame:CreateFontString(nil, "OVERLAY")

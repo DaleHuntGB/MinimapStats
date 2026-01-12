@@ -16,7 +16,7 @@ local function HideInstanceDifficulty()
     local InstanceIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Instance or _G["MiniMapInstanceDifficulty"]
     local GuildIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.Guild or _G["GuildInstanceDifficulty"]
     local ChallengeIndicator = InstanceDifficultyIndicator and InstanceDifficultyIndicator.ChallengeMode or _G["MiniMapChallengeMode"]
-    if InstanceDifficultyIndicator then InstanceDifficultyIndicator:ClearAllPoints() InstanceDifficultyIndicator:SetAlpha(0) end
+    -- if InstanceDifficultyIndicator then InstanceDifficultyIndicator:ClearAllPoints() InstanceDifficultyIndicator:SetAlpha(0) end
     if InstanceIndicator then InstanceIndicator:ClearAllPoints() InstanceIndicator:SetAlpha(0) end
     if GuildIndicator then GuildIndicator:ClearAllPoints() GuildIndicator:SetAlpha(0) end
     if ChallengeIndicator then ChallengeIndicator:ClearAllPoints() ChallengeIndicator:SetAlpha(0) end
@@ -79,7 +79,7 @@ function MS:CreateInstanceDifficulty()
     local GeneralDB = MS.db.global.General
     local DB = MS.db.global.InstanceDifficulty
 
-    local InstanceDifficultyFrame = CreateFrame("Frame", "MinimapStats_InstanceDifficultyFrame", Minimap)
+    local InstanceDifficultyFrame = CreateFrame("Frame", "MinimapStats_InstanceDifficultyFrame", UIParent)
     InstanceDifficultyFrame:SetPoint(DB.Layout[1], Minimap, DB.Layout[2], DB.Layout[3], DB.Layout[4])
     InstanceDifficultyFrame:SetFrameStrata("MEDIUM")
     InstanceDifficultyFrame.Text = InstanceDifficultyFrame:CreateFontString(nil, "OVERLAY")

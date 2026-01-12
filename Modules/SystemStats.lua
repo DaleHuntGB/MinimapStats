@@ -53,7 +53,7 @@ function MS:CreateSystemStats()
     local GeneralDB = MS.db.global.General
     local DB = MS.db.global.SystemStats
 
-    local SystemStatsFrame = CreateFrame("Frame", "MinimapStats_SystemStatsFrame", Minimap)
+    local SystemStatsFrame = CreateFrame("Frame", "MinimapStats_SystemStatsFrame", UIParent)
     SystemStatsFrame:SetPoint(DB.Layout[1], Minimap, DB.Layout[2], DB.Layout[3], DB.Layout[4])
     SystemStatsFrame:SetFrameStrata("MEDIUM")
     SystemStatsFrame.Text = SystemStatsFrame:CreateFontString(nil, "OVERLAY")

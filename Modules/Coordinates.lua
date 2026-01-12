@@ -57,7 +57,7 @@ function MS:CreateCoordinates()
     local GeneralDB = MS.db.global.General
     local DB = MS.db.global.Coordinates
 
-    local CoordinatesFrame = CreateFrame("Frame", "MinimapStats_CoordinatesFrame", Minimap)
+    local CoordinatesFrame = CreateFrame("Frame", "MinimapStats_CoordinatesFrame", UIParent)
     CoordinatesFrame:SetPoint(DB.Layout[1], Minimap, DB.Layout[2], DB.Layout[3], DB.Layout[4])
     CoordinatesFrame:SetFrameStrata("MEDIUM")
     CoordinatesFrame.Text = CoordinatesFrame:CreateFontString(nil, "OVERLAY")
