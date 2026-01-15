@@ -73,17 +73,6 @@ local function DisableElements(parentContainer, widget, value)
     end
 end
 
-local function UpdateState(parent, dbValue)
-    local currentState = ""
-    if dbValue then
-        currentState = "|cFFFF4040Disable|r"
-    else
-        currentState = "|cFF40FF40Enable|r"
-    end
-    parent:SetLabel(currentState)
-    return currentState
-end
-
 local function UpdateRateWarning(rate, defaultRate)
     local currentText = ""
     if rate < (defaultRate) then
@@ -330,10 +319,10 @@ function MS:CreateGUI(TabToOpen)
         local ScrollFrame = SetupTabGroup(Container, "Time Options")
 
         local Enable = AG:Create("CheckBox")
-        Enable:SetLabel(UpdateState(Enable, DB.Time.Enable))
+        Enable:SetLabel("Enable |cFF8080FFTime|r")
         Enable:SetValue(DB.Time.Enable)
         Enable:SetRelativeWidth(1)
-        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.Time.Enable = value MS:UpdateTime() UpdateState(Enable, DB.Time.Enable) DisableElements(ScrollFrame, Enable, value) end)
+        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.Time.Enable = value MS:UpdateTime() DisableElements(ScrollFrame, Enable, value) end)
         ScrollFrame:AddChild(Enable)
 
         local ElementOptionsContainer = AG:Create("InlineGroup")
@@ -391,10 +380,10 @@ function MS:CreateGUI(TabToOpen)
         local ScrollFrame = SetupTabGroup(Container, "System Stats Options")
 
         local Enable = AG:Create("CheckBox")
-        Enable:SetLabel(UpdateState(Enable, DB.SystemStats.Enable))
+        Enable:SetLabel("Enable |cFF8080FFSystem Stats|r")
         Enable:SetValue(DB.SystemStats.Enable)
         Enable:SetRelativeWidth(1)
-        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.SystemStats.Enable = value MS:UpdateSystemStats() UpdateState(Enable, DB.SystemStats.Enable) DisableElements(ScrollFrame, Enable, value) end)
+        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.SystemStats.Enable = value MS:UpdateSystemStats() DisableElements(ScrollFrame, Enable, value) end)
         ScrollFrame:AddChild(Enable)
 
         local ElementOptionsContainer = AG:Create("InlineGroup")
@@ -475,10 +464,10 @@ function MS:CreateGUI(TabToOpen)
         local ScrollFrame = SetupTabGroup(Container, "Location Options")
 
         local Enable = AG:Create("CheckBox")
-        Enable:SetLabel(UpdateState(Enable, DB.Location.Enable))
+        Enable:SetLabel("Enable |cFF8080FFLocation|r")
         Enable:SetValue(DB.Location.Enable)
         Enable:SetRelativeWidth(1)
-        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.Location.Enable = value MS:UpdateLocation() UpdateState(Enable, DB.Location.Enable) DisableElements(ScrollFrame, Enable, value) end)
+        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.Location.Enable = value MS:UpdateLocation() DisableElements(ScrollFrame, Enable, value) end)
         ScrollFrame:AddChild(Enable)
 
         local ElementOptionsContainer = AG:Create("InlineGroup")
@@ -533,10 +522,10 @@ function MS:CreateGUI(TabToOpen)
         local ScrollFrame = SetupTabGroup(Container, "Instance Difficulty Options")
 
         local Enable = AG:Create("CheckBox")
-        Enable:SetLabel(UpdateState(Enable, DB.InstanceDifficulty.Enable))
+        Enable:SetLabel("Enable |cFF8080FFInstance Difficulty|r")
         Enable:SetValue(DB.InstanceDifficulty.Enable)
         Enable:SetRelativeWidth(1)
-        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.InstanceDifficulty.Enable = value MS:UpdateInstanceDifficulty() UpdateState(Enable, DB.InstanceDifficulty.Enable) DisableElements(ScrollFrame, Enable, value) end)
+        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.InstanceDifficulty.Enable = value MS:UpdateInstanceDifficulty() DisableElements(ScrollFrame, Enable, value) end)
         ScrollFrame:AddChild(Enable)
 
         local ElementOptionsContainer = AG:Create("InlineGroup")
@@ -585,10 +574,10 @@ function MS:CreateGUI(TabToOpen)
         local ScrollFrame = SetupTabGroup(Container, "Coordinates Options")
 
         local Enable = AG:Create("CheckBox")
-        Enable:SetLabel(UpdateState(Enable, DB.Coordinates.Enable))
+        Enable:SetLabel("Enable |cFF8080FFCoordinates|r")
         Enable:SetValue(DB.Coordinates.Enable)
         Enable:SetRelativeWidth(1)
-        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.Coordinates.Enable = value MS:UpdateCoordinates() UpdateState(Enable, DB.Coordinates.Enable) DisableElements(ScrollFrame, Enable, value) end)
+        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.Coordinates.Enable = value MS:UpdateCoordinates() DisableElements(ScrollFrame, Enable, value) end)
         ScrollFrame:AddChild(Enable)
 
         local ElementOptionsContainer = AG:Create("InlineGroup")
