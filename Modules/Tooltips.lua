@@ -158,7 +158,7 @@ local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateT
     local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
 
     GameTooltip:SetOwner(Minimap, "ANCHOR_NONE")
-    GameTooltip:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", 0, -2)
+    GameTooltip:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", 0, -1)
     GameTooltip:ClearLines()
 
     if displayDate and not displayAlternateTime then
@@ -186,7 +186,7 @@ local function CreateSystemStatsTooltip(displayVaultOptions)
     local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
     
     GameTooltip:SetOwner(Minimap, "ANCHOR_NONE")
-    GameTooltip:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", 0, -2)
+    GameTooltip:SetPoint("TOPRIGHT", Minimap, "BOTTOMRIGHT", 0, -1)
     GameTooltip:ClearLines()
 
     if displayVaultOptions then
