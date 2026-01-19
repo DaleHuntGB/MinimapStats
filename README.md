@@ -7,7 +7,7 @@
 [![KoFi](https://img.shields.io/badge/KoFi-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://ko-fi.com/unhalted)
 
 ## Midnight
-- Unhalted Unit Frames is ready for Pre-Patch & Midnight.
+- MinimapStats is ready for Pre-Patch & Midnight.
 - Settings from previous versions, will all be overwritten upon Pre-Patch.
 
 ## Features
