@@ -25,7 +25,7 @@
 - [LibDeflate](https://github.com/SafeteeWoW/LibDeflate.git): Handles importing/exporting of profiles.
 - [LibSharedMedia](https://www.curseforge.com/wow/addons/libsharedmedia-3-0): Handles all additional media for the AddOn.
 
-All of these libraries contribute to the success of Unhalted Unit Frames & are highly appreciated by myself.
+All of these libraries contribute to the success of MinimapStats & are highly appreciated by myself.
 
 ## About the Project
 This is a passion project & this has to be maintained as much as possible in order for the longevity of the AddOn. It is solo-developed, but some very kind people from the community have already started contributing.
