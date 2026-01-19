@@ -1,6 +1,6 @@
 ## Title: |cFF8080FFMinimap|rStats
+## Interface: 120000, 120001
 ## Version: @project-version@
-## Interface: 120000
 ## Author: UnhaltedGB
 ## SavedVariables: MinimapStatsDB
 ## IconTexture: Interface\AddOns\MinimapStats\Media\MinimapStats.png
