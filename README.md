@@ -10,14 +10,15 @@
 - Unhalted Unit Frames is ready for Pre-Patch & Midnight.
 - Settings from previous versions, will all be overwritten upon Pre-Patch.
 
-## Unit Frames
-- Player.
-- Target.
-- Target of Target.
-- Pet.
-- Focus.
-- Focus Target.
-- Boss.
+## Features
+- Time.
+- SystemStats.
+- Location.
+- Instance Difficulty.
+- Coordinates.
+- Complete support for [Lua Date](https://www.lua.org/pil/22.1.html).
+- Tooltip Functionality with various options.
+
 
 ## Libraries
 - [Ace3](https://www.curseforge.com/wow/addons/ace3): Database & Configuration Windows are all handled by Ace3 & Ace3 GUI.
