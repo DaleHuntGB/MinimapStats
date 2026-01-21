@@ -8,6 +8,7 @@ local Defaults = {
             AccentColour = {128, 128, 255},
             Font = "Friz Quadrata TT",
             FontFlag = "OUTLINE",
+            FrameStrata = "MEDIUM",
             FontShadow = {
                 Colour = {0, 0, 0, 1},
                 OffsetX = 0,
