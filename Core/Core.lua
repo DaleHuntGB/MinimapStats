@@ -79,14 +79,19 @@ function MinimapStats:OnInitialize()
     MS.db = LibStub("AceDB-3.0"):New("MinimapStatsDB", Defaults)
 end
 
-function MinimapStats:OnEnable()
+function MinimapStats:InitializeUI()
     MS:SetupSlashCommands()
+    MS:CreateTime()
+    MS:CreateSystemStats()
+    MS:CreateLocation()
+    MS:CreateCoordinates()
+    MS:CreateInstanceDifficulty()
+    MS:AssignTooltipScripts()
+end
+
+function MinimapStats:OnEnable()
+    local addon = self
     C_Timer.After(0, function()
-        MS:CreateTime()
-        MS:CreateSystemStats()
-        MS:CreateLocation()
-        MS:CreateCoordinates()
-        MS:CreateInstanceDifficulty()
-        MS:AssignTooltipScripts()
+        addon:InitializeUI()
     end)
 end
