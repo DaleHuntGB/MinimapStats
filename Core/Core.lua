@@ -85,6 +85,7 @@ function MinimapStats:OnInitialize()
 end
 
 function MinimapStats:OnEnable()
+    -- heistm: https://github.com/DaleHuntGB/MinimapStats/pull/3 - for the idea
     C_Timer.After(0.1, function()
         MS:SetupSlashCommands()
         MS:CreateTime()
