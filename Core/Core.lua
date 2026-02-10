@@ -53,6 +53,12 @@ local Defaults = {
             Format = "SINGLE",
         },
         Tooltip = {
+            Position = {
+                AnchorFrom = "TOPRIGHT",
+                AnchorTo = "BOTTOMRIGHT",
+                OffsetX = 0,
+                OffsetY = -1,
+            },
             Time = {
                 Date = true,
                 DateString = "%A, %B %d, %Y",
