@@ -23,10 +23,12 @@ local function HideInstanceDifficulty()
 end
 
 function MS:FetchDelveTierDifficulty(WidgetID)
-    if not WidgetID or WidgetID == nil then return end
-    local DelveTier = C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(WidgetID).tierText
+    if not WidgetID then return "" end
+    local WidgetInfo = C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(WidgetID)
 
-    return string.format("%s", DelveTier)
+    if WidgetInfo and WidgetInfo.tierText then return string.format("%s", WidgetInfo.tierText) end
+
+    return ""
 end
 
 local function FetchInstanceDifficulty()
