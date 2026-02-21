@@ -52,6 +52,19 @@ local Defaults = {
             UpdateInterval = 1.0,
             Format = "SINGLE",
         },
+        Durability = {
+            Enable = false,
+            Layout = {"BOTTOMRIGHT", "BOTTOMRIGHT", -3, 3, 12},
+            ColourBy = "VALUE",
+            Colour = {255, 255, 255},
+            Text = "%s%",
+            Thresholds = {
+                [1] = {Percent = 75, Colour = {64, 255, 64}},
+                [2] = {Percent = 50, Colour = {255, 204, 64}},
+                [3] = {Percent = 25, Colour = {255, 128, 64}},
+                [4] = {Percent = 0, Colour = {255, 64, 64}},
+            }
+        },
         Tooltip = {
             Position = {
                 AnchorFrom = "TOPRIGHT",
@@ -99,6 +112,7 @@ function MinimapStats:OnEnable()
         MS:CreateLocation()
         MS:CreateCoordinates()
         MS:CreateInstanceDifficulty()
+        MS:CreateDurability()
         MS:AssignTooltipScripts()
     end)
 end

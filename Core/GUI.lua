@@ -526,6 +526,89 @@ function MS:CreateGUI(TabToOpen)
         ScrollFrame:DoLayout()
     end
 
+    function MS:CreateDurabilityOptions(Container)
+        local ScrollFrame = SetupTabGroup(Container, "Durability Options")
+
+        local Enable = AG:Create("CheckBox")
+        Enable:SetLabel("Enable |cFF8080FFDurability|r")
+        Enable:SetValue(DB.Durability.Enable)
+        Enable:SetRelativeWidth(1)
+        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.Durability.Enable = value MS:UpdateDurability() DisableElements(ScrollFrame, Enable, value) end)
+        ScrollFrame:AddChild(Enable)
+
+        local ElementOptionsContainer = AG:Create("InlineGroup")
+        ElementOptionsContainer:SetTitle("Element Options")
+        ElementOptionsContainer:SetLayout("Flow")
+        ElementOptionsContainer:SetFullWidth(true)
+        ScrollFrame:AddChild(ElementOptionsContainer)
+
+        local DurabilityInfoTag = CreateInfoTag("You can assign |cFF8080FFCustom Text Colours|r by adding the colour code within |cFFFFCC00[XXXXXX]|r.\n|cFF8080FFFor Example|r: |cFFCCCCCC[8080FF]Durability: %s%|r = |cFF8080FFDurability|r: 80%.")
+        ElementOptionsContainer:AddChild(DurabilityInfoTag)
+
+        local TextFormatEditBox = AG:Create("EditBox")
+        TextFormatEditBox:SetLabel("Text Format")
+        TextFormatEditBox:SetText(DB.Durability.Text)
+        TextFormatEditBox:SetRelativeWidth(0.33)
+        TextFormatEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.Durability.Text = value MS:UpdateDurability() TextFormatEditBox:ClearFocus() end)
+        ElementOptionsContainer:AddChild(TextFormatEditBox)
+
+        local ColourByDropdown = AG:Create("Dropdown")
+        ColourByDropdown:SetLabel("Colour By")
+        ColourByDropdown:SetList({ ["VALUE"] = "Value", ["CUSTOM"] = "Custom", ["ACCENT"] = "Accent" }, { "VALUE", "ACCENT", "CUSTOM" })
+        ColourByDropdown:SetValue(DB.Durability.ColourBy)
+        ColourByDropdown:SetRelativeWidth(0.33)
+        ColourByDropdown:SetCallback("OnValueChanged", function(_, _, value) DB.Durability.ColourBy = value MS:UpdateDurability() if value == "CUSTOM" then MS.ColourPicker:SetDisabled(false) else MS.ColourPicker:SetDisabled(true) end end)
+        ElementOptionsContainer:AddChild(ColourByDropdown)
+
+        local ColourPicker = AG:Create("ColorPicker")
+        ColourPicker:SetLabel("Text Colour")
+        ColourPicker:SetColor(DB.Durability.Colour[1]/255, DB.Durability.Colour[2]/255, DB.Durability.Colour[3]/255)
+        ColourPicker:SetHasAlpha(false)
+        ColourPicker:SetRelativeWidth(0.33)
+        ColourPicker:SetCallback("OnValueChanged", function(_, _, r, g, b) DB.Durability.Colour = {r*255, g*255, b*255} MS:UpdateDurability() end)
+        MS.ColourPicker = ColourPicker
+        ElementOptionsContainer:AddChild(ColourPicker)
+
+        local ThresholdContainer = AG:Create("InlineGroup")
+        ThresholdContainer:SetTitle("Colour Thresholds")
+        ThresholdContainer:SetLayout("Flow")
+        ThresholdContainer:SetFullWidth(true)
+        ElementOptionsContainer:AddChild(ThresholdContainer)
+
+        for i = 1, 4 do
+            local ThresholdColourPicker = AG:Create("ColorPicker")
+            ThresholdColourPicker:SetLabel("Threshold #" .. i .. " Colour")
+            ThresholdColourPicker:SetColor(DB.Durability.Thresholds[i].Colour[1]/255, DB.Durability.Thresholds[i].Colour[2]/255, DB.Durability.Thresholds[i].Colour[3]/255)
+            ThresholdColourPicker:SetHasAlpha(false)
+            ThresholdColourPicker:SetRelativeWidth(0.5)
+            ThresholdColourPicker:SetCallback("OnValueChanged", function(_, _, r, g, b) DB.Durability.Thresholds[i].Colour = {r*255, g*255, b*255} MS:UpdateDurability() end)
+            ThresholdContainer:AddChild(ThresholdColourPicker)
+
+            local ThresholdValueSlider = AG:Create("Slider")
+            ThresholdValueSlider:SetLabel("Threshold #" .. i .. " [%]")
+            ThresholdValueSlider:SetValue(DB.Durability.Thresholds[i].Percent)
+            ThresholdValueSlider:SetSliderValues(0, 100, 1)
+            ThresholdValueSlider:SetRelativeWidth(0.5)
+            ThresholdValueSlider:SetCallback("OnValueChanged", function(_, _, value) DB.Durability.Thresholds[i].Percent = value MS:UpdateDurability() end)
+            ThresholdContainer:AddChild(ThresholdValueSlider)
+        end
+
+        local LayoutContainer = AG:Create("InlineGroup")
+        LayoutContainer:SetTitle("Layout")
+        LayoutContainer:SetLayout("Flow")
+        LayoutContainer:SetFullWidth(true)
+        ScrollFrame:AddChild(LayoutContainer)
+
+        CreateLayoutGroup(LayoutContainer, DB.Durability.Layout, function() MS:UpdateDurability() end)
+
+        DisableElements(ScrollFrame, Enable, DB.Durability.Enable)
+
+        if DB.Durability.ColourBy == "CUSTOM" then ColourPicker:SetDisabled(false) else ColourPicker:SetDisabled(true) end
+
+        LayoutContainer:DoLayout()
+        ScrollFrame:DoLayout()
+    end
+
     function MS:CreateInstanceDifficultyOptions(Container)
         local ScrollFrame = SetupTabGroup(Container, "Instance Difficulty Options")
 
@@ -855,6 +938,8 @@ function MS:CreateGUI(TabToOpen)
             MS:CreateInstanceDifficultyOptions(GUIContainer)
         elseif TabGroup == "Coordinates" then
             MS:CreateCoordinatesOptions(GUIContainer)
+        elseif TabGroup == "Durability" then
+            MS:CreateDurabilityOptions(GUIContainer)
         elseif TabGroup == "Tooltips" then
             MS:CreateTooltipOptions(GUIContainer)
         elseif TabGroup == "Share" then
@@ -872,6 +957,7 @@ function MS:CreateGUI(TabToOpen)
         { text = "System Stats", value = "SystemStats" },
         { text = "Location", value = "Location" },
         { text = "Coordinates", value = "Coordinates" },
+        { text = "Durability", value = "Durability" },
         { text = "Instance Difficulty", value = "InstanceDifficulty" },
         { text = "Tooltips", value = "Tooltips" },
         { text = "Sharing", value = "Share" },

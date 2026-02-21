@@ -4,5 +4,6 @@
     <Script file="Location.lua"/>
     <Script file="InstanceDifficulty.lua"/>
     <Script file="Coordinates.lua"/>
+    <Script file="Durability.lua"/>
     <Script file="Tooltips.lua"/>
 </Ui>

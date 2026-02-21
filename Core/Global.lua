@@ -98,6 +98,7 @@ function MS:UpdateAll()
     MS:UpdateLocation()
     MS:UpdateInstanceDifficulty()
     MS:UpdateCoordinates()
+    MS:UpdateDurability()
 end
 
 function MS:ReloadPrompt(text, onAcceptText, onCancelText, onAcceptFn, onCancelFn)
