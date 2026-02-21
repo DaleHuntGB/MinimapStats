@@ -921,6 +921,20 @@ function MS:CreateGUI(TabToOpen)
             VaultDisplayOptionsInlineGroup:AddChild(OptionCheckBox)
         end
 
+        local DurabilityTooltipOptionsInlineGroup = AG:Create("InlineGroup")
+        DurabilityTooltipOptionsInlineGroup:SetTitle("|cFF8080FFDurability|r Frame Options")
+        DurabilityTooltipOptionsInlineGroup:SetLayout("Flow")
+        DurabilityTooltipOptionsInlineGroup:SetFullWidth(true)
+        ScrollFrame:AddChild(DurabilityTooltipOptionsInlineGroup)
+
+        local ShowDurabilityInfoInTooltip = AG:Create("CheckBox")
+        ShowDurabilityInfoInTooltip:SetLabel("Show Durability Information")
+        ShowDurabilityInfoInTooltip:SetValue(DB.Tooltip.Durability.Enable)
+        ShowDurabilityInfoInTooltip:SetRelativeWidth(1)
+        ShowDurabilityInfoInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.Durability.Enable = value end)
+        ShowDurabilityInfoInTooltip:SetDisabled(not DB.Durability.Enable)
+        DurabilityTooltipOptionsInlineGroup:AddChild(ShowDurabilityInfoInTooltip)
+
         ScrollFrame:DoLayout()
     end
 

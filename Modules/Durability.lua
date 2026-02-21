@@ -1,23 +1,13 @@
 local _, MS = ...
 local LSM = MS.LSM
 
-local function DurabilityColourThreshold(durabilityPercent)
-    local DB = MS.db.global.Durability.Thresholds
-    for i = 1, 4 do
-        if durabilityPercent >= DB[i].Percent then
-            local r, g, b = unpack(DB[i].Colour)
-            return CreateColor(r/255, g/255, b/255):GenerateHexColor()
-        end
-    end
-end
-
 local function FetchDurabilityValueColour(durabilityPercent)
     local GeneralDB = MS.db.global.General
     local DB = MS.db.global.Durability
     local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
 
     if DB.ColourBy == "VALUE" then
-        return DurabilityColourThreshold(durabilityPercent)
+        return MS:DurabilityColourThreshold(durabilityPercent)
     elseif DB.ColourBy == "ACCENT" then
         return AccentColour
     elseif DB.ColourBy == "CUSTOM" then

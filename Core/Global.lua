@@ -92,6 +92,16 @@ function MS:FetchReactionColour()
     return ReactionColour
 end
 
+function MS:DurabilityColourThreshold(durabilityPercent)
+    local DB = MS.db.global.Durability.Thresholds
+    for i = 1, 4 do
+        if durabilityPercent >= DB[i].Percent then
+            local r, g, b = unpack(DB[i].Colour)
+            return CreateColor(r/255, g/255, b/255):GenerateHexColor()
+        end
+    end
+end
+
 function MS:UpdateAll()
     MS:UpdateTime()
     MS:UpdateSystemStats()

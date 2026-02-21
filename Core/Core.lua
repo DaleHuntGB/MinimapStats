@@ -87,7 +87,8 @@ local Defaults = {
                         World = true,
                     }
                 }
-            }
+            },
+            Durability = { Enable = true, }
         }
     },
 }

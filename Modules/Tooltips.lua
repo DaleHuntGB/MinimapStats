@@ -189,12 +189,88 @@ local function CreateSystemStatsTooltip(displayVaultOptions)
     GameTooltip:SetPoint(MS.db.global.Tooltip.Position.AnchorFrom, Minimap, MS.db.global.Tooltip.Position.AnchorTo, MS.db.global.Tooltip.Position.OffsetX, MS.db.global.Tooltip.Position.OffsetY)
     GameTooltip:ClearLines()
 
-    if displayVaultOptions then
-        FetchVaultOptions()
-    end
+    if displayVaultOptions then FetchVaultOptions() end
 
     GameTooltip:AddDoubleLine(MS.RIGHT_CLICK_BUTTON .. "|c" .. AccentColour .. "Right-Click|r", "Open Configuration", 1, 1, 1, 1, 1, 1)
     GameTooltip:AddDoubleLine(MS.MIDDLE_CLICK_BUTTON .. "|c" .. AccentColour .. "Middle-Click|r", "Reload UI", 1, 1, 1, 1, 1, 1)
+
+    GameTooltip:Show()
+end
+
+local function CreateDurabilityTooltip()
+    if not MS.db.global.Tooltip.Durability.Enable then return end
+    local TooltipDB = MS.db.global.Tooltip.Position
+
+    GameTooltip:SetOwner(Minimap, "ANCHOR_NONE")
+    GameTooltip:SetPoint(TooltipDB.AnchorFrom, Minimap, TooltipDB.AnchorTo, TooltipDB.OffsetX, TooltipDB.OffsetY)
+    GameTooltip:ClearLines()
+
+    local TotalPercent = 0
+    local ItemCount = 0
+
+    local InventorySlots = {
+        [1] = "HEADSLOT",
+        [2] = "NECKSLOT",
+        [3] = "SHOULDERSLOT",
+        [4] = "SHIRTSLOT",
+        [5] = "CHESTSLOT",
+        [6] = "WAISTSLOT",
+        [7] = "LEGSSLOT",
+        [8] = "FEETSLOT",
+        [9] = "WRISTSLOT",
+        [10] = "HANDSSLOT",
+        [11] = "FINGER1SLOT",
+        [12] = "FINGER2SLOT",
+        [13] = "TRINKET1SLOT",
+        [14] = "TRINKET2SLOT",
+        [15] = "BACKSLOT",
+        [16] = "MAINHANDSLOT",
+        [17] = "OFFHANDSLOT",
+        [18] = "RANGEDSLOT"
+    }
+
+    local PrettyInventorySlot = {
+        ["HEADSLOT"] = "Head",
+        ["NECKSLOT"] = "Neck",
+        ["SHOULDERSLOT"] = "Shoulder",
+        ["SHIRTSLOT"] = "Shirt",
+        ["CHESTSLOT"] = "Chest",
+        ["WAISTSLOT"] = "Waist",
+        ["LEGSSLOT"] = "Legs",
+        ["FEETSLOT"] = "Feet",
+        ["WRISTSLOT"] = "Wrists",
+        ["HANDSSLOT"] = "Hands",
+        ["FINGER1SLOT"] = "Finger 1",
+        ["FINGER2SLOT"] = "Finger 2",
+        ["TRINKET1SLOT"] = "Trinket 1",
+        ["TRINKET2SLOT"] = "Trinket 2",
+        ["BACKSLOT"] = "Back",
+        ["MAINHANDSLOT"] = "Main Hand",
+        ["OFFHANDSLOT"] = "Off Hand",
+        ["RANGEDSLOT"] = "Ranged"
+    }
+
+    for slot = 1, 18 do
+        local current, maximum = GetInventoryItemDurability(slot)
+        if current and maximum and maximum > 0 then
+            local percent = (current / maximum) * 100
+            local colour = MS:DurabilityColourThreshold(percent)
+            local slotName = PrettyInventorySlot[InventorySlots[slot]] or InventorySlots[slot]
+
+            GameTooltip:AddDoubleLine(slotName, string.format("|c%s%.0f%%|r", colour, percent), 1, 1, 1, 1, 1, 1 )
+
+            TotalPercent = TotalPercent + percent
+            ItemCount = ItemCount + 1
+        end
+    end
+
+    if ItemCount > 0 then
+        GameTooltip:AddLine(" ")
+        local average = TotalPercent / ItemCount
+        local avgColour = MS:DurabilityColourThreshold(average)
+        GameTooltip:AddDoubleLine( "Average", string.format("|c%s%.0f%%|r", avgColour, average), 1, 1, 1, 1, 1, 1 )
+    else return
+    end
 
     GameTooltip:Show()
 end
@@ -205,4 +281,7 @@ function MS:AssignTooltipScripts()
 
     MS.SystemStatsFrame:SetScript("OnEnter", function(self) CreateSystemStatsTooltip(MS.db.global.Tooltip.SystemStats.Vault.Enable) end)
     MS.SystemStatsFrame:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+
+    MS.DurabilityFrame:SetScript("OnEnter", function(self) CreateDurabilityTooltip() end)
+    MS.DurabilityFrame:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
 end
