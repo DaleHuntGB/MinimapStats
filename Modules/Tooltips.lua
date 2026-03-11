@@ -95,6 +95,7 @@ local function FetchVaultOptions()
 
     local function FetchRaidData()
         if not MS.db.global.Tooltip.SystemStats.Vault.Options.Raid then return end
+        if not C_WeeklyRewards.CanClaimRewards() then return end
         local RaidRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Raid)
         for i = 1, 3 do
             local DifficultyName = RaidDifficultyIDs[RaidRuns[i].level]
@@ -112,6 +113,7 @@ local function FetchVaultOptions()
 
     local function FetchMythicPlusData()
         if not MS.db.global.Tooltip.SystemStats.Vault.Options.MythicPlus then return end
+        if not C_WeeklyRewards.CanClaimRewards() then return end
         local MythicPlusRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Activities)
         for i = 1, 3 do
             local KeyLevel = MythicPlusRuns[i].level
@@ -132,6 +134,7 @@ local function FetchVaultOptions()
 
     local function FetchWorldData()
         if not MS.db.global.Tooltip.SystemStats.Vault.Options.World then return end
+        if not C_WeeklyRewards.CanClaimRewards() then return end
         local WorldRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.World)
         for i = 1, 3 do
             local WorldLevel = WorldRuns[i].level
