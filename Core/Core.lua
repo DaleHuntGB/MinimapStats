@@ -81,6 +81,7 @@ local Defaults = {
             SystemStats = {
                 Vault = {
                     Enable = true,
+                    ItemLevel = true,
                     Options = {
                         Raid = true,
                         MythicPlus = true,

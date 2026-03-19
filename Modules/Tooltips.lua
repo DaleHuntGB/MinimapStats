@@ -125,7 +125,11 @@ local function FetchVaultOptions()
             for i = 1, 3 do
                 local DifficultyName = RaidDifficultyIDs[RaidRuns[i].level]
                 if DifficultyName == nil then break end
-                table.insert(RaidsCompleted, string.format("Slot #%d: |c" .. AccentColour .. "%s|r - [|c%siLvl|r: %s|r]", i, DifficultyName, AccentColour, GVaultLevels["Raids"][RaidRuns[i].level]))
+                if MS.db.global.Tooltip.SystemStats.Vault.ItemLevel then
+                    table.insert(RaidsCompleted, string.format("Slot #%d: |c" .. AccentColour .. "%s|r - [|c%siLvl|r: %s|r]", i, DifficultyName, AccentColour, GVaultLevels["Raids"][RaidRuns[i].level]))
+                else
+                    table.insert(RaidsCompleted, string.format("Slot #%d: |c" .. AccentColour .. "%s|r", i, DifficultyName))
+                end
             end
 
             if #RaidsCompleted > 0 then
@@ -144,7 +148,11 @@ local function FetchVaultOptions()
             for i = 1, 3 do
                 local KeyLevel = MythicPlusRuns[i].level
                 if KeyLevel == nil or KeyLevel == 0 then break end
-                table.insert(MythicPlusRunsCompleted, string.format("Slot #%d: |c" .. AccentColour .. "+%d|r - [|c%siLvl|r: %s|r]", i, KeyLevel, AccentColour, GVaultLevels["Mythic+"][KeyLevel]))
+                if MS.db.global.Tooltip.SystemStats.Vault.ItemLevel then
+                    table.insert(MythicPlusRunsCompleted, string.format("Slot #%d: |c" .. AccentColour .. "+%d|r - [|c%siLvl|r: %s|r]", i, KeyLevel, AccentColour, GVaultLevels["Mythic+"][KeyLevel]))
+                else
+                    table.insert(MythicPlusRunsCompleted, string.format("Slot #%d: |c" .. AccentColour .. "+%d|r", i, KeyLevel))
+                end
             end
 
             if #MythicPlusRunsCompleted > 0 then
@@ -166,7 +174,11 @@ local function FetchVaultOptions()
             for i = 1, 3 do
                 local WorldLevel = WorldRuns[i].level
                 if WorldLevel == nil or WorldLevel == 0 then break end
-                table.insert(WorldRunsCompleted, string.format("Slot #%d: Tier |c" .. AccentColour .. "%d|r - [|c%siLvl|r: %s|r]", i, WorldLevel, AccentColour, GVaultLevels["World"][WorldLevel]))
+                if MS.db.global.Tooltip.SystemStats.Vault.ItemLevel then
+                    table.insert(WorldRunsCompleted, string.format("Slot #%d: Tier |c" .. AccentColour .. "%d|r - [|c%siLvl|r: %s|r]", i, WorldLevel, AccentColour, GVaultLevels["World"][WorldLevel]))
+                else
+                    table.insert(WorldRunsCompleted, string.format("Slot #%d: Tier |c" .. AccentColour .. "%d|r", i, WorldLevel))
+                end
             end
 
             if #WorldRunsCompleted > 0 then
@@ -224,6 +236,7 @@ local function CreateSystemStatsTooltip(displayVaultOptions)
 
     if displayVaultOptions then FetchVaultOptions() end
 
+    GameTooltip:AddDoubleLine(MS.LEFT_CLICK_BUTTON .. "|c" .. AccentColour .. "Left-Click|r", "Open Great Vault", 1, 1, 1, 1, 1, 1)
     GameTooltip:AddDoubleLine(MS.RIGHT_CLICK_BUTTON .. "|c" .. AccentColour .. "Right-Click|r", "Open Configuration", 1, 1, 1, 1, 1, 1)
     GameTooltip:AddDoubleLine(MS.MIDDLE_CLICK_BUTTON .. "|c" .. AccentColour .. "Middle-Click|r", "Reload UI", 1, 1, 1, 1, 1, 1)
 

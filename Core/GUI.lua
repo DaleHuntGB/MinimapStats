@@ -900,11 +900,19 @@ function MS:CreateGUI(TabToOpen)
         local ShowVaultInfoInTooltip = AG:Create("CheckBox")
         ShowVaultInfoInTooltip:SetLabel("Show Vault Information")
         ShowVaultInfoInTooltip:SetValue(DB.Tooltip.SystemStats.Vault.Enable)
-        ShowVaultInfoInTooltip:SetRelativeWidth(1)
+        ShowVaultInfoInTooltip:SetRelativeWidth(0.5)
         ShowVaultInfoInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.SystemStats.Vault.Enable = value DeepDisable(VaultDisplayOptionsInlineGroup, not value) end)
         VaultOptionsInlineGroup:AddChild(ShowVaultInfoInTooltip)
-        VaultOptionsInlineGroup:AddChild(VaultDisplayOptionsInlineGroup)
+
+        local ShowItemLevelInTooltip = AG:Create("CheckBox")
+        ShowItemLevelInTooltip:SetLabel("Show Item Level")
+        ShowItemLevelInTooltip:SetValue(DB.Tooltip.SystemStats.Vault.ItemLevel)
+        ShowItemLevelInTooltip:SetRelativeWidth(0.5)
+        ShowItemLevelInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.SystemStats.Vault.ItemLevel = value end)
+        VaultOptionsInlineGroup:AddChild(ShowItemLevelInTooltip)
         
+        VaultOptionsInlineGroup:AddChild(VaultDisplayOptionsInlineGroup)
+
         local VaultOptions = {
             ["Raid"] = "Raid",
             ["MythicPlus"] = "Mythic Plus",
