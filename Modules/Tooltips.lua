@@ -42,6 +42,8 @@ local GVaultLevels = {
     }
 }
 
+local MAX_MYTHIC_KEY = 10
+
 local function FetchPlayerLockouts()
     local GeneralDB = MS.db.global.General
     local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
@@ -149,6 +151,7 @@ local function FetchVaultOptions()
                 local KeyLevel = MythicPlusRuns[i].level
                 if KeyLevel == nil or KeyLevel == 0 then break end
                 if MS.db.global.Tooltip.SystemStats.Vault.ItemLevel then
+                    if KeyLevel > MAX_MYTHIC_KEY then KeyLevel = MAX_MYTHIC_KEY end
                     table.insert(MythicPlusRunsCompleted, string.format("Slot #%d: |c" .. AccentColour .. "+%d|r - [|c%siLvl|r: %s|r]", i, KeyLevel, AccentColour, GVaultLevels["Mythic+"][KeyLevel]))
                 else
                     table.insert(MythicPlusRunsCompleted, string.format("Slot #%d: |c" .. AccentColour .. "+%d|r", i, KeyLevel))
