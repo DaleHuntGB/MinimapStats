@@ -1,5 +1,5 @@
 ## Title: |cFF8080FFMinimap|rStats
-## Interface: 120000, 120001
+## Interface: 120000, 120001, 120005
 ## Version: @project-version@
 ## Author: UnhaltedGB
 ## SavedVariables: MinimapStatsDB
