@@ -34,6 +34,7 @@ local GVaultLevels = {
         [10]    = 259,
         [11]    = 259,
         [12]    = 263,
+        [13]    = 269,
     },
     ["Raids"] = {
         [14]    = 246,
@@ -44,6 +45,7 @@ local GVaultLevels = {
 }
 
 local MAX_MYTHIC_KEY = 10
+local MAX_WORLD_TIER = 13
 
 local function FetchPlayerLockouts()
     local GeneralDB = MS.db.global.General
@@ -179,6 +181,7 @@ local function FetchVaultOptions()
                 local WorldLevel = WorldRuns[i].level
                 if WorldLevel == nil or WorldLevel == 0 then break end
                 if MS.db.global.Tooltip.SystemStats.Vault.ItemLevel then
+                    if WorldLevel > MAX_WORLD_TIER then WorldLevel = MAX_WORLD_TIER end
                     table.insert(WorldRunsCompleted, string.format("Slot #%d: Tier |c" .. AccentColour .. "%d|r - [|c%siLvl|r: %s|r]", i, WorldLevel, AccentColour, GVaultLevels["World"][WorldLevel]))
                 else
                     table.insert(WorldRunsCompleted, string.format("Slot #%d: Tier |c" .. AccentColour .. "%d|r", i, WorldLevel))
