@@ -202,7 +202,7 @@ function MS:CreateGUI(TabToOpen)
 
         local FontFlagDropdown = AG:Create("Dropdown")
         FontFlagDropdown:SetLabel("Font Outline")
-        FontFlagDropdown:SetList({ [""] = "None", ["OUTLINE"] = "Outline", ["THICKOUTLINE"] = "Thick Outline", ["MONOCHROME"] = "Monochrome" }, { "NONE", "OUTLINE", "THICKOUTLINE", "MONOCHROME" })
+        FontFlagDropdown:SetList({ [""] = "None", ["OUTLINE"] = "Outline", ["THICKOUTLINE"] = "Thick Outline", ["MONOCHROME"] = "Monochrome" }, { "", "OUTLINE", "THICKOUTLINE", "MONOCHROME" })
         FontFlagDropdown:SetValue(DB.General.FontFlag)
         FontFlagDropdown:SetRelativeWidth(0.5)
         FontFlagDropdown:SetCallback("OnValueChanged", function(_, _, value) DB.General.FontFlag = value MS:UpdateAll() end)
