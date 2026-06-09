@@ -202,7 +202,7 @@ function MS:CreateGUI(TabToOpen)
 
         local FontFlagDropdown = AG:Create("Dropdown")
         FontFlagDropdown:SetLabel("Font Outline")
-        FontFlagDropdown:SetList({ [""] = "None", ["OUTLINE"] = "Outline", ["THICKOUTLINE"] = "Thick Outline", ["MONOCHROME"] = "Monochrome" }, { "", "OUTLINE", "THICKOUTLINE", "MONOCHROME" })
+        FontFlagDropdown:SetList({ [""] = "None", ["OUTLINE"] = "Outline", ["OUTLINE SLUG"] = "Outline (Slug)", ["THICKOUTLINE"] = "Thick Outline", ["MONOCHROME"] = "Monochrome", ["SLUG"] = "Slug" }, { "", "OUTLINE", "OUTLINE SLUG", "THICKOUTLINE", "MONOCHROME", "SLUG" })
         FontFlagDropdown:SetValue(DB.General.FontFlag)
         FontFlagDropdown:SetRelativeWidth(0.5)
         FontFlagDropdown:SetCallback("OnValueChanged", function(_, _, value) DB.General.FontFlag = value MS:UpdateAll() end)
@@ -834,7 +834,7 @@ function MS:CreateGUI(TabToOpen)
             DateStringOutputExample:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
             DateStringOutputExample:SetJustifyH("LEFT")
             DateStringOutputExample:SetJustifyV("MIDDLE")
-            TimeTooltipOptions:DoLayout() 
+            TimeTooltipOptions:DoLayout()
             ScrollFrame:DoLayout()
         end
 
@@ -896,7 +896,7 @@ function MS:CreateGUI(TabToOpen)
         VaultDisplayOptionsInlineGroup:SetTitle("Vault Display Options")
         VaultDisplayOptionsInlineGroup:SetLayout("Flow")
         VaultDisplayOptionsInlineGroup:SetFullWidth(true)
-        
+
         local ShowVaultInfoInTooltip = AG:Create("CheckBox")
         ShowVaultInfoInTooltip:SetLabel("Show Vault Information")
         ShowVaultInfoInTooltip:SetValue(DB.Tooltip.SystemStats.Vault.Enable)
@@ -910,7 +910,7 @@ function MS:CreateGUI(TabToOpen)
         ShowItemLevelInTooltip:SetRelativeWidth(0.5)
         ShowItemLevelInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.SystemStats.Vault.ItemLevel = value end)
         VaultOptionsInlineGroup:AddChild(ShowItemLevelInTooltip)
-        
+
         VaultOptionsInlineGroup:AddChild(VaultDisplayOptionsInlineGroup)
 
         local VaultOptions = {
@@ -918,7 +918,7 @@ function MS:CreateGUI(TabToOpen)
             ["MythicPlus"] = "Mythic Plus",
             ["World"] = "World",
         }
-        
+
         for key, label in pairs(VaultOptions) do
             local OptionCheckBox = AG:Create("CheckBox")
             OptionCheckBox:SetLabel(label)
