@@ -90,7 +90,6 @@ local Defaults = {
                     }
                 }
             },
-            Durability = { Enable = true, }
         }
     },
 }
