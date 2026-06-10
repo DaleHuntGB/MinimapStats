@@ -57,7 +57,7 @@ function MS:SetupSlashCommands()
             MS:CreateGUI("Share")
         end
     end
-    MS:Print("'|cFF8080FF/ms|r' for in-game configuration.")
+    if MS.db.global.General.DisplayLoginMessage then MS:Print("'|cFF8080FF/ms|r' for in-game configuration.") end
 end
 
 function MS:Reset(valueToReset)

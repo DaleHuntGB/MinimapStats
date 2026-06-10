@@ -13,7 +13,8 @@ local Defaults = {
                 Colour = {0, 0, 0, 1},
                 OffsetX = 0,
                 OffsetY = 0,
-            }
+            },
+            DisplayLoginMessage = true,
         },
         Time = {
             Enable = true,
