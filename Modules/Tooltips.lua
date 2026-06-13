@@ -182,7 +182,7 @@ local function FetchVaultOptions()
                 if WorldLevel == nil or WorldLevel == 0 then break end
                 if MS.db.global.Tooltip.SystemStats.Vault.ItemLevel then
                     if WorldLevel > MAX_WORLD_TIER then WorldLevel = MAX_WORLD_TIER end
-                    table.insert(WorldRunsCompleted, string.format("Slot #%d: Tier |c" .. AccentColour .. "%d|r - [|c%siLvl|r: %s|r]", i, WorldLevel, AccentColour, GVaultLevels["World"][WorldLevel]))
+                    table.insert(WorldRunsCompleted, string.format("Slot #%d: Tier |c" .. AccentColour .. "%d|r - [|c%siLvl|r: %s|r]", i, WorldRuns[i].level, AccentColour, GVaultLevels["World"][WorldLevel]))
                 else
                     table.insert(WorldRunsCompleted, string.format("Slot #%d: Tier |c" .. AccentColour .. "%d|r", i, WorldLevel))
                 end
