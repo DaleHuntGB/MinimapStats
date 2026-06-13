@@ -18,7 +18,6 @@ local function FetchTime()
     elseif DB.TimeZone == "Realm" then
         CurrHr, CurrMin = GetGameTime()
     end
-    -- If AM/PM colour with accent colour, else, 24H without accent colour
     return string.format(
         (DB.Format == "12H" and "%02d:%02d %s") or "%02d:%02d",
         (DB.Format == "12H" and ((CurrHr % 12 == 0) and 12 or (CurrHr % 12))) or CurrHr,
