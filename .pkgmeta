@@ -26,6 +26,9 @@ externals:
         url: https://repos.wowace.com/wow/libstub/trunk
         tag: latest
 
+manual-changelog:
+    filename: CHANGELOG.md
+
 ignore:
     - README.md
     - .git/
