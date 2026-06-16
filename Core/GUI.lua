@@ -250,7 +250,7 @@ function MS:CreateGUI(TabToOpen)
         ResetOptionsContainer:SetFullWidth(true)
         ScrollFrame:AddChild(ResetOptionsContainer)
 
-        local ResetOptions = {"All", "General", "Time", "System Stats", "Coordinates", "Location", "Instance Difficulty", "Tooltip"}
+        local ResetOptions = {"All", "General", "Time", "Date", "System Stats", "Coordinates", "Location", "Instance Difficulty", "Tooltip"}
         local ResetSelections = {}
         local Checkboxes = {}
 
@@ -387,6 +387,67 @@ function MS:CreateGUI(TabToOpen)
         CreateLayoutGroup(LayoutContainer, DB.Time.Layout, function() MS:UpdateTime() end)
 
         DisableElements(ScrollFrame, Enable, DB.Time.Enable)
+        LayoutContainer:DoLayout()
+        ScrollFrame:DoLayout()
+    end
+
+    function MS:CreateDateOptions(Container)
+        local ScrollFrame = SetupTabGroup(Container, "Date Options")
+
+        local Enable = AG:Create("CheckBox")
+        Enable:SetLabel("Enable |cFF8080FFDate|r")
+        Enable:SetValue(DB.Date.Enable)
+        Enable:SetRelativeWidth(1)
+        Enable:SetCallback("OnValueChanged", function(_, _, value) DB.Date.Enable = value MS:UpdateDate() DisableElements(ScrollFrame, Enable, value) end)
+        ScrollFrame:AddChild(Enable)
+
+        local ElementOptionsContainer = AG:Create("InlineGroup")
+        ElementOptionsContainer:SetTitle("Element Options")
+        ElementOptionsContainer:SetLayout("Flow")
+        ElementOptionsContainer:SetFullWidth(true)
+        ScrollFrame:AddChild(ElementOptionsContainer)
+
+        local DateStringEditBox = AG:Create("EditBox")
+        local DateStringOutputExample = AG:Create("Label")
+
+        local function PositionDateStringExample()
+            DateStringOutputExample:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
+            DateStringOutputExample:SetJustifyH("LEFT")
+            DateStringOutputExample:SetJustifyV("MIDDLE")
+            ElementOptionsContainer:DoLayout()
+            ScrollFrame:DoLayout()
+        end
+
+        DateStringEditBox:SetLabel("Date Format")
+        DateStringEditBox:SetText(DB.Date.Format)
+        DateStringEditBox:SetRelativeWidth(0.5)
+        DateStringEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.Date.Format = value MS:UpdateDate() DateStringEditBox:ClearFocus() DateStringOutputExample:SetText(" " .. date(DB.Date.Format)) end)
+        DateStringEditBox:SetCallback("OnEnter", function() local tooltipText = "" local Formats = LuaDateFormats[1] local Order = LuaDateFormats[2] tooltipText = tooltipText .. "|cFFFFFFFFSupported Date Tokens:|r\n" for _, identifier in ipairs(Order) do tooltipText = tooltipText .. "• |cFF8080FF" .. identifier .. "|r - " .. Formats[identifier] .. "\n" end GameTooltip:SetOwner(DateStringEditBox.frame, "ANCHOR_NONE") GameTooltip:SetPoint("TOPLEFT", DateStringEditBox.frame, "BOTTOMLEFT", 0, -3) GameTooltip:SetText(tooltipText, 1, 1, 1, 1, false) GameTooltip:Show() end)
+        DateStringEditBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
+        ElementOptionsContainer:AddChild(DateStringEditBox)
+
+        DateStringOutputExample:SetText(" " .. date(DB.Date.Format))
+        PositionDateStringExample()
+        DateStringOutputExample:SetRelativeWidth(0.5)
+        ElementOptionsContainer:AddChild(DateStringOutputExample)
+
+        local ColourPicker = AG:Create("ColorPicker")
+        ColourPicker:SetLabel("Text Colour")
+        ColourPicker:SetColor(DB.Date.Colour[1]/255, DB.Date.Colour[2]/255, DB.Date.Colour[3]/255)
+        ColourPicker:SetHasAlpha(false)
+        ColourPicker:SetRelativeWidth(1)
+        ColourPicker:SetCallback("OnValueChanged", function(_, _, r, g, b) DB.Date.Colour = {r*255, g*255, b*255} MS:UpdateDate() end)
+        ElementOptionsContainer:AddChild(ColourPicker)
+
+        local LayoutContainer = AG:Create("InlineGroup")
+        LayoutContainer:SetTitle("Layout")
+        LayoutContainer:SetLayout("Flow")
+        LayoutContainer:SetFullWidth(true)
+        ScrollFrame:AddChild(LayoutContainer)
+
+        CreateLayoutGroup(LayoutContainer, DB.Date.Layout, function() MS:UpdateDate() end)
+
+        DisableElements(ScrollFrame, Enable, DB.Date.Enable)
         LayoutContainer:DoLayout()
         ScrollFrame:DoLayout()
     end
@@ -945,6 +1006,8 @@ function MS:CreateGUI(TabToOpen)
             MS:CreateGeneralOptions(GUIContainer)
         elseif TabGroup == "Time" then
             MS:CreateTimeOptions(GUIContainer)
+        elseif TabGroup == "Date" then
+            MS:CreateDateOptions(GUIContainer)
         elseif TabGroup == "SystemStats" then
             MS:CreateSystemStatsOptions(GUIContainer)
         elseif TabGroup == "Location" then
@@ -969,6 +1032,7 @@ function MS:CreateGUI(TabToOpen)
     TabGroup:SetTabs({
         { text = "General", value = "General" },
         { text = "Time", value = "Time" },
+        { text = "Date", value = "Date" },
         { text = "System Stats", value = "SystemStats" },
         { text = "Location", value = "Location" },
         { text = "Coordinates", value = "Coordinates" },
