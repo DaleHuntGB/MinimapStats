@@ -24,6 +24,12 @@ local Defaults = {
             Colour = {255, 255, 255},
             Layout = {"BOTTOMLEFT", "BOTTOMLEFT", 3, 17, 18},
         },
+        Date = {
+            Enable = false,
+            Format = "%a, %d %b",
+            Colour = {255, 255, 255},
+            Layout = {"BOTTOMRIGHT", "BOTTOMRIGHT", -3, 3, 12},
+        },
         SystemStats = {
             Enable = true,
             Layout = {"BOTTOMLEFT", "BOTTOMLEFT", 3, 3, 12},
