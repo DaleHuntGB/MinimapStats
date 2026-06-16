@@ -9,6 +9,7 @@ MS.InfoButton = "|A:glueannouncementpopup-icon-info:16:16|a "
 MS.LEFT_CLICK_BUTTON = "|A:newplayertutorial-icon-mouse-leftbutton:20.7:15.6|a"
 MS.RIGHT_CLICK_BUTTON = "|A:newplayertutorial-icon-mouse-rightbutton:20.7:15.6|a"
 MS.MIDDLE_CLICK_BUTTON = "|A:newplayertutorial-icon-mouse-middlebutton:20.7:15.6|a"
+MS.SHIFT_BUTTON = "|TInterface\\AddOns\\MinimapStats\\Media\\Shift.png:16:16|t"
 MS.TestInstanceDifficulty = false
 
 local OptionsToDB = {

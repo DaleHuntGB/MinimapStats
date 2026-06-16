@@ -4,6 +4,10 @@ local LSM = MS.LSM
 local function SystemStats_OnClick(self, button)
     if button == "LeftButton" then
         C_AddOns.LoadAddOn("Blizzard_WeeklyRewards"); if WeeklyRewardsFrame:IsShown() then WeeklyRewardsFrame:Hide() else  WeeklyRewardsFrame:Show() end
+    elseif button == "RightButton" and IsShiftKeyDown() then
+        if C_AddOns.IsAddOnLoaded("UnhaltedUnitFrames") then
+            UUFG:OpenUUFGUI()
+        end
     elseif button == "RightButton" then
         MS:CreateGUI()
     elseif button == "MiddleButton" then
