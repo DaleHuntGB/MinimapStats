@@ -408,34 +408,23 @@ function MS:CreateGUI(TabToOpen)
         ScrollFrame:AddChild(ElementOptionsContainer)
 
         local DateStringEditBox = AG:Create("EditBox")
-        local DateStringOutputExample = AG:Create("Label")
 
-        local function PositionDateStringExample()
-            DateStringOutputExample:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
-            DateStringOutputExample:SetJustifyH("LEFT")
-            DateStringOutputExample:SetJustifyV("MIDDLE")
-            ElementOptionsContainer:DoLayout()
-            ScrollFrame:DoLayout()
-        end
+        local DateInfoTag = CreateInfoTag("You can assign |cFF8080FFCustom Text Colours|r by adding the colour code within |cFFFFCC00[XXXXXX]|r.\n|cFF8080FFFor Example|r: |cFFCCCCCC[8080FF]%a, [FFCC00]%d [40FF40]%b|r.")
+        ElementOptionsContainer:AddChild(DateInfoTag)
 
         DateStringEditBox:SetLabel("Date Format")
         DateStringEditBox:SetText(DB.Date.Format)
         DateStringEditBox:SetRelativeWidth(0.5)
-        DateStringEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.Date.Format = value MS:UpdateDate() DateStringEditBox:ClearFocus() DateStringOutputExample:SetText(" " .. date(DB.Date.Format)) end)
+        DateStringEditBox:SetCallback("OnEnterPressed", function(_, _, value) DB.Date.Format = value MS:UpdateDate() DateStringEditBox:ClearFocus() end)
         DateStringEditBox:SetCallback("OnEnter", function() local tooltipText = "" local Formats = LuaDateFormats[1] local Order = LuaDateFormats[2] tooltipText = tooltipText .. "|cFFFFFFFFSupported Date Tokens:|r\n" for _, identifier in ipairs(Order) do tooltipText = tooltipText .. "• |cFF8080FF" .. identifier .. "|r - " .. Formats[identifier] .. "\n" end GameTooltip:SetOwner(DateStringEditBox.frame, "ANCHOR_NONE") GameTooltip:SetPoint("TOPLEFT", DateStringEditBox.frame, "BOTTOMLEFT", 0, -3) GameTooltip:SetText(tooltipText, 1, 1, 1, 1, false) GameTooltip:Show() end)
         DateStringEditBox:SetCallback("OnLeave", function() GameTooltip:Hide() end)
         ElementOptionsContainer:AddChild(DateStringEditBox)
-
-        DateStringOutputExample:SetText(" " .. date(DB.Date.Format))
-        PositionDateStringExample()
-        DateStringOutputExample:SetRelativeWidth(0.5)
-        ElementOptionsContainer:AddChild(DateStringOutputExample)
 
         local ColourPicker = AG:Create("ColorPicker")
         ColourPicker:SetLabel("Text Colour")
         ColourPicker:SetColor(DB.Date.Colour[1]/255, DB.Date.Colour[2]/255, DB.Date.Colour[3]/255)
         ColourPicker:SetHasAlpha(false)
-        ColourPicker:SetRelativeWidth(1)
+        ColourPicker:SetRelativeWidth(0.5)
         ColourPicker:SetCallback("OnValueChanged", function(_, _, r, g, b) DB.Date.Colour = {r*255, g*255, b*255} MS:UpdateDate() end)
         ElementOptionsContainer:AddChild(ColourPicker)
 

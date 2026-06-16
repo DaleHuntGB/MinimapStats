@@ -1,3 +1,6 @@
+## V12.0.13
+- Improve GUI for Date.
+- Added Support for Colour Codes for the new Date module.
 ## V12.0.12
 - Updated Events on Date.
 ## V12.0.11

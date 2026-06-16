@@ -18,6 +18,7 @@ local function FetchDurabilityValueColour(durabilityPercent)
 end
 
 local function ApplyDurabilityTextFormat(textFormat, valueText)
+    textFormat = textFormat:gsub("%[([0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])%]([^%[]*)", function(colour, text) return "|cFF" .. colour:upper() .. text .. "|r" end)
     local formattedText, replacements = textFormat:gsub("%%s", valueText, 1)
     if replacements == 0 then formattedText = textFormat .. valueText end
     return formattedText:gsub("%%%%", "%%")
@@ -26,12 +27,6 @@ end
 local function FetchDurability()
     local DB = MS.db.global.Durability
     local textFormat = DB.Text or "%s%%"
-
-    local bracketColour, rawFormat = textFormat:match("^%[([0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f])%](.+)$")
-    if bracketColour and rawFormat then
-        local prefixToken, suffixText = rawFormat:match("^([%w_]+)(.*)$")
-        if prefixToken then textFormat = string.format("|cFF%s%s|r%s", bracketColour:upper(), prefixToken, suffixText) end
-    end
 
     local totalDurability, maxDurability = 0, 0
     for i = 1, 18 do
