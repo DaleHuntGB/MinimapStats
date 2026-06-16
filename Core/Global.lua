@@ -15,6 +15,7 @@ MS.TestInstanceDifficulty = false
 local OptionsToDB = {
     ["General"] = "General",
     ["Time"] = "Time",
+    ["Date"] = "Date",
     ["System Stats"] = "SystemStats",
     ["Location"] = "Location",
     ["Instance Difficulty"] = "InstanceDifficulty",
@@ -44,6 +45,8 @@ function MS:SetupSlashCommands()
             MS:CreateGUI()
         elseif msg == "time" then
             MS:CreateGUI("Time")
+        elseif msg == "date" or msg == "d" then
+            MS:CreateGUI("Date")
         elseif msg == "system" or msg == "systemstats" or msg == "s" then
             MS:CreateGUI("SystemStats")
         elseif msg == "location" or msg == "loc" or msg == "l" then
@@ -105,6 +108,7 @@ end
 
 function MS:UpdateAll()
     MS:UpdateTime()
+    MS:UpdateDate()
     MS:UpdateSystemStats()
     MS:UpdateLocation()
     MS:UpdateInstanceDifficulty()
