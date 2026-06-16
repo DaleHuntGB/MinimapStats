@@ -1,3 +1,5 @@
+## V12.0.12
+- Updated Events on Date.
 ## V12.0.11
 - Added `OUTLINE, SLUG` to the Font Selection.
 - Added Date Module.
