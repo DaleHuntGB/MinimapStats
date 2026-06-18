@@ -1,3 +1,5 @@
+## V12.0.14
+- Added `Flex Mythic` for Instance Difficulties.
 ## V12.0.13
 - Improve GUI for Date.
 - Added Support for Colour Codes for the new Date module.
