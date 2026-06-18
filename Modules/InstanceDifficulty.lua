@@ -72,6 +72,8 @@ local function FetchInstanceDifficulty()
         InstanceDifficulty = MaxPlayers .. "|c" .. AccentColour .. (DB.Abbreviate and "F" or " Follower") .. "|r"
     elseif DiffID == 208 then
         InstanceDifficulty = "|c" .. AccentColour .. (DB.Abbreviate and "T" or "Tier ") .. "|r" .. MS:FetchDelveTierDifficulty(6183)
+    elseif DiffID == 233 then
+        InstanceDifficulty = CurrentPlayers .. "|c" .. AccentColour .. (DB.Abbreviate and "M" or " Mythic") .. "|r"
     end
 
     return InstanceDifficulty
