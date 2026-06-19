@@ -1,3 +1,5 @@
+## V12.0.15
+- Added `Shift-Left Click` on SystemStats to open Omnium Folio.
 ## V12.0.14
 - Added `Flex Mythic` for Instance Difficulties.
 ## V12.0.13

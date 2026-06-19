@@ -244,6 +244,7 @@ local function CreateSystemStatsTooltip(displayVaultOptions)
     if displayVaultOptions then FetchVaultOptions() end
 
     GameTooltip:AddDoubleLine(MS.LEFT_CLICK_BUTTON .. "|c" .. AccentColour .. "Left-Click|r", "Open Great Vault", 1, 1, 1, 1, 1, 1)
+    GameTooltip:AddDoubleLine(MS.SHIFT_BUTTON .. MS.LEFT_CLICK_BUTTON .. "|c" .. AccentColour .. "Left-Click|r", "Open Omnium Folio", 1, 1, 1, 1, 1, 1)
     GameTooltip:AddDoubleLine(MS.RIGHT_CLICK_BUTTON .. "|c" .. AccentColour .. "Right-Click|r", "Open Configuration", 1, 1, 1, 1, 1, 1)
     if C_AddOns.IsAddOnLoaded("UnhaltedUnitFrames") then GameTooltip:AddDoubleLine(MS.SHIFT_BUTTON .. MS.RIGHT_CLICK_BUTTON .. "|c" .. AccentColour .. "Right-Click|r", "Open |cFF8080FFUnhalted|r Unit Frames Configuration", 1, 1, 1, 1, 1, 1) end
     GameTooltip:AddDoubleLine(MS.MIDDLE_CLICK_BUTTON .. "|c" .. AccentColour .. "Middle-Click|r", "Reload UI", 1, 1, 1, 1, 1, 1)
