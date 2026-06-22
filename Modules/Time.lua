@@ -19,7 +19,7 @@ local function FetchTime()
         CurrHr, CurrMin = GetGameTime()
     end
     return string.format(
-        (DB.Format == "12H" and "%02d:%02d %s") or "%02d:%02d",
+        (DB.Format == "12H" and ((DB.LeadingZero and "%02d" or "%d") .. ":%02d %s")) or "%02d:%02d",
         (DB.Format == "12H" and ((CurrHr % 12 == 0) and 12 or (CurrHr % 12))) or CurrHr,
         CurrMin,
         (DB.Format == "12H" and ((tonumber(CurrHr) >= 12) and "|c" .. AccentColour .. "PM" .. "|r" or "|c" .. AccentColour .. "AM" .. "|r")) or ""
