@@ -18,11 +18,12 @@ local function FetchTime()
     elseif DB.TimeZone == "Realm" then
         CurrHr, CurrMin = GetGameTime()
     end
+    local Is12Hour = DB.Format == "12H" or DB.Format == "12H_NO_ZERO"
     return string.format(
-        (DB.Format == "12H" and ((DB.LeadingZero and "%02d" or "%d") .. ":%02d %s")) or "%02d:%02d",
-        (DB.Format == "12H" and ((CurrHr % 12 == 0) and 12 or (CurrHr % 12))) or CurrHr,
+        (Is12Hour and (((DB.Format == "12H_NO_ZERO" and "%d") or "%02d") .. ":%02d %s")) or "%02d:%02d",
+        (Is12Hour and ((CurrHr % 12 == 0) and 12 or (CurrHr % 12))) or CurrHr,
         CurrMin,
-        (DB.Format == "12H" and ((tonumber(CurrHr) >= 12) and "|c" .. AccentColour .. "PM" .. "|r" or "|c" .. AccentColour .. "AM" .. "|r")) or ""
+        (Is12Hour and ((tonumber(CurrHr) >= 12) and "|c" .. AccentColour .. "PM" .. "|r" or "|c" .. AccentColour .. "AM" .. "|r")) or ""
     )
 end
 

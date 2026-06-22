@@ -20,7 +20,6 @@ local Defaults = {
             Enable = true,
             TimeZone = "Local",
             Format = "24H",
-            LeadingZero = true,
             UpdateInterval = 60.0,
             Colour = {255, 255, 255},
             Layout = {"BOTTOMLEFT", "BOTTOMLEFT", 3, 17, 18},

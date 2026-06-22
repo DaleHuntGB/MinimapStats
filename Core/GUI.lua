@@ -372,20 +372,12 @@ function MS:CreateGUI(TabToOpen)
 
         local TimeFormatDropdown = AG:Create("Dropdown")
         TimeFormatDropdown:SetLabel("Time Format")
-        TimeFormatDropdown:SetList({ ["12H"] = "12-Hour", ["24H"] = "24-Hour" })
+        TimeFormatDropdown:SetList({ ["12H"] = "12-Hour", ["24H"] = "24-Hour", ["12H_NO_ZERO"] = "12-Hour (No Leading Zero)"})
         TimeFormatDropdown:SetValue(DB.Time.Format)
         TimeFormatDropdown:SetRelativeWidth(0.5)
 
-        local LeadingZeroCheckbox = AG:Create("CheckBox")
-        LeadingZeroCheckbox:SetLabel("Leading Zero")
-        LeadingZeroCheckbox:SetValue(DB.Time.LeadingZero)
-        LeadingZeroCheckbox:SetRelativeWidth(0.5)
-        LeadingZeroCheckbox:SetDisabled(DB.Time.Format == "24H")
-        LeadingZeroCheckbox:SetCallback("OnValueChanged", function(_, _, value) DB.Time.LeadingZero = value MS:UpdateTime() end)
-
-        TimeFormatDropdown:SetCallback("OnValueChanged", function(_, _, value) DB.Time.Format = value LeadingZeroCheckbox:SetDisabled(value == "24H") MS:UpdateTime() end)
+        TimeFormatDropdown:SetCallback("OnValueChanged", function(_, _, value) DB.Time.Format = value MS:UpdateTime() end)
         ElementOptionsContainer:AddChild(TimeFormatDropdown)
-        ElementOptionsContainer:AddChild(LeadingZeroCheckbox)
 
         local LayoutContainer = AG:Create("InlineGroup")
         LayoutContainer:SetTitle("Layout")
