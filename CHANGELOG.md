@@ -1,5 +1,5 @@
 ## V12.0.16
-- Added `12 Hour (No Leading Zero) as a Time Format.
+- Added `12 Hour (No Leading Zero)` as a Time Format.
 ## V12.0.15
 - Added `Shift-Left Click` on SystemStats to open Omnium Folio.
 ## V12.0.14
