@@ -484,6 +484,7 @@ function MS:CreateGUI(TabToOpen)
             {
                 [""] = "None",
                 ["%fps"] = "FPS",
+                ["%fps_alt"] = "FPS (Spaced)",
                 ["%world"] = "MS (World)",
                 ["%home"] = "MS (Home)",
                 ["%down"] = "Bandwidth (Down)",
