@@ -33,13 +33,17 @@ local function FetchSystemStats()
     local bandWidthDown = string.format("%s%s", math.floor(select(1, GetNetStats())), bandWidthDownTexture)
     local bandWidthUp = string.format("%s%s", math.floor(select(2, GetNetStats())), bandWidthUpTexture)
     local latencyHome = string.format("%s|c%sMS|r", math.floor(select(3, GetNetStats())), AccentColour)
+    local latencyHome_Alt = string.format("%s |c%sMS|r", math.floor(select(3, GetNetStats())), AccentColour)
     local latencyWorld = string.format("%s|c%sMS|r", math.floor(select(4, GetNetStats())), AccentColour)
+    local latencyWorld_Alt = string.format("%s |c%sMS|r", math.floor(select(4, GetNetStats())), AccentColour)
 
     local Replacements = {
         ["%%fps"] = FPS,
         ["%%fps_alt"] = FPS_Alt,
         ["%%home"] = latencyHome,
+        ["%%home_alt"] = latencyHome_Alt,
         ["%%world"] = latencyWorld,
+        ["%%world_alt"] = latencyWorld_Alt,
         ["%%down"] = bandWidthDown,
         ["%%up"] = bandWidthUp,
         ["%%shortdate"] = string.format("%s |c%s%s|r %s", date("%d"), AccentColour, date("%b"), date("%y")),

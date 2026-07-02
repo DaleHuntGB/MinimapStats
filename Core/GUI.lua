@@ -484,15 +484,17 @@ function MS:CreateGUI(TabToOpen)
             {
                 [""] = "None",
                 ["%fps"] = "FPS",
-                ["%fps_alt"] = "FPS (Spaced)",
+                ["%fps_alt"] = "FPS - Spaced",
                 ["%world"] = "MS (World)",
+                ["%world_alt"] = "MS (World) - Spaced",
                 ["%home"] = "MS (Home)",
+                ["%home_alt"] = "MS (Home) - Spaced",
                 ["%down"] = "Bandwidth (Down)",
                 ["%up"] = "Bandwidth (Up)",
                 ["%shortdate"] = "Date (01 Jan 99)",
                 ["%longdate"] = "Date (01 January 1999)",
             },
-            { "", "%fps", "%fps_alt", "%home", "%world", "%down", "%up", "%shortdate", "%longdate"}
+            { "", "%fps", "%fps_alt", "%home", "%home_alt", "%world", "%world_alt", "%down", "%up", "%shortdate", "%longdate"}
         }
 
         local DisplayStringEditBox = AG:Create("EditBox")

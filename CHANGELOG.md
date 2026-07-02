@@ -1,3 +1,5 @@
+## V12.0.18
+- Add `MS` Alternative Tags.
 ## V12.0.17
 - Add `FPS` Alternative Tag.
 ## V12.0.16
