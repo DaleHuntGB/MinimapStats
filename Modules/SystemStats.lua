@@ -38,19 +38,19 @@ local function FetchSystemStats()
     local latencyWorld_Alt = string.format("%s |c%sMS|r", math.floor(select(4, GetNetStats())), AccentColour)
 
     local Replacements = {
-        ["%%fps"] = FPS,
-        ["%%fps_alt"] = FPS_Alt,
-        ["%%home"] = latencyHome,
-        ["%%home_alt"] = latencyHome_Alt,
-        ["%%world"] = latencyWorld,
-        ["%%world_alt"] = latencyWorld_Alt,
-        ["%%down"] = bandWidthDown,
-        ["%%up"] = bandWidthUp,
-        ["%%shortdate"] = string.format("%s |c%s%s|r %s", date("%d"), AccentColour, date("%b"), date("%y")),
-        ["%%longdate"] = string.format("%s |c%s%s|r %s", date("%d"), AccentColour, date("%B"), date("%Y")),
+        {"%%fpsalt", FPS_Alt},
+        {"%%homealt", latencyHome_Alt},
+        {"%%worldalt", latencyWorld_Alt},
+        {"%%fps", FPS},
+        {"%%home", latencyHome},
+        {"%%world", latencyWorld},
+        {"%%down", bandWidthDown},
+        {"%%up", bandWidthUp},
+        {"%%shortdate", string.format("%s |c%s%s|r %s", date("%d"), AccentColour, date("%b"), date("%y"))},
+        {"%%longdate", string.format("%s |c%s%s|r %s", date("%d"), AccentColour, date("%B"), date("%Y"))},
     }
 
-    for token, value in pairs(Replacements) do systemStatsString = systemStatsString:gsub(token, value) end
+    for _, Replacement in ipairs(Replacements) do systemStatsString = systemStatsString:gsub(Replacement[1], Replacement[2]) end
 
     systemStatsString = systemStatsString:gsub("%%(%a+)", function(fmt)
         local ok, result = pcall(date, "%" .. fmt)
