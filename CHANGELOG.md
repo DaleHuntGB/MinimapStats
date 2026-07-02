@@ -1,3 +1,5 @@
+## V12.0.17
+- Add `FPS` Alternative Tag.
 ## V12.0.16
 - Added `12 Hour (No Leading Zero)` as a Time Format.
 ## V12.0.15
