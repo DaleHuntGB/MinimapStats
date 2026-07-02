@@ -29,6 +29,7 @@ local function FetchSystemStats()
     local bandWidthDownTexture = "|TInterface\\AddOns\\MinimapStats\\Media\\BandwidthDown.png:" .. DB.Layout[5] .. ":" .. DB.Layout[5] .. "|t"
 
     local FPS = string.format("%s|c%sFPS|r", math.floor(GetFramerate()), AccentColour)
+    local FPS_Spaced = string.format("%s |c%sFPS|r", math.floor(GetFramerate()), AccentColour)
     local bandWidthDown = string.format("%s%s", math.floor(select(1, GetNetStats())), bandWidthDownTexture)
     local bandWidthUp = string.format("%s%s", math.floor(select(2, GetNetStats())), bandWidthUpTexture)
     local latencyHome = string.format("%s|c%sMS|r", math.floor(select(3, GetNetStats())), AccentColour)
@@ -36,6 +37,7 @@ local function FetchSystemStats()
 
     local Replacements = {
         ["%%fps"] = FPS,
+        ["%%fps_"] = FPS_Spaced,
         ["%%home"] = latencyHome,
         ["%%world"] = latencyWorld,
         ["%%down"] = bandWidthDown,
