@@ -492,7 +492,7 @@ function MS:CreateGUI(TabToOpen)
                 ["%shortdate"] = "Date (01 Jan 99)",
                 ["%longdate"] = "Date (01 January 1999)",
             },
-            { "", "%fps", "%home", "%world", "%down", "%up", "%shortdate", "%longdate"}
+            { "", "%fps", "%fps_alt", "%home", "%world", "%down", "%up", "%shortdate", "%longdate"}
         }
 
         local DisplayStringEditBox = AG:Create("EditBox")
