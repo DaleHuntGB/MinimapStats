@@ -40,7 +40,7 @@ local GVaultLevels = {
         [14] = 292, -- Raid Finder
         [15] = 305, -- Normal
         [16] = 318, -- Heroic
-        [17] = 331, -- Mythic
+        [17] = 334, -- Mythic
     }
 }
 
