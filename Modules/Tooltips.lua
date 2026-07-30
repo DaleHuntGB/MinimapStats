@@ -205,6 +205,19 @@ local function FetchVaultOptions()
     if #RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 or #WorldRunsCompleted > 0 then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
 end
 
+local function FetchCurrencyInfo(currencyID)
+    local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(currencyID)
+    if currencyInfo then
+        local name = currencyInfo.name
+        local quantity = currencyInfo.quantity
+        local maxQuantity = currencyInfo.maxQuantity
+        local iconTexture = currencyInfo.iconFileID
+        local totalEarned = currencyInfo.totalEarned
+
+        return name, quantity, maxQuantity, iconTexture, totalEarned
+    end
+end
+
 local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateTime)
     local GeneralDB = MS.db.global.General
     local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
@@ -240,6 +253,13 @@ local function CreateSystemStatsTooltip(displayVaultOptions)
     GameTooltip:SetOwner(Minimap, "ANCHOR_NONE")
     GameTooltip:SetPoint(MS.db.global.Tooltip.Position.AnchorFrom, Minimap, MS.db.global.Tooltip.Position.AnchorTo, MS.db.global.Tooltip.Position.OffsetX, MS.db.global.Tooltip.Position.OffsetY)
     GameTooltip:ClearLines()
+
+    if displayVaultOptions then
+        local currencyName, currencyQuantity, currencyMaxQuantity, currencyIconTexture, currencyTotalEarned = FetchCurrencyInfo(3418)
+        GameTooltip:AddLine("|c" .. AccentColour .. "Currency|r", 1, 1, 1)
+        GameTooltip:AddDoubleLine(string.format("|T%d:16:16|t |c%s%s|r", currencyIconTexture, AccentColour, currencyName), string.format("|c%s%d (%s)|r", AccentColour, currencyQuantity, (currencyTotalEarned < currencyMaxQuantity) and "|cFFCC4040Can Collect|r" or "|cFF40CC40Collected|r"), 1, 1, 1, 1, 1, 1)
+        if currencyName ~= nil then GameTooltip:AddLine(" ", 1, 1, 1) end
+    end
 
     if displayVaultOptions then FetchVaultOptions() end
 
