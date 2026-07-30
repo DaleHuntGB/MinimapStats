@@ -996,20 +996,20 @@ function MS:CreateGUI(TabToOpen)
         end
 
         local CurrencyOptionsInlineGroup = AG:Create("InlineGroup")
-        CurrencyOptionsInlineGroup:SetTitle("Currency Display Options")
+        CurrencyOptionsInlineGroup:SetTitle("Currency Options")
         CurrencyOptionsInlineGroup:SetLayout("Flow")
         CurrencyOptionsInlineGroup:SetFullWidth(true)
         SystemStatsTooltipOptions:AddChild(CurrencyOptionsInlineGroup)
 
         local ShowCurrencyInfoInTooltip = AG:Create("CheckBox")
-        ShowCurrencyInfoInTooltip:SetLabel("Show Currency Information")
+        ShowCurrencyInfoInTooltip:SetLabel("Show Currencies")
         ShowCurrencyInfoInTooltip:SetValue(DB.Tooltip.SystemStats.Currency.Enable)
         ShowCurrencyInfoInTooltip:SetRelativeWidth(0.5)
         ShowCurrencyInfoInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.SystemStats.Currency.Enable = value DeepDisable(CurrencyOptionsInlineGroup, not value, ShowCurrencyInfoInTooltip) end)
         CurrencyOptionsInlineGroup:AddChild(ShowCurrencyInfoInTooltip)
 
         local CurrencyDisplayOptionsInlineGroup = AG:Create("InlineGroup")
-        CurrencyDisplayOptionsInlineGroup:SetTitle("Currencies")
+        CurrencyDisplayOptionsInlineGroup:SetTitle("Currency Display Options")
         CurrencyDisplayOptionsInlineGroup:SetLayout("Flow")
         CurrencyDisplayOptionsInlineGroup:SetFullWidth(true)
         CurrencyOptionsInlineGroup:AddChild(CurrencyDisplayOptionsInlineGroup)
