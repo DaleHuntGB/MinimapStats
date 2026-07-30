@@ -255,16 +255,14 @@ local function CreateSystemStatsTooltip(displayVaultOptions, displayCurrency, di
     GameTooltip:ClearLines()
 
     if displayCurrency then
+        GameTooltip:AddLine("|c" .. AccentColour .. "Currencies|r", 1, 1, 1)
         if displayCurrencyOptions.NebulousVoidcore then
             local currencyName, currencyQuantity, currencyMaxQuantity, currencyIconTexture, currencyTotalEarned = FetchCurrencyInfo(3418)
-            GameTooltip:AddLine("|c" .. AccentColour .. "Currencies|r", 1, 1, 1)
             GameTooltip:AddDoubleLine(string.format("|T%d:16:16|t |c%s%s|r", currencyIconTexture, AccentColour, currencyName), string.format("|c%s%d (%s)|r", AccentColour, currencyQuantity, (currencyTotalEarned < currencyMaxQuantity) and "|cFFCC4040Can Collect|r" or "|cFF40CC40Collected|r"), 1, 1, 1, 1, 1, 1)
         end
         if displayCurrencyOptions.DawnlightManaflux then
             local currencyName, currencyQuantity, currencyMaxQuantity, currencyIconTexture, currencyTotalEarned = FetchCurrencyInfo(3378)
-            GameTooltip:AddLine("|c" .. AccentColour .. "Currencies|r", 1, 1, 1)
             GameTooltip:AddDoubleLine(string.format("|T%d:16:16|t |c%s%s|r", currencyIconTexture, AccentColour, currencyName), string.format("|c%s%d (%s)|r", AccentColour, currencyQuantity, (currencyTotalEarned < currencyMaxQuantity) and "|cFFCC4040Can Collect|r" or "|cFF40CC40Collected|r"), 1, 1, 1, 1, 1, 1)
-            GameTooltip:AddLine(" ", 1, 1, 1)
         end
         GameTooltip:AddLine(" ", 1, 1, 1)
     end
