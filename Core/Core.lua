@@ -94,6 +94,13 @@ local Defaults = {
                         MythicPlus = true,
                         World = true,
                     }
+                },
+                Currency = {
+                    Enable = true,
+                    Checklist = {
+                        ["NebulousVoidcore"] = true,
+                        ["DawnlightManaflux"] = true,
+                    }
                 }
             },
         }

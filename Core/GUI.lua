@@ -56,11 +56,11 @@ local function CreateInfoTag(Description)
     return InfoDesc
 end
 
-local function DeepDisable(widget, disabled)
-    if widget.SetDisabled then widget:SetDisabled(disabled) end
+local function DeepDisable(widget, disabled, skipWidget)
+    if widget.SetDisabled and widget ~= skipWidget then widget:SetDisabled(disabled) end
     if widget.children then
         for _, child in ipairs(widget.children) do
-            DeepDisable(child, disabled)
+            DeepDisable(child, disabled, skipWidget)
         end
     end
 end
@@ -68,7 +68,7 @@ end
 local function DisableElements(parentContainer, widget, value)
     for _, child in ipairs(parentContainer.children) do
         if child ~= widget then
-            DeepDisable(child, not value)
+            DeepDisable(child, not value, widget)
         end
     end
 end
@@ -980,6 +980,11 @@ function MS:CreateGUI(TabToOpen)
             ["World"] = "World",
         }
 
+        local CurrencyOptions = {
+            ["NebulousVoidcore"] = "Nebulous Voidcore",
+            ["DawnlightManaflux"] = "Dawnlight Manaflux",
+        }
+
         for key, label in pairs(VaultOptions) do
             local OptionCheckBox = AG:Create("CheckBox")
             OptionCheckBox:SetLabel(label)
@@ -988,6 +993,35 @@ function MS:CreateGUI(TabToOpen)
             OptionCheckBox:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.SystemStats.Vault.Options[key] = value end)
             OptionCheckBox:SetDisabled(not DB.Tooltip.SystemStats.Vault.Enable)
             VaultDisplayOptionsInlineGroup:AddChild(OptionCheckBox)
+        end
+
+        local CurrencyOptionsInlineGroup = AG:Create("InlineGroup")
+        CurrencyOptionsInlineGroup:SetTitle("Currency Display Options")
+        CurrencyOptionsInlineGroup:SetLayout("Flow")
+        CurrencyOptionsInlineGroup:SetFullWidth(true)
+        SystemStatsTooltipOptions:AddChild(CurrencyOptionsInlineGroup)
+
+        local ShowCurrencyInfoInTooltip = AG:Create("CheckBox")
+        ShowCurrencyInfoInTooltip:SetLabel("Show Currency Information")
+        ShowCurrencyInfoInTooltip:SetValue(DB.Tooltip.SystemStats.Currency.Enable)
+        ShowCurrencyInfoInTooltip:SetRelativeWidth(0.5)
+        ShowCurrencyInfoInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.SystemStats.Currency.Enable = value DeepDisable(CurrencyOptionsInlineGroup, not value, ShowCurrencyInfoInTooltip) end)
+        CurrencyOptionsInlineGroup:AddChild(ShowCurrencyInfoInTooltip)
+
+        local CurrencyDisplayOptionsInlineGroup = AG:Create("InlineGroup")
+        CurrencyDisplayOptionsInlineGroup:SetTitle("Currencies")
+        CurrencyDisplayOptionsInlineGroup:SetLayout("Flow")
+        CurrencyDisplayOptionsInlineGroup:SetFullWidth(true)
+        CurrencyOptionsInlineGroup:AddChild(CurrencyDisplayOptionsInlineGroup)
+
+        for key, value in pairs(DB.Tooltip.SystemStats.Currency.Checklist) do
+            local OptionCheckBox = AG:Create("CheckBox")
+            OptionCheckBox:SetLabel(CurrencyOptions[key])
+            OptionCheckBox:SetValue(value)
+            OptionCheckBox:SetRelativeWidth(0.33)
+            OptionCheckBox:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.SystemStats.Currency.Checklist[key] = value end)
+            OptionCheckBox:SetDisabled(not DB.Tooltip.SystemStats.Currency.Enable)
+            CurrencyDisplayOptionsInlineGroup:AddChild(OptionCheckBox)
         end
 
         ScrollFrame:DoLayout()
