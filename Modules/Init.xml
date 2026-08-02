@@ -6,5 +6,6 @@
     <Script file="InstanceDifficulty.lua"/>
     <Script file="Coordinates.lua"/>
     <Script file="Durability.lua"/>
+    <Script file="Currency.lua"/>
     <Script file="Tooltips.lua"/>
 </Ui>

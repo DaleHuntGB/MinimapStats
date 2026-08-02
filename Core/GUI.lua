@@ -980,12 +980,6 @@ function MS:CreateGUI(TabToOpen)
             ["World"] = "World",
         }
 
-        local CurrencyOptions = {
-            ["NebulousVoidcore"] = "Nebulous Voidcore",
-            ["DawnlightManaflux"] = "Dawnlight Manaflux",
-            ["RadiantSparkDust"] = "Radiant Spark Dust",
-        }
-
         for key, label in pairs(VaultOptions) do
             local OptionCheckBox = AG:Create("CheckBox")
             OptionCheckBox:SetLabel(label)
@@ -1015,12 +1009,12 @@ function MS:CreateGUI(TabToOpen)
         CurrencyDisplayOptionsInlineGroup:SetFullWidth(true)
         CurrencyOptionsInlineGroup:AddChild(CurrencyDisplayOptionsInlineGroup)
 
-        for key, value in pairs(DB.Tooltip.SystemStats.Currency.Checklist) do
+        for _, currency in ipairs(MS.Currencies) do
             local OptionCheckBox = AG:Create("CheckBox")
-            OptionCheckBox:SetLabel(CurrencyOptions[key])
-            OptionCheckBox:SetValue(value)
+            OptionCheckBox:SetLabel(currency.Label)
+            OptionCheckBox:SetValue(DB.Tooltip.SystemStats.Currency.Checklist[currency.Key])
             OptionCheckBox:SetRelativeWidth(0.33)
-            OptionCheckBox:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.SystemStats.Currency.Checklist[key] = value end)
+            OptionCheckBox:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.SystemStats.Currency.Checklist[currency.Key] = value end)
             OptionCheckBox:SetDisabled(not DB.Tooltip.SystemStats.Currency.Enable)
             CurrencyDisplayOptionsInlineGroup:AddChild(OptionCheckBox)
         end

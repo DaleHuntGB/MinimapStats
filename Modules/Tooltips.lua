@@ -205,19 +205,6 @@ local function FetchVaultOptions()
     if #RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 or #WorldRunsCompleted > 0 then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
 end
 
-local function FetchCurrencyInfo(currencyID)
-    local currencyInfo = C_CurrencyInfo.GetCurrencyInfo(currencyID)
-    if currencyInfo then
-        local name = currencyInfo.name
-        local quantity = currencyInfo.quantity
-        local maxQuantity = currencyInfo.maxQuantity
-        local iconTexture = currencyInfo.iconFileID
-        local totalEarned = currencyInfo.totalEarned
-
-        return name, quantity, maxQuantity, iconTexture, totalEarned
-    end
-end
-
 local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateTime)
     local GeneralDB = MS.db.global.General
     local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
@@ -246,7 +233,7 @@ local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateT
     GameTooltip:Show()
 end
 
-local function CreateSystemStatsTooltip(displayVaultOptions, displayCurrency, displayCurrencyOptions)
+local function CreateSystemStatsTooltip(displayVaultOptions)
     local GeneralDB = MS.db.global.General
     local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
 
@@ -254,23 +241,7 @@ local function CreateSystemStatsTooltip(displayVaultOptions, displayCurrency, di
     GameTooltip:SetPoint(MS.db.global.Tooltip.Position.AnchorFrom, Minimap, MS.db.global.Tooltip.Position.AnchorTo, MS.db.global.Tooltip.Position.OffsetX, MS.db.global.Tooltip.Position.OffsetY)
     GameTooltip:ClearLines()
 
-    if displayCurrency then
-        GameTooltip:AddLine("|c" .. AccentColour .. "Currencies|r", 1, 1, 1)
-        if displayCurrencyOptions.NebulousVoidcore then
-            local currencyName, currencyQuantity, currencyMaxQuantity, currencyIconTexture, currencyTotalEarned = FetchCurrencyInfo(3418)
-            GameTooltip:AddDoubleLine(string.format("|T%d:16:16|t |c%s%s|r", currencyIconTexture, AccentColour, currencyName), string.format("|c%s%d (%s)|r", AccentColour, currencyQuantity, (currencyTotalEarned < currencyMaxQuantity) and "|cFFCC4040Can Collect|r" or "|cFF40CC40Collected|r"), 1, 1, 1, 1, 1, 1)
-        end
-        if displayCurrencyOptions.DawnlightManaflux then
-            local currencyName, currencyQuantity, currencyMaxQuantity, currencyIconTexture, currencyTotalEarned = FetchCurrencyInfo(3378)
-            GameTooltip:AddDoubleLine(string.format("|T%d:16:16|t |c%s%s|r", currencyIconTexture, AccentColour, currencyName), string.format("|c%s%d (%s)|r", AccentColour, currencyQuantity, (currencyTotalEarned < currencyMaxQuantity) and "|cFFCC4040Can Collect|r" or "|cFF40CC40Collected|r"), 1, 1, 1, 1, 1, 1)
-        end
-
-        if displayCurrencyOptions.RadiantSparkDust then
-            local currencyName, currencyQuantity, currencyMaxQuantity, currencyIconTexture, currencyTotalEarned = FetchCurrencyInfo(3212)
-            GameTooltip:AddDoubleLine(string.format("|T%d:16:16|t |c%s%s|r", currencyIconTexture, AccentColour, currencyName), string.format("|c%s%d (%s)|r", AccentColour, currencyQuantity, (currencyTotalEarned < currencyMaxQuantity) and "|cFFCC4040Can Collect|r" or "|cFF40CC40Collected|r"), 1, 1, 1, 1, 1, 1)
-        end
-        GameTooltip:AddLine(" ", 1, 1, 1)
-    end
+    MS:AddCurrencyTooltip(AccentColour)
 
     if displayVaultOptions then FetchVaultOptions() end
 
@@ -287,6 +258,6 @@ function MS:AssignTooltipScripts()
     MS.TimeFrame:SetScript("OnEnter", function(self) CreateTimeTooltip(MS.db.global.Tooltip.Time.Date, MS.db.global.Tooltip.Time.Lockouts, MS.db.global.Tooltip.Time.AlternateTime) end)
     MS.TimeFrame:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
 
-    MS.SystemStatsFrame:SetScript("OnEnter", function(self) CreateSystemStatsTooltip(MS.db.global.Tooltip.SystemStats.Vault.Enable, MS.db.global.Tooltip.SystemStats.Currency.Enable, MS.db.global.Tooltip.SystemStats.Currency.Checklist) end)
+    MS.SystemStatsFrame:SetScript("OnEnter", function(self) CreateSystemStatsTooltip(MS.db.global.Tooltip.SystemStats.Vault.Enable) end)
     MS.SystemStatsFrame:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
 end
