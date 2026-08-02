@@ -983,6 +983,7 @@ function MS:CreateGUI(TabToOpen)
         local CurrencyOptions = {
             ["NebulousVoidcore"] = "Nebulous Voidcore",
             ["DawnlightManaflux"] = "Dawnlight Manaflux",
+            ["RadiantSparkDust"] = "Radiant Spark Dust",
         }
 
         for key, label in pairs(VaultOptions) do

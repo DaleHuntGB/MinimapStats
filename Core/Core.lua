@@ -100,6 +100,7 @@ local Defaults = {
                     Checklist = {
                         ["NebulousVoidcore"] = true,
                         ["DawnlightManaflux"] = true,
+                        ["RadiantSparkDust"] = true,
                     }
                 }
             },
