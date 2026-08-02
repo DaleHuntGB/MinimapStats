@@ -4,6 +4,7 @@ local Currencies = {
     { Key = "NebulousVoidcore", CurrencyID = 3418, Label = "Nebulous Voidcore"},
     { Key = "DawnlightManaflux", CurrencyID = 3378, Label = "Dawnlight Manaflux"},
     { Key = "RadiantSparkDust", CurrencyID = 3212, Label = "Radiant Spark Dust"},
+    { Key = "CofferKeyShards", CurrencyID = 3310, Label = "Coffer Key Shards"}
 }
 
 MS.Currencies = Currencies

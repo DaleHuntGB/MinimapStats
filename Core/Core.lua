@@ -96,12 +96,8 @@ local Defaults = {
                     }
                 },
                 Currency = {
-                    Enable = true,
-                    Checklist = {
-                        ["NebulousVoidcore"] = true,
-                        ["DawnlightManaflux"] = true,
-                        ["RadiantSparkDust"] = true,
-                    }
+                    Enable = false,
+                    Checklist = {}
                 }
             },
         }
