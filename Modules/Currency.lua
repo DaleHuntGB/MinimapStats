@@ -2,9 +2,9 @@ local _, MS = ...
 
 local Currencies = {
     { Key = "NebulousVoidcore", CurrencyID = 3418, Label = "Nebulous Voidcore"},
-    { Key = "DawnlightManaflux", CurrencyID = 3378, Label = "Dawnlight Manaflux"},
-    { Key = "RadiantSparkDust", CurrencyID = 3212, Label = "Radiant Spark Dust"},
-    { Key = "CofferKeyShards", CurrencyID = 3310, Label = "Coffer Key Shards"}
+    { Key = "VenomblightManaflux", CurrencyID = 3465, Label = "Venomblight Manaflux"},
+    { Key = "CofferKeyShards", CurrencyID = 3310, Label = "Coffer Key Shards"},
+    { Key = "RestoredCofferKey", CurrencyID = 3028, Label = "Restored Coffer Key"}
 }
 
 MS.Currencies = Currencies
