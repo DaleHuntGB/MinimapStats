@@ -150,8 +150,8 @@ local function FetchVaultOptions()
         if WeeklyRewardsUtil.HasUnlockedRewards(Enum.WeeklyRewardChestThresholdType.Activities) then
             local MythicPlusRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Activities)
             for i = 1, 3 do
+                if MythicPlusRuns[i].activityTierID == 0 then break end
                 local KeyLevel = MythicPlusRuns[i].level
-                if KeyLevel == nil then break end
                 if MS.db.global.Tooltip.SystemStats.Vault.ItemLevel then
                     if KeyLevel > MAX_MYTHIC_KEY then KeyLevel = MAX_MYTHIC_KEY end
                     table.insert(MythicPlusRunsCompleted, string.format("Slot #%d: |c" .. AccentColour .. "+%d|r - [|c%siLvl|r: %s|r]", i, MythicPlusRuns[i].level, AccentColour, GVaultLevels["Mythic+"][KeyLevel]))
