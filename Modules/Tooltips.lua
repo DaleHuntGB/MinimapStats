@@ -9,8 +9,7 @@ local RaidDifficultyIDs = {
 
 local GVaultLevels = {
     ["Mythic+"] = {
-        [-1] = "Go do M0s, please.",
-        [0]  = 292,
+        [0]  = 302,
         [2]  = 305,
         [3]  = 305,
         [4]  = 308,
@@ -152,7 +151,7 @@ local function FetchVaultOptions()
             local MythicPlusRuns = C_WeeklyRewards.GetActivities(Enum.WeeklyRewardChestThresholdType.Activities)
             for i = 1, 3 do
                 local KeyLevel = MythicPlusRuns[i].level
-                if KeyLevel == nil or KeyLevel == 0 then break end
+                if KeyLevel == nil then break end
                 if MS.db.global.Tooltip.SystemStats.Vault.ItemLevel then
                     if KeyLevel > MAX_MYTHIC_KEY then KeyLevel = MAX_MYTHIC_KEY end
                     table.insert(MythicPlusRunsCompleted, string.format("Slot #%d: |c" .. AccentColour .. "+%d|r - [|c%siLvl|r: %s|r]", i, MythicPlusRuns[i].level, AccentColour, GVaultLevels["Mythic+"][KeyLevel]))
