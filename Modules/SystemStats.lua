@@ -8,7 +8,7 @@ local function SystemStats_OnClick(self, button)
         C_AddOns.LoadAddOn("Blizzard_WeeklyRewards"); if WeeklyRewardsFrame:IsShown() then WeeklyRewardsFrame:Hide() else  WeeklyRewardsFrame:Show() end
     elseif button == "RightButton" and IsShiftKeyDown() then
         if C_AddOns.IsAddOnLoaded("UnhaltedUnitFrames") then
-            UUFG:OpenUUFGUI()
+            if _G.UUFG then _G.UUFG.CreateGUI() end
         end
     elseif button == "RightButton" then
         MS:CreateGUI()
