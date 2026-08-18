@@ -45,7 +45,7 @@ local GVaultLevels = {
 
 local MAX_MYTHIC_KEY = 10
 local MAX_WORLD_TIER = 13
-local MAX_UPCOMING_EVENTS = 3
+local MAX_UPCOMING_EVENTS = 5
 
 local function FetchPlayerLockouts(hasPreviousContent)
     local GeneralDB = MS.db.global.General
