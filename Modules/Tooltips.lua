@@ -45,8 +45,9 @@ local GVaultLevels = {
 
 local MAX_MYTHIC_KEY = 10
 local MAX_WORLD_TIER = 13
+local MAX_UPCOMING_EVENTS = 3
 
-local function FetchPlayerLockouts()
+local function FetchPlayerLockouts(hasPreviousContent)
     local GeneralDB = MS.db.global.General
     local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
     RequestRaidInfo()
@@ -67,7 +68,7 @@ local function FetchPlayerLockouts()
             end
         end
     end
-    if #DungeonLockouts > 0 or #RaidLockouts > 0 and (MS.db.global.Tooltip.Time.Date or MS.db.global.Tooltip.Time.AlternateTime) then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
+    if (#DungeonLockouts > 0 or #RaidLockouts > 0) and hasPreviousContent then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
     if #DungeonLockouts > 0 then
         GameTooltip:AddLine("|c" .. AccentColour .. "Dungeon|r |cFFFFFFFFLockouts|r", 1, 1, 1, 1)
         for _, Lockout in pairs(DungeonLockouts) do
@@ -112,6 +113,35 @@ local function FetchAlternateTime()
         CurrHr, CurrMin = date("%H"), date("%M")
     end
     return string.format( (DB.Format == "12H" and "%02d:%02d %s") or "%02d:%02d", (DB.Format == "12H" and ((CurrHr % 12 == 0) and 12 or (CurrHr % 12))) or CurrHr, CurrMin, (DB.Format == "12H" and ((tonumber(CurrHr) >= 12) and "|c" .. AccentColour .. "PM" .. "|r" or "|c" .. AccentColour .. "AM" .. "|r")) or "" )
+end
+
+local function FetchUpcomingEvents(hasPreviousContent)
+    local GeneralDB = MS.db.global.General
+    local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
+    local ScheduledEvents = C_EventScheduler.GetScheduledEvents()
+    if not ScheduledEvents then return false end
+
+    local CurrentTime = time()
+    local DisplayedEvents = 0
+    for _, EventInfo in ipairs(ScheduledEvents) do
+        if EventInfo.endTime > CurrentTime and MS.db.global.Tooltip.Time.EventChecklist[EventInfo.eventID] then
+            local POIInfo = C_AreaPoiInfo.GetAreaPOIInfo(nil, EventInfo.areaPoiID)
+            if POIInfo then
+                if DisplayedEvents == 0 then
+                    if hasPreviousContent then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
+                    GameTooltip:AddLine("|c" .. AccentColour .. "Upcoming|r |cFFFFFFFFEvents|r", 1, 1, 1, 1)
+                end
+
+                local EventDate = date("*t", EventInfo.startTime)
+                local EventTime = GameTime_GetFormattedTime(EventDate.hour, EventDate.min, true)
+                GameTooltip:AddDoubleLine(POIInfo.name, date("%a %d %b", EventInfo.startTime) .. ", |c" .. AccentColour .. EventTime .. "|r", 1, 1, 1, 1, 1, 1)
+                DisplayedEvents = DisplayedEvents + 1
+                if DisplayedEvents == MAX_UPCOMING_EVENTS then break end
+            end
+        end
+    end
+
+    return DisplayedEvents > 0
 end
 
 local function FetchVaultOptions()
@@ -204,7 +234,7 @@ local function FetchVaultOptions()
     if #RaidsCompleted > 0 or #MythicPlusRunsCompleted > 0 or #WorldRunsCompleted > 0 then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
 end
 
-local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateTime)
+local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateTime, displayEvents)
     local GeneralDB = MS.db.global.General
     local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
 
@@ -224,9 +254,11 @@ local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateT
         GameTooltip:AddLine(alternateTimeString, 1, 1, 1)
     end
 
-    if displayLockouts then FetchPlayerLockouts() end
+    local hasEvents = displayEvents and FetchUpcomingEvents(displayDate or displayAlternateTime)
 
-    if displayLockouts or displayDate or displayAlternateTime then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
+    if displayLockouts then FetchPlayerLockouts(displayDate or displayAlternateTime or hasEvents) end
+
+    if displayLockouts or displayDate or displayAlternateTime or hasEvents then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
     GameTooltip:AddDoubleLine(MS.LEFT_CLICK_BUTTON .. "|c" .. AccentColour .. "Left-Click|r", "Open Calendar", 1, 1, 1, 1, 1, 1)
 
     GameTooltip:Show()
@@ -254,8 +286,21 @@ local function CreateSystemStatsTooltip(displayVaultOptions)
 end
 
 function MS:AssignTooltipScripts()
-    MS.TimeFrame:SetScript("OnEnter", function(self) CreateTimeTooltip(MS.db.global.Tooltip.Time.Date, MS.db.global.Tooltip.Time.Lockouts, MS.db.global.Tooltip.Time.AlternateTime) end)
-    MS.TimeFrame:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+    MS.TimeFrame:RegisterEvent("EVENT_SCHEDULER_UPDATE")
+    MS.TimeFrame:SetScript("OnEvent", function(self)
+        MS:UpdateEventOptionsDropdown()
+        if self.TimeTooltipShown then CreateTimeTooltip(MS.db.global.Tooltip.Time.Date, MS.db.global.Tooltip.Time.Lockouts, MS.db.global.Tooltip.Time.AlternateTime, MS.db.global.Tooltip.Time.Events) end
+    end)
+    MS.TimeFrame:SetScript("OnEnter", function(self)
+        self.TimeTooltipShown = true
+        if MS.db.global.Tooltip.Time.Events then C_EventScheduler.RequestEvents() end
+        CreateTimeTooltip(MS.db.global.Tooltip.Time.Date, MS.db.global.Tooltip.Time.Lockouts, MS.db.global.Tooltip.Time.AlternateTime, MS.db.global.Tooltip.Time.Events)
+    end)
+    MS.TimeFrame:SetScript("OnLeave", function(self)
+        self.TimeTooltipShown = nil
+        GameTooltip:Hide()
+    end)
+    if MS.db.global.Tooltip.Time.Events then C_EventScheduler.RequestEvents() end
 
     MS.SystemStatsFrame:SetScript("OnEnter", function(self) CreateSystemStatsTooltip(MS.db.global.Tooltip.SystemStats.Vault.Enable) end)
     MS.SystemStatsFrame:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
