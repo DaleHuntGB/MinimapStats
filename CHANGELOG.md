@@ -1,7 +1,7 @@
 ## V12.0.20
 
 - Added the next three upcoming World Map events to the Time tooltip.
-- Added options to toggle upcoming events and select which event types are displayed.
+- Added an option to toggle upcoming events.
 - Added automatic event schedule refreshes and accent-coloured event times.
 - Fixed Mythic 0 Great Vault display and ignored incomplete activity tiers.
 - Updated the Unhalted Unit Frames configuration shortcut.

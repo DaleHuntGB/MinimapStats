@@ -84,9 +84,6 @@ local Defaults = {
                 DateString = "%A, %B %d, %Y",
                 AlternateTime = true,
                 Events = true,
-                EventChecklist = {
-                    ["*"] = true,
-                },
                 Lockouts = true,
             },
             SystemStats = {

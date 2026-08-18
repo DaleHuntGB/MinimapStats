@@ -3,7 +3,6 @@ local AG = LibStub("AceGUI-3.0")
 local GUIActive = false
 local GUIFrame = nil
 local LSM = MS.LSM
-local EventOptionsDropdown = nil
 
 local Anchors = {
     {
@@ -45,35 +44,6 @@ local LuaDateFormats = {
         "%j", "%W", "%Z",
     }
 }
-
-function MS:UpdateEventOptionsDropdown()
-    if not EventOptionsDropdown then return end
-
-    local EventNames = {}
-    local EventOrder = {}
-    local SeenEvents = {}
-    local CurrentTime = time()
-    local ScheduledEvents = C_EventScheduler.GetScheduledEvents()
-    if ScheduledEvents then
-        for _, EventInfo in ipairs(ScheduledEvents) do
-            if EventInfo.endTime > CurrentTime and not SeenEvents[EventInfo.eventID] then
-                local POIInfo = C_AreaPoiInfo.GetAreaPOIInfo(nil, EventInfo.areaPoiID)
-                if POIInfo then
-                    SeenEvents[EventInfo.eventID] = true
-                    EventNames[EventInfo.eventID] = POIInfo.name
-                    table.insert(EventOrder, EventInfo.eventID)
-                end
-            end
-        end
-    end
-
-    EventOptionsDropdown:SetList(EventNames, EventOrder)
-    for _, EventID in ipairs(EventOrder) do
-        EventOptionsDropdown:SetItemValue(EventID, MS.db.global.Tooltip.Time.EventChecklist[EventID])
-    end
-    EventOptionsDropdown:SetDisabled(not MS.db.global.Tooltip.Time.Events or #EventOrder == 0)
-    if #EventOrder == 0 then EventOptionsDropdown:SetText(C_EventScheduler.HasData() and "No scheduled events available" or "Loading events...") end
-end
 
 local function CreateInfoTag(Description)
     local InfoDesc = AG:Create("Label")
@@ -177,7 +147,7 @@ function MS:CreateGUI(TabToOpen)
     GUIFrame:SetLayout("Flow")
     GUIFrame:SetWidth(720)
     GUIFrame:SetHeight(480)
-    GUIFrame:SetCallback("OnClose", function() MS.TestInstanceDifficulty = false MS:UpdateInstanceDifficulty() GUIActive = false EventOptionsDropdown = nil AG:Release(GUIFrame) end)
+    GUIFrame:SetCallback("OnClose", function() MS.TestInstanceDifficulty = false MS:UpdateInstanceDifficulty() GUIActive = false AG:Release(GUIFrame) end)
     GUIFrame:EnableResize(false)
     GUIFrame:Show()
     MS:UpdateInstanceDifficulty()
@@ -964,13 +934,11 @@ function MS:CreateGUI(TabToOpen)
         ShowAlternateTimeInTooltip:SetCallback("OnLeave", function() GameTooltip:Hide() end)
         TimeTooltipOptions:AddChild(ShowAlternateTimeInTooltip)
 
-        EventOptionsDropdown = AG:Create("Dropdown")
-
         local ShowEventsInTooltip = AG:Create("CheckBox")
         ShowEventsInTooltip:SetLabel("Show Upcoming Events")
         ShowEventsInTooltip:SetValue(DB.Tooltip.Time.Events)
         ShowEventsInTooltip:SetRelativeWidth(0.33)
-        ShowEventsInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.Time.Events = value MS:UpdateEventOptionsDropdown() end)
+        ShowEventsInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.Time.Events = value end)
         TimeTooltipOptions:AddChild(ShowEventsInTooltip)
 
         local ShowLockoutsInTooltip = AG:Create("CheckBox")
@@ -979,14 +947,6 @@ function MS:CreateGUI(TabToOpen)
         ShowLockoutsInTooltip:SetRelativeWidth(0.33)
         ShowLockoutsInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.Time.Lockouts = value end)
         TimeTooltipOptions:AddChild(ShowLockoutsInTooltip)
-
-        EventOptionsDropdown:SetLabel("Displayed Events")
-        EventOptionsDropdown:SetMultiselect(true)
-        EventOptionsDropdown:SetFullWidth(true)
-        EventOptionsDropdown:SetCallback("OnValueChanged", function(_, _, eventID, value) DB.Tooltip.Time.EventChecklist[eventID] = value end)
-        TimeTooltipOptions:AddChild(EventOptionsDropdown)
-        MS:UpdateEventOptionsDropdown()
-        C_EventScheduler.RequestEvents()
 
         local SystemStatsTooltipOptions = AG:Create("InlineGroup")
         SystemStatsTooltipOptions:SetTitle("|cFF8080FFSystemStats|r Frame Options")
@@ -1070,7 +1030,6 @@ function MS:CreateGUI(TabToOpen)
     end
 
     local function SelectTabGroup(GUIContainer, _, TabGroup)
-        EventOptionsDropdown = nil
         GUIContainer:ReleaseChildren()
         if TabGroup == "General" then
             MS:CreateGeneralOptions(GUIContainer)

@@ -124,7 +124,7 @@ local function FetchUpcomingEvents(hasPreviousContent)
     local CurrentTime = time()
     local DisplayedEvents = 0
     for _, EventInfo in ipairs(ScheduledEvents) do
-        if EventInfo.endTime > CurrentTime and MS.db.global.Tooltip.Time.EventChecklist[EventInfo.eventID] then
+        if EventInfo.endTime > CurrentTime then
             local POIInfo = C_AreaPoiInfo.GetAreaPOIInfo(nil, EventInfo.areaPoiID)
             if POIInfo then
                 if DisplayedEvents == 0 then
@@ -288,7 +288,6 @@ end
 function MS:AssignTooltipScripts()
     MS.TimeFrame:RegisterEvent("EVENT_SCHEDULER_UPDATE")
     MS.TimeFrame:SetScript("OnEvent", function(self)
-        MS:UpdateEventOptionsDropdown()
         if self.TimeTooltipShown then CreateTimeTooltip(MS.db.global.Tooltip.Time.Date, MS.db.global.Tooltip.Time.Lockouts, MS.db.global.Tooltip.Time.AlternateTime, MS.db.global.Tooltip.Time.Events) end
     end)
     MS.TimeFrame:SetScript("OnEnter", function(self)
