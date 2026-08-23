@@ -3,6 +3,8 @@
 - Added the next three upcoming World Map events to the Time tooltip.
 - Added an option to toggle upcoming events.
 - Added automatic event schedule refreshes and accent-coloured event times.
+- Limited the Time tooltip to future events sorted by their start time.
+- Fixed Durability temporarily displaying `N/A` while equipment data loads.
 - Fixed Mythic 0 Great Vault display and ignored incomplete activity tiers.
 - Updated the Unhalted Unit Frames configuration shortcut.
 

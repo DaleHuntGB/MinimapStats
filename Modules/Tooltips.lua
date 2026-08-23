@@ -122,22 +122,26 @@ local function FetchUpcomingEvents(hasPreviousContent)
     if not ScheduledEvents then return false end
 
     local CurrentTime = time()
-    local DisplayedEvents = 0
+    local UpcomingEvents = {}
     for _, EventInfo in ipairs(ScheduledEvents) do
-        if EventInfo.endTime > CurrentTime then
-            local POIInfo = C_AreaPoiInfo.GetAreaPOIInfo(nil, EventInfo.areaPoiID)
-            if POIInfo then
-                if DisplayedEvents == 0 then
-                    if hasPreviousContent then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
-                    GameTooltip:AddLine("|c" .. AccentColour .. "Upcoming|r |cFFFFFFFFEvents|r", 1, 1, 1, 1)
-                end
+        if EventInfo.startTime > CurrentTime then table.insert(UpcomingEvents, EventInfo) end
+    end
+    table.sort(UpcomingEvents, function(FirstEvent, SecondEvent) return FirstEvent.startTime < SecondEvent.startTime end)
 
-                local EventDate = date("*t", EventInfo.startTime)
-                local EventTime = GameTime_GetFormattedTime(EventDate.hour, EventDate.min, true)
-                GameTooltip:AddDoubleLine(POIInfo.name, date("%a %d %b", EventInfo.startTime) .. ", |c" .. AccentColour .. EventTime .. "|r", 1, 1, 1, 1, 1, 1)
-                DisplayedEvents = DisplayedEvents + 1
-                if DisplayedEvents == MAX_UPCOMING_EVENTS then break end
+    local DisplayedEvents = 0
+    for _, EventInfo in ipairs(UpcomingEvents) do
+        local POIInfo = C_AreaPoiInfo.GetAreaPOIInfo(nil, EventInfo.areaPoiID)
+        if POIInfo then
+            if DisplayedEvents == 0 then
+                if hasPreviousContent then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
+                GameTooltip:AddLine("|c" .. AccentColour .. "Upcoming|r |cFFFFFFFFEvents|r", 1, 1, 1, 1)
             end
+
+            local EventDate = date("*t", EventInfo.startTime)
+            local EventTime = GameTime_GetFormattedTime(EventDate.hour, EventDate.min, true)
+            GameTooltip:AddDoubleLine(POIInfo.name, date("%a %d %b", EventInfo.startTime) .. ", |c" .. AccentColour .. EventTime .. "|r", 1, 1, 1, 1, 1, 1)
+            DisplayedEvents = DisplayedEvents + 1
+            if DisplayedEvents == MAX_UPCOMING_EVENTS then break end
         end
     end
 

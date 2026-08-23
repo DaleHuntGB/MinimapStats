@@ -1,5 +1,6 @@
 local _, MS = ...
 local LSM = MS.LSM
+local DURABILITY_RETRY_DELAY = 0.1
 
 local function FetchDurabilityValueColour(durabilityPercent)
     local GeneralDB = MS.db.global.General
@@ -37,12 +38,30 @@ local function FetchDurability()
         end
     end
 
-    if maxDurability == 0 then return ApplyDurabilityTextFormat(textFormat, "N/A") end
+    if maxDurability == 0 then return ApplyDurabilityTextFormat(textFormat, "N/A"), false end
     local durabilityPercent = (totalDurability / maxDurability) * 100
     local valueColour = FetchDurabilityValueColour(durabilityPercent)
 
     local colouredValue = string.format("|c%s%.0f|r", valueColour, durabilityPercent)
-    return ApplyDurabilityTextFormat(textFormat, colouredValue)
+    return ApplyDurabilityTextFormat(textFormat, colouredValue), true
+end
+
+local function UpdateDurabilityText(frame, retryUnavailable)
+    local durabilityText, hasDurability = FetchDurability()
+    if not hasDurability and retryUnavailable then
+        if not frame.DurabilityRetryPending then
+            frame.DurabilityRetryPending = true
+            C_Timer.After(DURABILITY_RETRY_DELAY, function()
+                frame.DurabilityRetryPending = nil
+                if MS.db.global.Durability.Enable then UpdateDurabilityText(frame, false) end
+            end)
+        end
+        return
+    end
+
+    frame.Text:SetText(durabilityText)
+    frame:SetWidth(frame.Text:GetStringWidth())
+    frame:SetHeight(frame.Text:GetStringHeight())
 end
 
 function MS:CreateDurability()
@@ -54,27 +73,23 @@ function MS:CreateDurability()
     DurabilityFrame:SetFrameStrata(GeneralDB.FrameStrata)
     DurabilityFrame.Text = DurabilityFrame:CreateFontString(nil, "OVERLAY")
     DurabilityFrame.Text:SetFont(LSM:Fetch("font", GeneralDB.Font), DB.Layout[5], GeneralDB.FontFlag)
-    DurabilityFrame.Text:SetText(FetchDurability())
     DurabilityFrame.Text:SetTextColor(DB.Colour[1]/255, DB.Colour[2]/255, DB.Colour[3]/255, 1)
     DurabilityFrame.Text:SetShadowColor(GeneralDB.FontShadow.Colour[1]/255, GeneralDB.FontShadow.Colour[2]/255, GeneralDB.FontShadow.Colour[3]/255, 1)
     DurabilityFrame.Text:SetShadowOffset(GeneralDB.FontShadow.OffsetX, GeneralDB.FontShadow.OffsetY)
     DurabilityFrame.Text:SetPoint(DB.Layout[1], DurabilityFrame, DB.Layout[1], 0, 0)
     DurabilityFrame.Text:SetJustifyH(MS:SetJustification(DB.Layout[1]))
-    DurabilityFrame:SetWidth(DurabilityFrame.Text:GetStringWidth())
-    DurabilityFrame:SetHeight(DurabilityFrame.Text:GetStringHeight())
+    UpdateDurabilityText(DurabilityFrame, DB.Enable)
     if DB.Enable then
         DurabilityFrame:Show()
         DurabilityFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+        DurabilityFrame:RegisterEvent("UPDATE_INVENTORY_ALERTS")
         DurabilityFrame:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
         DurabilityFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-        DurabilityFrame:SetScript("OnEvent", function(self, event, ...)
-            self.Text:SetText(FetchDurability())
-            self:SetWidth(self.Text:GetStringWidth())
-            self:SetHeight(self.Text:GetStringHeight())
-        end)
+        DurabilityFrame:SetScript("OnEvent", function(self) UpdateDurabilityText(self, true) end)
     else
         DurabilityFrame:Hide()
         DurabilityFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+        DurabilityFrame:UnregisterEvent("UPDATE_INVENTORY_ALERTS")
         DurabilityFrame:UnregisterEvent("UPDATE_INVENTORY_DURABILITY")
         DurabilityFrame:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
         DurabilityFrame:SetScript("OnEvent", nil)
@@ -95,24 +110,18 @@ function MS:UpdateDurability()
         MS.DurabilityFrame.Text:SetShadowOffset(GeneralDB.FontShadow.OffsetX, GeneralDB.FontShadow.OffsetY)
         MS.DurabilityFrame.Text:SetPoint(DB.Layout[1], MS.DurabilityFrame, DB.Layout[1], 0, 0)
         MS.DurabilityFrame.Text:SetJustifyH(MS:SetJustification(DB.Layout[1]))
-        MS.DurabilityFrame:SetWidth(MS.DurabilityFrame.Text:GetStringWidth())
-        MS.DurabilityFrame:SetHeight(MS.DurabilityFrame.Text:GetStringHeight())
         if DB.Enable then
             MS.DurabilityFrame:Show()
             MS.DurabilityFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+            MS.DurabilityFrame:RegisterEvent("UPDATE_INVENTORY_ALERTS")
             MS.DurabilityFrame:RegisterEvent("UPDATE_INVENTORY_DURABILITY")
             MS.DurabilityFrame:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
-            MS.DurabilityFrame:SetScript("OnEvent", function(self, event, ...)
-                self.Text:SetText(FetchDurability())
-                self:SetWidth(self.Text:GetStringWidth())
-                self:SetHeight(self.Text:GetStringHeight())
-            end)
-            MS.DurabilityFrame.Text:SetText(FetchDurability())
-            MS.DurabilityFrame:SetWidth(MS.DurabilityFrame.Text:GetStringWidth())
-            MS.DurabilityFrame:SetHeight(MS.DurabilityFrame.Text:GetStringHeight())
+            MS.DurabilityFrame:SetScript("OnEvent", function(self) UpdateDurabilityText(self, true) end)
+            UpdateDurabilityText(MS.DurabilityFrame, true)
         else
             MS.DurabilityFrame:Hide()
             MS.DurabilityFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+            MS.DurabilityFrame:UnregisterEvent("UPDATE_INVENTORY_ALERTS")
             MS.DurabilityFrame:UnregisterEvent("UPDATE_INVENTORY_DURABILITY")
             MS.DurabilityFrame:UnregisterEvent("PLAYER_EQUIPMENT_CHANGED")
             MS.DurabilityFrame:SetScript("OnEvent", nil)
