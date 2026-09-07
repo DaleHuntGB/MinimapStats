@@ -3,7 +3,7 @@ local LSM = MS.LSM
 
 local function SystemStats_OnClick(self, button)
     if button == "LeftButton" and IsShiftKeyDown() then
-        if ExpansionLandingPageMinimapButton and ExpansionLandingPageMinimapButton:IsShown() then ExpansionLandingPageMinimapButton:Click() end
+        ToggleExpansionLandingPage()
     elseif button == "LeftButton" then
         C_AddOns.LoadAddOn("Blizzard_WeeklyRewards"); if WeeklyRewardsFrame:IsShown() then WeeklyRewardsFrame:Hide() else  WeeklyRewardsFrame:Show() end
     elseif button == "RightButton" and IsShiftKeyDown() then
