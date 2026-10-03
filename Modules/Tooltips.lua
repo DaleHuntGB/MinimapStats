@@ -1,4 +1,6 @@
 local _, MS = ...
+local LibKeystone = LibStub("LibKeystone")
+local PartyKeystones = {}
 
 local RaidDifficultyIDs = {
     [14] = "Normal",
@@ -268,6 +270,50 @@ local function CreateTimeTooltip(displayDate, displayLockouts, displayAlternateT
     GameTooltip:Show()
 end
 
+local function FetchKeystones(AccentColour)
+    local DB = MS.db.global.Tooltip.SystemStats
+    local DisplayedKeystones = false
+    local DisplayedPartyHeader = false
+
+    local function AddKeystone(Level, MapID, PlayerName)
+        if not Level or Level <= 0 or not MapID or MapID <= 0 then return end
+        local DungeonName = C_ChallengeMode.GetMapUIInfo(MapID)
+        if not DungeonName then return end
+        local KeystoneString = string.format("|c%s+%d|r %s", AccentColour, Level, DungeonName)
+        if PlayerName then
+            if not DisplayedPartyHeader then
+                if DisplayedKeystones then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
+                GameTooltip:AddLine("|c" .. AccentColour .. "Party|r |cFFFFFFFFKeystone|r", 1, 1, 1)
+                DisplayedPartyHeader = true
+            end
+            GameTooltip:AddDoubleLine(PlayerName, KeystoneString, 1, 1, 1, 1, 1, 1)
+        else
+            GameTooltip:AddLine("|c" .. AccentColour .. "Your|r |cFFFFFFFFKeystone|r", 1, 1, 1)
+            GameTooltip:AddLine(KeystoneString, 1, 1, 1)
+        end
+        DisplayedKeystones = true
+    end
+
+    if DB.Keystone then
+        AddKeystone(C_MythicPlus.GetOwnedKeystoneLevel(), C_MythicPlus.GetOwnedKeystoneChallengeMapID())
+    end
+    if DB.PartyKeystones and IsInGroup() and not IsInRaid() then
+        for i = 1, GetNumSubgroupMembers() do
+            local Unit = "party" .. i
+            local PlayerName = GetUnitName(Unit, true)
+            local Keystone = PlayerName and PartyKeystones[Ambiguate(PlayerName, "none")]
+            if Keystone then
+                local _, Class = UnitClass(Unit)
+                local ClassColour = not issecretvalue(Class) and Class and C_ClassColor.GetClassColor(Class)
+                local DisplayName = Ambiguate(PlayerName, "short")
+                if ClassColour then DisplayName = ClassColour:WrapTextInColorCode(DisplayName) end
+                AddKeystone(Keystone.Level, Keystone.MapID, DisplayName)
+            end
+        end
+    end
+    if DisplayedKeystones then GameTooltip:AddLine(" ", 1, 1, 1, 1) end
+end
+
 local function CreateSystemStatsTooltip(displayVaultOptions)
     local GeneralDB = MS.db.global.General
     local AccentColour = GeneralDB.ClassColour and string.format("FF%02x%02x%02x", MS.CLASS_COLOUR[1], MS.CLASS_COLOUR[2], MS.CLASS_COLOUR[3]) or string.format("FF%02x%02x%02x", GeneralDB.AccentColour[1], GeneralDB.AccentColour[2], GeneralDB.AccentColour[3])
@@ -279,6 +325,8 @@ local function CreateSystemStatsTooltip(displayVaultOptions)
     MS:AddCurrencyTooltip(AccentColour)
 
     if displayVaultOptions then FetchVaultOptions() end
+
+    FetchKeystones(AccentColour)
 
     GameTooltip:AddDoubleLine(MS.LEFT_CLICK_BUTTON .. "|c" .. AccentColour .. "Left-Click|r", "Open Great Vault", 1, 1, 1, 1, 1, 1)
     GameTooltip:AddDoubleLine(MS.SHIFT_BUTTON .. MS.LEFT_CLICK_BUTTON .. "|c" .. AccentColour .. "Left-Click|r", "Open Omnium Folio", 1, 1, 1, 1, 1, 1)
@@ -305,6 +353,40 @@ function MS:AssignTooltipScripts()
     end)
     if MS.db.global.Tooltip.Time.Events then C_EventScheduler.RequestEvents() end
 
-    MS.SystemStatsFrame:SetScript("OnEnter", function(self) CreateSystemStatsTooltip(MS.db.global.Tooltip.SystemStats.Vault.Enable) end)
-    MS.SystemStatsFrame:SetScript("OnLeave", function(self) GameTooltip:Hide() end)
+    MS.SystemStatsFrame:SetScript("OnEvent", function(self, event)
+        if event == "GROUP_ROSTER_UPDATE" then
+            wipe(PartyKeystones)
+            if MS.db.global.Tooltip.SystemStats.PartyKeystones and IsInGroup() and not IsInRaid() then LibKeystone.Request("PARTY") end
+        end
+        CreateSystemStatsTooltip(MS.db.global.Tooltip.SystemStats.Vault.Enable)
+    end)
+    MS.SystemStatsFrame:SetScript("OnEnter", function(self)
+        self.SystemStatsTooltipShown = true
+        wipe(PartyKeystones)
+        local DB = MS.db.global.Tooltip.SystemStats
+        if DB.Keystone or DB.PartyKeystones then
+            self:RegisterEvent("BAG_UPDATE_DELAYED")
+            self:RegisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
+            C_MythicPlus.RequestMapInfo()
+        end
+        if DB.PartyKeystones then
+            self:RegisterEvent("GROUP_ROSTER_UPDATE")
+            LibKeystone.Register(MS, function(Level, MapID, _, PlayerName, Channel)
+                if Channel ~= "PARTY" or not MS.db.global.Tooltip.SystemStats.PartyKeystones then return end
+                PartyKeystones[PlayerName] = { Level = Level, MapID = MapID }
+                if self.SystemStatsTooltipShown then CreateSystemStatsTooltip(MS.db.global.Tooltip.SystemStats.Vault.Enable) end
+            end)
+            if IsInGroup() and not IsInRaid() then LibKeystone.Request("PARTY") end
+        end
+        CreateSystemStatsTooltip(DB.Vault.Enable)
+    end)
+    MS.SystemStatsFrame:SetScript("OnLeave", function(self)
+        self.SystemStatsTooltipShown = nil
+        self:UnregisterEvent("BAG_UPDATE_DELAYED")
+        self:UnregisterEvent("CHALLENGE_MODE_MAPS_UPDATE")
+        self:UnregisterEvent("GROUP_ROSTER_UPDATE")
+        LibKeystone.Unregister(MS)
+        wipe(PartyKeystones)
+        GameTooltip:Hide()
+    end)
 end

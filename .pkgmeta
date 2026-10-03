@@ -6,6 +6,9 @@ curse-id: 695388
 wago-id: qGYM7vGg
 
 externals:
+    Libs/LibKeystone:
+        url: https://github.com/BigWigsMods/LibKeystone.git/LibKeystone
+
     Libs/Ace3:
         url: https://repos.wowace.com/wow/ace3/trunk
         tag: latest

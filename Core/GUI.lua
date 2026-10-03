@@ -997,6 +997,20 @@ function MS:CreateGUI(TabToOpen)
             VaultDisplayOptionsInlineGroup:AddChild(OptionCheckBox)
         end
 
+        local ShowKeystoneInTooltip = AG:Create("CheckBox")
+        ShowKeystoneInTooltip:SetLabel("Show Keystone")
+        ShowKeystoneInTooltip:SetValue(DB.Tooltip.SystemStats.Keystone)
+        ShowKeystoneInTooltip:SetRelativeWidth(0.5)
+        ShowKeystoneInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.SystemStats.Keystone = value end)
+        SystemStatsTooltipOptions:AddChild(ShowKeystoneInTooltip)
+
+        local ShowPartyKeystonesInTooltip = AG:Create("CheckBox")
+        ShowPartyKeystonesInTooltip:SetLabel("Show Party Keystones")
+        ShowPartyKeystonesInTooltip:SetValue(DB.Tooltip.SystemStats.PartyKeystones)
+        ShowPartyKeystonesInTooltip:SetRelativeWidth(0.5)
+        ShowPartyKeystonesInTooltip:SetCallback("OnValueChanged", function(_, _, value) DB.Tooltip.SystemStats.PartyKeystones = value end)
+        SystemStatsTooltipOptions:AddChild(ShowPartyKeystonesInTooltip)
+
         local CurrencyOptionsInlineGroup = AG:Create("InlineGroup")
         CurrencyOptionsInlineGroup:SetTitle("Currency Options")
         CurrencyOptionsInlineGroup:SetLayout("Flow")

@@ -87,6 +87,8 @@ local Defaults = {
                 Lockouts = true,
             },
             SystemStats = {
+                Keystone = true,
+                PartyKeystones = true,
                 Vault = {
                     Enable = true,
                     ItemLevel = true,
