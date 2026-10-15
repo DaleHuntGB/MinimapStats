@@ -1,5 +1,4 @@
 package-as: MinimapStats
-release-type: beta
 enable-nolib-creation: yes
 
 curse-id: 695388
@@ -28,9 +27,6 @@ externals:
     Libs/LibStub:
         url: https://repos.wowace.com/wow/libstub/trunk
         tag: latest
-
-manual-changelog:
-    filename: CHANGELOG.md
 
 ignore:
     - README.md
